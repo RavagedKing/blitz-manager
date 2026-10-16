@@ -2,7 +2,7 @@
 
 Jeu de gestion de Blitzball dans le navigateur : compose ton équipe, règle ta tactique, mène ton club saison après saison.
 
-Jouer : (lien ajouté à l'ouverture de la phase de test)
+Jouer : https://ravagedking.github.io/blitz-manager/
 
 - Un seul fichier HTML, aucune installation, FR (défaut) et EN.
 - Les parties sont sauvegardées dans ton navigateur, pour cette adresse seulement.
@@ -19,7 +19,7 @@ Licence : [PolyForm Noncommercial 1.0.0](LICENSE) (usage non commercial uniqueme
 
 Browser-based Blitzball management game: build your team, set your tactics, and lead your club season after season.
 
-Play: (link to be added when the testing phase opens)
+Play: https://ravagedking.github.io/blitz-manager/
 
 - Single HTML file: No installation required, available in FR (default) and EN.
 - Local saves: Games are saved directly in your browser, specific to this URL only.
