@@ -97,6 +97,23 @@ h3{font:700 12px/1.2 var(--font-body);letter-spacing:.1em;text-transform:upperca
 .seg{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font:600 13px var(--font-body);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--water);border-color:var(--water);color:var(--on-water)}
+.chip[disabled]{background:transparent;border-style:dashed;color:var(--muted);cursor:not-allowed}   /* TAC-10 : formation verrouillée */
+.mst{display:flex;align-items:center;gap:8px;font-size:12px}.mst .bar{flex:1}.mst .ms{font-size:12px;letter-spacing:0}   /* TAC-11 */
+/* TAC-09 : forces de zone (4 lignes d'environ 18 px), repère gris de l'adversaire, lecture fort / faible */
+.zb{display:grid;gap:3px;margin-top:8px}
+.zr{display:grid;grid-template-columns:62px 22px minmax(0,1fr) 92px;gap:8px;align-items:center;font:600 12px/18px var(--font-body)}
+.zr .zl{color:var(--muted)}.zr .mono{font-size:12px}
+.zr .bar>u{background:var(--muted);margin-left:-1px;box-shadow:0 0 0 1.5px var(--surface)}
+.zr .zs{white-space:nowrap}.zr .zs [aria-hidden]{display:inline-block;width:12px;text-align:center}
+.zr.z2 .zs{color:var(--good);color:color-mix(in srgb,var(--good) 78%,var(--ink))}.zr.z0 .zs{color:var(--bad);color:color-mix(in srgb,var(--bad) 82%,var(--ink))}.zr.z1 .zs{color:var(--muted)}
+.zt{margin:6px 0 0;font-size:12.5px;line-height:18px}
+.zleg u{display:inline-block;width:2px;height:10px;margin-right:6px;background:var(--muted);vertical-align:-1px}
+/* UI-12c : Tactique sur une page (mobile : formation / style / pressing, Sphère, six, remplaçants ; ≥ 980 px : Sphère à gauche) */
+.tacg{display:grid;gap:16px;grid-template-columns:minmax(0,1fr);grid-template-areas:"ctl" "sph" "six" "ben"}
+.tacg>*{min-width:0}.tacctl{grid-area:ctl}.tacsph{grid-area:sph}.tacsix{grid-area:six}.tacben{grid-area:ben}
+.tacctl.stack{gap:12px}.tacsph .row{margin-bottom:6px}
+.tacsph .pl[id^="p-h-"]{cursor:pointer}
+@media (min-width:980px){.tacg{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);grid-template-areas:"sph ctl" "sph six" "sph ben";grid-template-rows:auto auto 1fr}.tacsph{align-self:start}}
 select,input[type="text"]{font:500 14px var(--font-body);padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);max-width:100%;min-width:0}
 input[type="text"]{width:100%}
 label.f{display:grid;gap:4px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
@@ -342,7 +359,7 @@ td,th{white-space:normal}
 .av.r-bad{background:color-mix(in srgb,var(--bad) 28%,transparent);color:var(--ink)}
 .hpm{display:grid;gap:2px;font:600 12px var(--font-mono);color:var(--muted);text-align:center}
 .pr .btn.small{padding:6px 8px;width:100%}
-.sortsel{display:none;gap:8px;align-items:end}
+.sortsel{display:flex;gap:8px;align-items:end}
 .tabsm{display:flex;gap:2px;border-bottom:1px solid var(--line);margin:-4px 0 0}
 .tabsm button{background:none;border:0;border-bottom:3px solid transparent;padding:8px 12px 6px;color:var(--muted);font:600 13px var(--font-body);cursor:pointer}
 .tabsm button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ball)}
@@ -592,6 +609,14 @@ td select,.tbl select{max-width:150px}
 .cmp .cb .mk{position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--mk);border-radius:1px;box-shadow:0 0 0 2px var(--surface)}
 .cmp b.hi{font-weight:800;color:var(--ink)}
 .cmp b.lo{font-weight:500;color:var(--muted)}
+/* UI-51 : comparatif de forces en couleurs (vert plus fort, rouge moins fort, jaune égal) + ▲ ▼ = ; les teintes sont rapprochées de l'encre pour tenir 4,5:1 en clair et en sombre */
+.cmp.tn{grid-template-columns:46px 1fr 46px}
+.cmp.tn b{display:flex;align-items:center;gap:3px;font-weight:800}
+.cmp.tn b:last-child{justify-content:flex-end}
+.cmp.tn b .tg{font-size:12px;line-height:1}
+.cmp.tn b.up{color:var(--good);color:color-mix(in srgb,var(--good) 78%,var(--ink))}
+.cmp.tn b.dn{color:var(--bad);color:color-mix(in srgb,var(--bad) 82%,var(--ink))}
+.cmp.tn b.eq{color:var(--warn);color:color-mix(in srgb,var(--warn) 82%,var(--ink))}
 .xpc{display:grid;gap:4px;min-width:0}
 .xpb{display:flex;border-radius:4px;overflow:hidden;background:var(--surface2);border:1px solid var(--line)}
 .xpb i{display:block;height:100%}
@@ -650,6 +675,18 @@ td select,.tbl select{max-width:150px}
   .bn .sl{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .bn .pill{right:calc(50% - 22px);top:2px}
   .bn:focus-visible{outline:2px solid var(--water);outline-offset:-3px}
+  /* UI-38 : Jouer au centre, ambre, mis en évidence (la hauteur de la barre ne change pas) ; pastille accrochée hors de la capsule */
+  .bn.play .si{width:46px;border-radius:11px;background:var(--ball);color:var(--ball-ink)}
+  .bn.play .sl{color:var(--ink);font-weight:800}
+  .bn.play[aria-current="true"]{border-top-color:var(--ball)}
+  .bn.play[aria-current="true"] .si{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
+  .bn.play .pill{right:calc(50% - 36px);top:0;box-shadow:0 0 0 2px var(--surface)}
+  /* même ordre et même mise en évidence quand la barre est en haut (réglage « Barre en haut ») */
+  .top.navtabs .sect[data-s=accueil]{order:1}.top.navtabs .sect[data-s=club]{order:2}.top.navtabs .sect.play{order:3}.top.navtabs .sect[data-s=effectif]{order:4}.top.navtabs .sect[data-s=options]{order:5}
+  .top.navtabs .sect.play{background:var(--ball);border-color:var(--ball);color:var(--ball-ink);font-weight:800}
+  .top.navtabs .sect.play[aria-current="true"]{box-shadow:inset 0 0 0 2px var(--ink)}
+  .top.navtabs .sect.play .pill{background:var(--ink);color:var(--surface)}
+  .top.navtabs .sect.play .pill.block{background:var(--bad);color:var(--on-bad)}
   body:has(.bnav){padding-block-end:calc(52px + env(safe-area-inset-bottom,0px) + 20px)}
   body:has(.bnav) .toast{bottom:calc(52px + 14px + env(safe-area-inset-bottom,0px))}
 }
@@ -760,6 +797,43 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
 .trow .tx .bar{min-width:36px}
 .trow .tx span{white-space:nowrap}
 @media (max-width:700px){.trow .ts{width:112px;font-size:13px}}
+
+/* UI-39 : nom de l'entraîneur + crayon ; UI-40 : confirmation de spécialité */
+.cname{display:flex;align-items:center;gap:6px;min-width:0;font:600 17px var(--font-display)}
+.cname .cn{min-width:0;overflow-wrap:anywhere}
+.cname input{font:600 15px var(--font-body);flex:1 1 auto;width:min(240px,100%)}
+.grow{flex:1 1 0;min-width:0}
+.ibtn{flex:none;width:32px;height:32px;display:inline-grid;place-items:center;padding:0;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--muted);cursor:pointer}
+.ibtn:hover{color:var(--ink);border-color:var(--water)}
+.ibtn:focus-visible{outline:2px solid var(--water);outline-offset:2px}
+/* UI-20b : portrait de l'entraîneur (emplacement) ; l'icône « changer » est inerte (aria-disabled) */
+.cport{position:relative;flex:none}
+.cport .pframe{width:72px}
+.cpchg{position:absolute;right:-8px;bottom:-8px;width:28px;height:28px;background:var(--surface)}
+.ibtn[aria-disabled="true"]{opacity:.65;cursor:default}
+.ibtn[aria-disabled="true"]:hover{color:var(--muted);border-color:var(--line)}
+.chip.pend{border-color:var(--water);box-shadow:0 0 0 2px var(--water) inset}
+.cfm{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:10px 12px;border:1px solid var(--water);border-radius:8px;background:var(--surface2);font-size:14px}
+.cfm>span:first-child{min-width:0;flex:1 1 200px}
+/* v0.6.9 (UI-41, UI-53, UI-56) : barre d'outils des listes (tri, filtres, compteur) ; carte joueur en feuille du bas sous 700 px */
+.ltb{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:end}
+.ltb .sortsel{grid-column:1/-1}
+.ltb select{width:100%}
+.fltr{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.flc{font-size:13px;white-space:nowrap}
+@media (min-width:701px){.ltb{grid-template-columns:repeat(4,minmax(0,1fr))}.ltb .sortsel{grid-column:span 2}}
+.nxd{margin-top:-4px}
+.dlgback.bs{display:flex;align-items:flex-end;padding:0}
+.bsheet{width:100%;height:80vh;height:80dvh;display:grid;grid-template-rows:auto minmax(0,1fr);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0;overflow:hidden;animation:bsup .15s ease-out}
+.bsheet:focus-visible{outline:2px solid var(--water);outline-offset:-2px}
+@keyframes bsup{from{transform:translateY(32px);opacity:.4}to{transform:none;opacity:1}}
+.bshh{border-bottom:1px solid var(--line)}
+.bsh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 6px 0 16px}
+.bshh .tabsm{margin:0;padding-inline:10px;border-bottom:0}
+.bsh .who{min-width:0;flex:1}
+.bsb{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom,0px)}
+.toast{z-index:70}   /* les notifications passent au-dessus de la feuille (z-index 60) */
+@media (prefers-reduced-motion: reduce){.bsheet{animation:none!important;transition:none!important}}
 </style>
 
 
@@ -1519,20 +1593,20 @@ function newSeason(G){
 // ==UI START==
 const app=document.getElementById('app');
 let G=null;
-const UI={prev:null,sect:'accueil',tab:'home',last:lastDef(),ptab:'ov',rtab:'game',csel:null,ctab:'ov',sort:'pos',sdir:1,msort:'ovr',mdir:-1,sel:null,msel:null,confirm:null,live:null,timer:null,resDay:null,toastT:null,scr:'title',step:1,draft:{coach:''},saved:null,dlg:null,newsI:0,jf:'all',jn:30,warn:false,demo:null,xmsg:null,xpend:null,xtxt:null,xpaste:false,xptxt:''};
+const UI={prev:null,sect:'accueil',tab:'home',last:lastDef(),ptab:'ov',rtab:'game',csel:null,ctab:'ov',sort:'pos',sdir:1,msort:'ovr',mdir:-1,sel:null,msel:null,confirm:null,cedit:false,live:null,timer:null,resDay:null,toastT:null,scr:'title',step:1,draft:{coach:''},saved:null,dlg:null,fl:{s:{},m:{}},newsI:0,jf:'all',jn:30,warn:false,demo:null,xmsg:null,xpend:null,xtxt:null,xpaste:false,xptxt:''};
 const KEY='blitz-manager-v2',PKEY='blitz-manager-prefs';
 const PREFS={lang:'fr',theme:'auto',nav:'bar',hideWelcome:false};
 function applyPrefs(){LANG=PREFS.lang;const r=document.documentElement;r.lang=LANG;if(PREFS.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',PREFS.theme);}
 function loadPrefs(){try{const s=JSON.parse(localStorage.getItem(PKEY)||'null');if(s){if(s.lang==='en'||s.lang==='fr')PREFS.lang=s.lang;if(['auto','light','dark'].includes(s.theme))PREFS.theme=s.theme;if(s.nav==='bar'||s.nav==='tabs')PREFS.nav=s.nav;if(s.hideWelcome===true)PREFS.hideWelcome=true;}}catch(e){}applyPrefs();}
 function savePrefs(){try{localStorage.setItem(PKEY,JSON.stringify(PREFS));}catch(e){}}
 // ---------- v0.6.3 (UI-19 / UI-20a / UI-21 / TEC-01 UI) : constantes et textes ----------
-const VERSION='v0.6.8';                     // source unique : écran titre, À propos, test d'actualité
+const VERSION='v0.6.9';                     // source unique : écran titre, À propos, test d'actualité
 const COACH_MAX=20,NEWS_MAX=3;
-const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Loska','Nikje']};
+const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 // Actualités du titre : {t:[fr,en], b:[fr,en] | () => texte, v?:version}. Une entrée sans titre ou sans corps n'est jamais affichée.
 const TITLE_NEWS=[
   {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-  {v:VERSION,t:['Nouveautés','What’s new'],b:['v0.6.8 « identité » : les joueurs ont un sexe, des listes de noms bien plus riches, un cadre de portrait sur la fiche, et les Hypellos deviennent rares.','v0.6.8 "identity": players now have a sex, much larger name lists, a portrait frame on the player sheet, and Hypellos become rare.']}
+  {v:VERSION,t:['Nouveautés','What’s new'],b:['v0.6.9 « Tactique et listes » : Tactique sur une page avec forces par zone, formations à débloquer et maîtrise, tri et filtres des listes, fiche joueur en feuille sur mobile, confirmation avant de changer de spécialité, barre mobile avec Jouer au centre.','v0.6.9 “Tactics and lists”: one-page Tactics with strengths by zone, unlockable formations and mastery, sorting and filters on lists, player card as a sheet on mobile, confirmation before changing a specialty, mobile bar with Play in the centre.']}
 ];
 // Textes (ids de la fiche UI-19-20a-21 §3, plus x.* pour Exporter / Importer). Les valeurs {x} sont remplacées par T() ; l'appelant échappe ce qui vient du jeu.
 const TX={
@@ -1632,7 +1706,7 @@ const SECTN={accueil:['Tableau de bord','Dashboard'],club:['Club','Club'],effect
 const SECTB={accueil:['Tableau','Dashboard']};
 const SECT={
   accueil:[['home',['Tableau de bord','Dashboard']]],
-  club:[['coach',['Entraîneur','Coach']],['finance',['Finances','Finances']],['club',['Fiche du club','Club sheet']],['cust',['Personnalisation','Customisation']],['journal',['Journal','Journal']]],
+  club:[['club',['Fiche du club','Club sheet']],['coach',['Entraîneur','Coach']],['finance',['Finances','Finances']],['journal',['Journal','Journal']],['cust',['Personnalisation','Customisation']]],
   effectif:[['squad',['Joueurs','Players']],['lineup',['Tactique','Tactics']],['train',['Entraînement','Training']],['market',['Marché','Market']]],
   jouer:[['match',['Match','Match']],['calendar',['Calendrier','Fixtures']],['table',['Classement','Table']]],
   options:[['settings',['Paramètres','Settings']],['rules',['Règles','Rules']],['about',['À propos','About']]]
@@ -1641,7 +1715,7 @@ const SECT={
 const TABALIAS={style:'lineup',arena:'finance'};
 const tabId=t=>TABALIAS[t]||t;
 const sectOf=t=>{t=tabId(t);for(const s in SECT)if(SECT[s].some(x=>x[0]===t))return s;return 'accueil';};
-function lastDef(){return{accueil:'home',club:'coach',effectif:'squad',jouer:'match',options:'settings'};}
+function lastDef(){return{accueil:'home',club:'club',effectif:'squad',jouer:'match',options:'settings'};}
 const NAVICO={
   accueil:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
   club:'<path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/>',
@@ -1665,6 +1739,13 @@ function toast(msg,bad){
 // UI-12b : Journal. Entrée {d: journée, s: texte, sn: saison, k?: catégorie, a?: 1 si alerte}. Plafond JOURNAL_MAX, plus d'effacement à chaque saison.
 // k : 'match' | 'effectif' | 'marche' | 'club' | 'finances' ; une entrée sans k (ancienne sauvegarde) = « Autre ». sn est le champ saison (s est pris par le texte).
 const JOURNAL_MAX=100,JPAGE=30;
+// UI-55 : le premier message du Journal garde le nom de club choisi (renommage après le coup d'envoi) ; ancien nom → nouveau nom, FR et EN, aucune clé ajoutée.
+function renameWelcome(a,b){
+  if(!G||!G.news||a===b)return;
+  const f=n=>[`Bienvenue chez ${n}. La saison démarre !`,`Welcome to ${n}. The season begins!`];
+  const [fa,ea]=f(a),[fb,eb]=f(b);
+  G.news.forEach(n=>{if(n.s===fa)n.s=fb;else if(n.s===ea)n.s=eb;});
+}
 function stampNews(){if(G&&G.news)G.news.forEach(n=>{if(n.sn==null)n.sn=G.season;});}   // anciennes entrées sans saison : rattachées à la saison en cours (elles étaient effacées à chaque saison)
 function news(s,k,a){
   stampNews();
@@ -1715,7 +1796,13 @@ function lineVals(team,auto){
   const lu=(auto||!lineupValid(team))?bestLineup(team,team.formation):team.lineup.map(id=>team.players.find(p=>p.id===id));
   return lines({lu,slots:sl,sides:lanesOf(team),style:team.style,press:team.press});
 }
-function cmpRow(label,a,b){const t=a+b||1,hi=a>b?'a':b>a?'b':'';return `<div class="cmp"><span class="lab">${label}</span><b class="${hi==='a'?'hi':hi?'lo':''}">${Math.round(a)}</b><div class="cb"><i class="a" style="width:${a/t*100}%"></i><i class="b" style="width:${b/t*100}%"></i><u class="mk" aria-hidden="true"></u></div><b class="${hi==='b'?'hi':hi?'lo':''}">${Math.round(b)}</b></div>`;}
+// tone (UI-51, comparatif de forces seulement) : chaque valeur en vert (plus forte), rouge (moins forte) ou jaune (égale), toujours avec ▲ ▼ = et un aria-label sur la ligne (jamais la couleur seule) ; sur les valeurs affichées (arrondies)
+function cmpRow(label,a,b,tone){
+  const t=a+b||1,hi=a>b?'a':b>a?'b':'',ra=Math.round(a),rb=Math.round(b);
+  const v=(x,y,w)=>`<b class="${hi===w?'hi':hi?'lo':''}${tone?(x>y?' up':x<y?' dn':' eq'):''}">${tone?`<span class="tg" aria-hidden="true">${x>y?'▲':x<y?'▼':'='}</span>`:''}${x}</b>`;
+  const al=tone?` role="group" aria-label="${label} : ${ra} ${L('contre','vs')} ${rb}, ${ra>rb?L('plus fort','stronger'):ra<rb?L('moins fort','weaker'):L('égal','equal')}"`:'';
+  return `<div class="cmp${tone?' tn':''}"${al}><span class="lab">${label}</span>${v(ra,rb,'a')}<div class="cb"><i class="a" style="width:${a/t*100}%"></i><i class="b" style="width:${b/t*100}%"></i><u class="mk" aria-hidden="true"></u></div>${v(rb,ra,'b')}</div>`;
+}
 const LOGO=`<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--water)" stroke-width="2.5"/><path d="M4 18c4-4 7 4 12 0s8 4 12 0" fill="none" stroke="var(--ball)" stroke-width="2.5" stroke-linecap="round"/><circle cx="21" cy="10" r="3" fill="var(--ball)"/></svg>`;
 const brandH=`<div class="brand">${LOGO}<span>BLITZ</span><span class="b2">MANAGER</span></div>`;
 const prefBar=()=>`<div class="prefbar"><div class="seg" role="group" aria-label="${L('Langue','Language')}">${[['fr','FR'],['en','EN']].map(([k,l])=>`<button class="chip" data-a="lang" data-v="${k}" aria-pressed="${PREFS.lang===k}">${l}</button>`).join('')}</div>
@@ -1762,8 +1849,33 @@ function listHead(which){
 }
 function sortSel(which){
   const sq=which==='s',cur=sq?UI.sort:UI.msort,dir=sq?UI.sdir:UI.mdir;
-  const keys=[['pos',L('Poste','Position')],['name',L('Nom','Name')],['ovr',L('Note','Rating')],['pot',L('Potentiel','Potential')],['age',L('Âge','Age')],['lvl',L('Niveau','Level')],...(sq?[['avg',L('Moyenne','Average')],['hp','HP']]:[['price',L('Prix','Price')]]),...STATS.map(s=>['st_'+s,SL[s]+' · '+P(STATN[s])])];
+  const keys=[['pos',L('Poste','Position')],['name',L('Nom','Name')],['ovr',L('Note','Rating')],['pot',L('Potentiel','Potential')],['age',L('Âge','Age')],['lvl',L('Niveau','Level')],...(sq?[['avg',L('Moyenne','Average')],['hp','HP'],['price',L('Valeur','Value')]]:[['price',L('Prix','Price')]]),['wage',L('Salaire','Wage')],...STATS.map(s=>['st_'+s,SL[s]+' · '+P(STATN[s])])];
   return `<div class="sortsel"><label class="f" style="flex:1">${L('Trier par','Sort by')}<select data-c="sortsel" data-w="${which}">${keys.map(([k,l])=>`<option value="${k}" ${cur===k?'selected':''}>${esc(l)}</option>`).join('')}</select></label><button class="btn" data-a="sortdir" data-w="${which}" aria-label="${L('Inverser l’ordre','Reverse order')}">${dir>0?'↑':'↓'}</button></div>`;
+}
+// UI-41 : filtres Poste (ligne), Race, Sexe, niveau et âge (tranches) sur Joueurs (s) et Marché (m). État d'interface UI.fl, non sauvegardé, hors G ; '' = tous.
+// Tranches calées sur le jeu : niveaux 8 à 20 en début de partie (MAXLVL 40), âges 18 à 34 (retraite à 35).
+const LVL_BANDS=[[1,10],[11,13],[14,16],[17,20],[21,30],[31,99]],AGE_BANDS=[[0,21],[22,25],[26,29],[30,99]];
+const FLT_POS=[['GK',['Gardien','Keeper']],['DF',['Défense','Defence']],['MF',['Milieu','Midfield']],['FW',['Attaque','Attack']]];
+const FLT_SEX=[['F',['Féminin','Female']],['M',['Masculin','Male']]];
+const fget=w=>UI.fl[w==='m'?'m':'s'];
+const bandTxt=(b,age)=>age&&b[0]===0?`≤ ${b[1]}`:b[1]>=99?`${b[0]}+`:`${b[0]}–${b[1]}`;
+function fltPass(p,f){
+  if(f.pos&&p.pos!==f.pos)return false;
+  if(f.race&&(p.race||'humain')!==f.race)return false;
+  if(f.sex&&(isF(p)?'F':'M')!==f.sex)return false;
+  const lb=LVL_BANDS[+f.lvl],ab=AGE_BANDS[+f.age];
+  if(f.lvl!==undefined&&f.lvl!==''&&lb&&(p.lvl<lb[0]||p.lvl>lb[1]))return false;
+  if(f.age!==undefined&&f.age!==''&&ab&&(p.age<ab[0]||p.age>ab[1]))return false;
+  return true;
+}
+function listBar(which,shown,total){
+  const f=fget(which),nAct=['pos','race','sex','lvl','age'].filter(k=>f[k]!==undefined&&f[k]!=='').length;
+  const fs=(k,nm,opts)=>`<select data-c="flt" data-w="${which}" data-k="${k}" aria-label="${esc(nm)}"><option value="">${esc(nm)}${L(' : ',': ')}${L('Tous','All')}</option>${opts.map(([v,l])=>`<option value="${v}"${String(f[k])===String(v)?' selected':''}>${esc(nm)}${L(' : ',': ')}${esc(l)}</option>`).join('')}</select>`;
+  const nm={pos:L('Poste','Position'),race:'Race',sex:L('Sexe','Sex'),lvl:L('Niveau','Level'),age:L('Âge','Age')};
+  const lv=LVL_BANDS.map((b,i)=>[i,bandTxt(b)]),ag=AGE_BANDS.map((b,i)=>[i,bandTxt(b,1)]);
+  return `<div class="ltb" role="group" aria-label="${L('Tri et filtres','Sort and filters')}">${sortSel(which)}
+  ${fs('pos',nm.pos,FLT_POS.map(([v,n])=>[v,P(n)]))}${fs('race',nm.race,Object.keys(RACES).map(k=>[k,P(RACES[k].n)]))}${fs('sex',nm.sex,FLT_SEX.map(([v,n])=>[v,P(n)]))}${fs('lvl',nm.lvl,lv)}${fs('age',nm.age,ag)}
+  <div class="fltr"><span class="mono flc" role="status" aria-label="${shown} ${L('affichés sur','shown of')} ${total}">${shown}/${total}</span><button class="btn small" data-a="fltreset" data-w="${which}"${nAct?'':' disabled'}>${L('Réinitialiser','Reset')}</button></div></div>`;
 }
 const nameCell=(p,extra)=>`<div class="c-name"><b>${esc(p.name)}${extra||''}</b><small>${esc(raceName(p))} · ${p.age} ${L('ans','y')} · ${L('Niv','Lv')} ${p.lvl}</small>${traitChips(p)}</div>`;
 const stats8=p=>`<div class="c-stats">${STATS.map(s=>stCell(p,s)).join('')}</div>`;
@@ -1784,6 +1896,15 @@ const mw=n=>L(n>1?'matchs':'match',n>1?'matches':'match');
 const HLBL={stats:['Comment lire ces stats ?','How to read these stats?'],tactics:['Comprendre compositions et style','Understanding formations and style'],train:['Comprendre l’XP et l’entraînement','Understanding XP and training'],stade:['Comprendre le stade et les finances','Understanding the stadium and finances'],game:['Voir les règles du jeu','See the game rules']};
 const helpRow=tab=>`<div class="helprow">${helpLink(tab,...HLBL[tab])}</div>`;
 const masteryTag=f=>{const m=masteryOf(G.coach,f);return m?` <span class="ms" aria-label="${L('Maîtrise','Mastery')} ${m}">${'★'.repeat(m)}</span>`:'';};
+// TAC-11 : progression de la maîtrise de la formation choisie (lecture seule de G.coach.comps ; palier MASTER_STEP, plafond MASTER_MAX ; même comptage que masteryOf)
+function masteryBar(f){
+  let n=0;for(const k in G.coach.comps)if(k.split('|')[0]===f)n+=G.coach.comps[k].p;
+  const m=masteryOf(G.coach,f),mx=m>=MASTER_MAX,r=n%MASTER_STEP;
+  const al=L(`Maîtrise ${f} : ${m} étoile${m>1?'s':''} sur ${MASTER_MAX}${mx?', maximum':`, ${r} match${r>1?'s':''} sur ${MASTER_STEP} avant la suivante`}`,`Mastery ${f}: ${m} of ${MASTER_MAX} stars${mx?', maximum':`, ${r} of ${MASTER_STEP} matches to the next`}`);
+  return `<div class="mst" role="group" aria-label="${al}"><span class="mono">${L('Maîtrise','Mastery')} <span class="ms" aria-hidden="true">${'★'.repeat(m)+'☆'.repeat(MASTER_MAX-m)}</span></span>${barH(mx?100:r/MASTER_STEP*100,'var(--ball)')}<span class="mono muted" aria-hidden="true">${mx?'max':`${r}/${MASTER_STEP}`}</span></div>`;
+}
+// TAC-10 : puces de formation (Effectif › Tactique et Tactique rapide) ; verrouillée = grisée (pointillés, texte atténué) + niveau requis écrit ; `disabled` natif, infobulle et aria-label (jamais la couleur seule)
+const formBtns=u=>Object.keys(FORMATIONS).map(f=>{const ok=unlocked(G,f),req=L(`Niveau d’entraîneur ${FORM_UNLOCK[f]} requis`,`Coach level ${FORM_UNLOCK[f]} required`);return `<button class="chip" data-a="formation" data-v="${f}" aria-pressed="${u.formation===f}"${ok?'':` disabled title="${req}" aria-label="${f} : ${req}"`}>${f}${masteryTag(f)}${ok?'':` · ${L('niv.','lv.')} ${FORM_UNLOCK[f]}`}</button>`;}).join('');
 const formLine=(f,c)=>`<div class="frow"><span class="mono">${f}</span><span class="mono muted">${c.p} ${mw(c.p)}</span><b class="mono">${Math.round(c.w/c.p*100)} %</b></div>`;
 function histHTML(p,ctx){
   const out=[];
@@ -1812,13 +1933,14 @@ function statsTabHTML(p){
 }
 // UI-13 : silhouette provisoire du cadre de portrait (aucun champ de portrait dans les données ; p.portrait viendra avec CON-04)
 const PORTRAIT_SIL='<svg viewBox="0 0 96 128" aria-hidden="true" focusable="false"><circle cx="48" cy="48" r="19"/><path d="M10 128c0-27 17-42 38-42s38 15 38 42z"/></svg>';
-function playerPanel(p,ctx){
+function playerPanel(p,ctx,sh){
   const sq=ctx==='squad',pk=ctx==='pick',u=pk?null:U(),tab=pk?'ov':UI.ptab;
   const sale=Math.round(valueOf(p)*.5/100)*100,conf=UI.confirm==='rel'+p.id,cost=valueOf(p),need=xpNeed(p.lvl);
   const tabs=[['ov',L('Aperçu','Overview')],['st',L('Statistiques','Statistics')],['hi',L('Historique','History')]];
-  const head=`<div class="who">${posTag(p)}<h2${pk?' id="dlg-t"':''} style="min-width:0;overflow-wrap:anywhere">${esc(p.name)}</h2></div>
-  <p class="muted" style="font-size:13px">${esc(raceName(p))} · ${p.age} ${L('ans','y/o')}${pk?'':` · ${L('Niv','Lv')} ${p.lvl}`}</p>${traitChips(p)}
-  ${pk?'':`<div class="tabsm" role="tablist" style="margin-top:2px">${tabs.map(([k,l])=>`<button role="tab" data-a="ptab" data-v="${k}" aria-selected="${tab===k}">${l}</button>`).join('')}</div>`}`;
+  const who=`<div class="who">${posTag(p)}<h2${pk||sh?' id="dlg-t"':''} style="min-width:0;overflow-wrap:anywhere">${esc(p.name)}</h2></div>`;
+  const info=`<p class="muted" style="font-size:13px">${esc(raceName(p))} · ${p.age} ${L('ans','y/o')}${pk?'':` · ${L('Niv','Lv')} ${p.lvl}`}</p>${traitChips(p)}`;
+  const tabsH=pk?'':`<div class="tabsm" role="tablist" style="margin-top:2px">${tabs.map(([k,l])=>`<button role="tab" data-a="ptab" data-v="${k}" aria-selected="${tab===k}">${l}</button>`).join('')}</div>`;
+  const head=who+'\n  '+info+'\n  '+tabsH;
   let body='';
   if(tab==='st')body=statsTabHTML(p);
   else if(tab==='hi')body=histHTML(p,ctx);
@@ -1846,6 +1968,7 @@ function playerPanel(p,ctx){
     body=`${ident}${radar(p)}${kv}${mid}${act}`;
   }
   if(pk)return `<div class="ppanel stack tight sheetbody">${head}${body}</div>`;
+  if(sh)return {who,tabs:tabsH,main:info+body};   // UI-53 : en-tête fixe = nom, croix et onglets ; le reste défile
   return `<aside class="panel ppanel stack tight sticky" id="ppanel">${head}${body}</aside>`;
 }
 // ---------- Rendu général ----------
@@ -1857,7 +1980,7 @@ function render(){
     app.innerHTML=st===1?coachStepHTML():st===2?pickHTML():`<div class="wrap main" style="padding-top:12px">${prefBar()}${clubHTML(true)}</div>`;return;
   }
   ensureLineup(U());
-  UI.tab=tabId(UI.tab);UI.sect=sectOf(UI.tab);
+  UI.tab=tabId(UI.tab);UI.sect=sectOf(UI.tab);if(UI.tab!=='coach')UI.cedit=false;
   const pages={home:homeHTML,coach:coachHTML,finance:financeHTML,club:()=>clubHTML(false),cust:custPageHTML,journal:journalHTML,squad:squadHTML,train:trainHTML,market:marketHTML,match:matchHTML,lineup:lineupHTML,calendar:calendarHTML,table:tableHTML,settings:settingsHTML,rules:rulesHTML,about:aboutHTML};
   const HELP={lineup:'tactics',train:'train',coach:'train',finance:'stade',club:'stade',cust:'stade'};
   const by=todoBySect(G);
@@ -1868,18 +1991,20 @@ function render(){
 // todoLines(G) : lignes « À faire avant le match », par priorité, calculées depuis G seul (aucune clé ajoutée à G, rien n'est stocké).
 // → [{id, go, sev, n, who?}] : go = page ciblée, sev = 'block' (bloquante) | 'warn' (ambre), n = nombre concerné ; le texte vient de todoText.
 // Les pastilles (en-tête, barre) la lisent dès 12a ; le bloc « À faire » de l'Accueil la réutilisera en 12b.
+// UI-37 : table « alerte → page » ; la section de la pastille est sectOf(page). 'rep' (bilan à valider) ne vit que dans les pastilles (navLines), jamais dans « À faire » de l'Accueil (UI-32).
+const ALERT_GO={inj:'lineup',tired:'lineup',cash:'finance',pts:'squad',spec:'coach',rep:'match'};
 function todoLines(G){
   const out=[],t=G&&G.teams&&G.userId!=null?G.teams[G.userId]:null;
   if(!t)return out;
   const lu=(t.lineup||[]).map(id=>t.players.find(p=>p.id===id)).filter(Boolean);
   const hurt=lu.filter(p=>p.inj>0);
-  if(hurt.length)out.push({id:'inj',go:'lineup',sev:'block',n:hurt.length,who:hurt[0]});
+  if(hurt.length)out.push({id:'inj',go:ALERT_GO.inj,sev:'block',n:hurt.length,who:hurt[0]});
   const tired=lu.filter(p=>!(p.inj>0)&&hpPct(p)<.5).length;
-  if(tired)out.push({id:'tired',go:'lineup',sev:'warn',n:tired});
-  if(G.cash<0)out.push({id:'cash',go:'finance',sev:'warn',n:1});
+  if(tired)out.push({id:'tired',go:ALERT_GO.tired,sev:'warn',n:tired});
+  if(G.cash<0)out.push({id:'cash',go:ALERT_GO.cash,sev:'warn',n:1});
   const pts=sum(t.players.map(p=>p.pts||0));
-  if(pts>0)out.push({id:'pts',go:'squad',sev:'warn',n:pts});
-  if(G.coach&&coachLvl(G.coach).lvl>=SPEC_MIN&&!G.coach.spec)out.push({id:'spec',go:'coach',sev:'warn',n:1});
+  if(pts>0)out.push({id:'pts',go:ALERT_GO.pts,sev:'warn',n:pts});
+  if(G.coach&&coachLvl(G.coach).lvl>=SPEC_MIN&&!G.coach.spec)out.push({id:'spec',go:ALERT_GO.spec,sev:'warn',n:1});
   return out;
 }
 function todoText(l){
@@ -1888,13 +2013,16 @@ function todoText(l){
     case 'tired':return L(`${l.n} titulaire${l.n>1?'s':''} sous 50 % de HP`,`${l.n} starter${l.n>1?'s':''} under 50% HP`);
     case 'cash':return L('Budget négatif : recrutements bloqués','Negative budget: signings blocked');
     case 'pts':return L(`${l.n} point${l.n>1?'s':''} de talent à répartir`,`${l.n} talent point${l.n>1?'s':''} to spend`);
+    case 'rep':return L('Bilan du match à valider','Match report to confirm');
     default:return L('Choisis une spécialité (gratuite)','Pick a specialty (free)');
   }
 }
+// lignes des pastilles = todoLines + alerte d'interface lue hors de G (UI.live) : bilan de match terminé, pas encore validé (Continuer) → Jouer
+function navLines(G){const o=todoLines(G);if(UI.live&&UI.live.done)o.push({id:'rep',go:ALERT_GO.rep,sev:'warn',n:1});return o;}
 // {section: {n: nombre de lignes, block: au moins une bloquante, tips: textes}} ; l'Accueil n'a jamais de pastille
 function todoBySect(G){
   const by={};
-  todoLines(G).forEach(l=>{const s=sectOf(l.go);if(s==='accueil')return;const b=by[s]||(by[s]={n:0,block:false,tips:[]});b.n++;if(l.sev==='block')b.block=true;b.tips.push(todoText(l));});
+  navLines(G).forEach(l=>{const s=sectOf(l.go);if(s==='accueil')return;const b=by[s]||(by[s]={n:0,block:false,tips:[]});b.n++;if(l.sev==='block')b.block=true;b.tips.push(todoText(l));});
   return by;
 }
 const brandHd=`<div class="brand">${LOGO}<span class="bt">BLITZ</span><span class="b2 bt">MANAGER</span></div>`;
@@ -1918,11 +2046,13 @@ function headerHTML(by){
   const pages=SECT[UI.sect];
   return `<header class="top ${PREFS.nav==='bar'?'navbar':'navtabs'}"><div class="wrap topin">${brandHd}
   <div class="meta"><span>${badge(u)}</span><span class="mfull">${L('Saison','Season')} <b>${G.season}</b></span><span class="mfull">${day}</span><span class="mshort">${sd}</span><span><b>${fmt(G.cash)}</b><span class="mfull"> gils</span><span class="mshort"> g</span></span></div>${nextBtn()}</div>
-  <div class="wrap sects">${Object.keys(SECT).map(s=>sectBtn(s,by,'sect'+(s==='options'?' opt':''),false)).join('')}</div>
+  <div class="wrap sects">${Object.keys(SECT).map(s=>sectBtn(s,by,'sect'+(s==='options'?' opt':'')+(s==='jouer'?' play':''),false)).join('')}</div>
   ${pages.length>1?`<nav class="wrap tabs" aria-label="${L('Pages','Pages')}">${pages.map(([k,l])=>`<button class="tab" data-a="tab" data-t="${k}" ${UI.tab===k?'aria-current="page"':''}>${P(l)}</button>`).join('')}</nav>`:''}</header>`;
 }
 // barre du bas (≤ 700 px, réglage PREFS.nav = 'bar') : rendue seulement dans ce mode, masquée par le CSS au-delà de 700 px
-function barHTML(by){return `<nav class="bnav" aria-label="${L('Sections','Sections')}">${Object.keys(SECT).map(s=>sectBtn(s,by,'bn',true)).join('')}</nav>`;}
+// UI-38 : ordre de la barre mobile, Jouer au centre (classe play : ambre, CSS) ; l'ordre des sections du bureau (SECT) ne change pas
+const BAR_ORDER=['accueil','club','jouer','effectif','options'];
+function barHTML(by){return `<nav class="bnav" aria-label="${L('Sections','Sections')}">${BAR_ORDER.map(s=>sectBtn(s,by,'bn'+(s==='jouer'?' play':''),true)).join('')}</nav>`;}
 
 // ---------- v0.6.3 : écran titre, Options sans partie, parcours, fenêtres, import / export ----------
 // UI.scr : 'title' | 'opts' | 'flow' | 'game'. G peut être null sur title et opts. Rien n'est lu ni écrit dans la sauvegarde avant « Commencer la saison ».
@@ -2007,7 +2137,7 @@ const PORD={GK:0,DF:1,MF:2,FW:3};
 const previewList=t=>t.players.slice().sort((a,b)=>PORD[a.pos]-PORD[b.pos]||ovr(b)-ovr(a));
 function resetUI(){
   stopTimer();
-  UI.sect='accueil';UI.tab='home';UI.last=lastDef();UI.csel=null;UI.ptab='ov';UI.live=null;UI.confirm=null;UI.sel=null;UI.msel=null;UI.resDay=null;UI.prev=null;UI.dlg=null;
+  UI.sect='accueil';UI.tab='home';UI.last=lastDef();UI.csel=null;UI.ptab='ov';UI.live=null;UI.confirm=null;UI.sel=null;UI.msel=null;UI.resDay=null;UI.prev=null;UI.dlg=null;UI.fl={s:{},m:{}};UI.cedit=false;
 }
 function startNew(){
   stopTimer();G=createLeague();            // premier (et seul) tirage aléatoire de la partie, au clic
@@ -2037,34 +2167,91 @@ function renderDlg(focusSel){
   }
   if(!root){
     root=document.createElement('div');root.id='dlg';document.body.appendChild(root);
-    root.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(el&&!el.disabled)act(el.dataset.a,el.dataset);});
-    root.addEventListener('change',e=>{const el=e.target.closest('[data-c]');if(el&&el.dataset.c==='wnomore'){PREFS.hideWelcome=!!el.checked;savePrefs();}});
+    root.addEventListener('click',e=>{
+      if(e.target.classList&&e.target.classList.contains('dlgback')&&UI.dlg&&UI.dlg.k==='psheet'){act('psclose',{});return;}   // UI-53 : toucher le fond ferme la feuille
+      const el=e.target.closest('[data-a]');if(el&&!el.disabled)act(el.dataset.a,el.dataset);});
+    root.addEventListener('change',e=>{const el=e.target.closest('[data-c]');if(!el)return;if(el.dataset.c==='wnomore'){PREFS.hideWelcome=!!el.checked;savePrefs();}else if(el.dataset.c==='ptrain')ptrainChange(el);});
   }
   const d=UI.dlg;let box='';
   if(d.k==='welcome')box=welcomeHTML();
-  else{
+  else if(d.k==='psheet'){
+    const p=sheetPlayer(d);
+    if(!p){UI.dlg=null;renderDlg();return;}
+    box=`<div class="bsheet" role="dialog" aria-modal="true" aria-labelledby="dlg-t" tabindex="-1">${psheetInner(p,d.ctx)}</div>`;
+  }else{
     const tm=G&&G.teams[d.t],list=tm?previewList(tm):[];
     if(!list.length){UI.dlg=null;renderDlg();return;}
     d.i=((d.i%list.length)+list.length)%list.length;box=sheetHTML(list[d.i],d.i,list.length);
   }
-  root.innerHTML=`<div class="dlgback">${box}</div>`;
+  root.innerHTML=`<div class="dlgback${d.k==='psheet'?' bs':''}">${box}</div>`;
   app.setAttribute('inert','');document.documentElement.setAttribute('data-dlg',d.k);
-  const f=(focusSel&&root.querySelector(focusSel))||(d.k==='welcome'?root.querySelector('[data-a=wclose]'):root.querySelector('.dlgbox'));
+  const f=(focusSel&&root.querySelector(focusSel))||(d.k==='welcome'?root.querySelector('[data-a=wclose]'):d.k==='psheet'?root.querySelector('[data-a=psclose]'):root.querySelector('.dlgbox'));
   if(f&&f.focus)f.focus();
 }
 function dlgKeys(e){
   if(!UI.dlg)return;
-  const box=document.querySelector('#dlg .dlgbox');if(!box)return;
-  if(e.key==='Escape'){e.preventDefault();act(UI.dlg.k==='sheet'?'sheetclose':'wclose',{});return;}
+  const box=document.querySelector('#dlg [role=dialog]');if(!box)return;
+  if(e.key==='Escape'){e.preventDefault();act(UI.dlg.k==='sheet'?'sheetclose':UI.dlg.k==='psheet'?'psclose':'wclose',{});return;}
   if(UI.dlg.k==='sheet'&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){e.preventDefault();act('sheetnav',{d:e.key==='ArrowLeft'?'-1':'1'});return;}
   if(e.key==='Tab'){
-    const f=Array.from(box.querySelectorAll('button:not([disabled]),input:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])'));
+    const f=Array.from(box.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])'));
     if(!f.length){e.preventDefault();return;}
     const a=document.activeElement,i=f.indexOf(a);
     if(e.shiftKey&&(i<=0)){e.preventDefault();f[f.length-1].focus();}
     else if(!e.shiftKey&&(i<0||i===f.length-1)){e.preventDefault();f[0].focus();}
   }
 }
+// ---- UI-53 : carte joueur en feuille du bas, sous 700 px (Joueurs et Marché) ----
+// Constantes d'interface (hors G) : bascule 700 px (même requête que la CSS), hauteur 80 % (CSS .bsheet). État : UI.dlg = {k:'psheet',ctx:'squad'|'market',id,hs}, non sauvegardé.
+// Sous 700 px la carte détaillée n'est plus rendue dans la page (squadHTML / marketHTML) : elle n'existe que dans la feuille, ouverte par un toucher explicite sur une ligne.
+const NARROW=(window.matchMedia&&window.matchMedia('(max-width:700px)'))||{matches:false};
+const narrow=()=>NARROW.matches;
+const sheetPlayer=d=>d.ctx==='squad'?(G&&G.userId!=null?U().players.find(x=>x.id===d.id):null):(G?G.market.find(x=>x.id===d.id):null);
+function psheetInner(p,ctx){
+  const r=playerPanel(p,ctx,true);
+  return `<div class="bshh"><div class="bsh">${r.who}<button class="icbtn" data-a="psclose" aria-label="${L('Fermer la fiche','Close the sheet')}">×</button></div>${r.tabs}</div><div class="bsb"><div class="ppanel stack tight sheetbody">${r.main}</div></div>`;
+}
+function openSheet(ctx,id){
+  UI.dlg={k:'psheet',ctx,id};
+  try{history.pushState({bmSheet:1},'');UI.dlg.hs=true;}catch(e){}   // Retour du navigateur = fermer la feuille ; si pushState est bloqué, la croix suffit
+  renderDlg();
+}
+// fromPop : fermeture déclenchée par Retour (l'entrée d'historique est déjà consommée) ; noFocus : pas de retour du focus (page quittée, joueur parti)
+function closeSheet(fromPop,noFocus){
+  const d=UI.dlg;if(!d||d.k!=='psheet')return;
+  UI.dlg=null;UI.confirm=null;renderDlg();
+  const r=app.querySelector(`.pr[data-id="${d.id}"]`)||(noFocus?null:app.querySelector('.pr'));
+  if(r&&r.focus)r.focus({preventScroll:true});
+  if(d.hs&&!fromPop){UI.skipPop=true;setTimeout(()=>{UI.skipPop=false;},500);try{history.back();}catch(e){UI.skipPop=false;}}
+}
+// Met la feuille à jour sur place (onglet, points de talent, programme) : défilement et focus conservés, l'animation d'ouverture ne rejoue pas ; joueur parti (recrutement, libération) = fermée.
+function syncSheet(){
+  const d=UI.dlg,root=document.getElementById('dlg'),box=root&&root.querySelector('.bsheet');
+  if(!d||d.k!=='psheet'||!box)return;
+  const p=sheetPlayer(d);
+  if(!p){closeSheet(false,false);return;}
+  const old=box.querySelector('.bsb'),top=old?old.scrollTop:0,fa=document.activeElement,ds=fa&&fa.dataset&&box.contains(fa)?fa.dataset:null;
+  const key=ds&&(ds.a||ds.c)?`[${ds.a?'data-a':'data-c'}="${ds.a||ds.c}"]`+['id','v','s'].filter(k=>ds[k]!==undefined).map(k=>`[data-${k}="${ds[k]}"]`).join(''):null;
+  box.innerHTML=psheetInner(p,d.ctx);
+  const nb=box.querySelector('.bsb');if(nb)nb.scrollTop=top;
+  const nf=(key&&box.querySelector(key+':not([disabled])'))||box.querySelector('[data-a=psclose]');
+  if(nf)nf.focus({preventScroll:true});
+}
+function ptrainChange(el){
+  const u=U(),p=u.players.find(x=>x.id===+el.dataset.id),v=el.value;
+  if(!p)return;
+  if(v==='team'){p.train=null;}
+  else if(v==='ar'&&p.pos!=='GK'){toast(L('AR est réservé aux gardiens.','AR is for keepers only.'),true);}
+  else if(!p.train&&indivCount(u)>=MAX_INDIV){toast(L(`${MAX_INDIV} programmes individuels au maximum.`,`Maximum ${MAX_INDIV} individual programmes.`),true);}
+  else p.train=v;
+  save();render();syncSheet();
+}
+{const onN=()=>{
+  if(UI.dlg&&UI.dlg.k==='psheet'&&!NARROW.matches)closeSheet(false,true);
+  if(G&&UI.scr==='game'&&(UI.tab==='squad'||UI.tab==='market'))render();   // la carte entre dans le flux ou en sort
+};
+if(NARROW.addEventListener)NARROW.addEventListener('change',onN);else if(NARROW.addListener)NARROW.addListener(onN);}
+if(window.addEventListener)window.addEventListener('popstate',()=>{if(UI.skipPop){UI.skipPop=false;return;}if(UI.dlg&&UI.dlg.k==='psheet')closeSheet(true);});
 // ---- TEC-01 : Exporter / Importer (le moteur fournit exportSave / importSave) ----
 function xmsgHTML(){
   const m=UI.xmsg;if(!m)return '';
@@ -2179,10 +2366,12 @@ function homeHTML(){
   <div class="vs"><div class="side">${badge(u,true)}<span class="nm">${esc(u.name)}</span>${formChips(u.id)}</div>
   <div class="mid">${home?L('DOMICILE','HOME'):L('EXTÉRIEUR','AWAY')}<br>VS</div>
   <div class="side">${badge(opp,true)}<span class="nm">${esc(opp.name)}</span>${formChips(opp.id)}</div></div>
-  <div class="stack tight">${cmpRow(L('Force globale','Overall power'),pu,po)}${cmpRow(L('Attaque','Attack'),lu.fwd,lo.fwd)}${cmpRow(L('Milieu','Midfield'),lu.mid,lo.mid)}${cmpRow(L('Défense','Defence'),lu.def,lo.def)}${cmpRow(L('Gardien','Keeper'),lu.gk,lo.gk)}</div>
+  <div class="stack tight">${cmpRow(L('Force globale','Overall power'),pu,po,1)}${cmpRow(L('Attaque','Attack'),lu.fwd,lo.fwd,1)}${cmpRow(L('Milieu','Midfield'),lu.mid,lo.mid,1)}${cmpRow(L('Défense','Defence'),lu.def,lo.def,1)}${cmpRow(L('Gardien','Keeper'),lu.gk,lo.gk,1)}</div>
   ${oppCard(opp)}
   <div class="row acts"><button class="btn primary" data-a="goto" data-t="match">${L('Aller sur le terrain','Go to the pitch')}</button><button class="btn" data-a="sim">${L('Simuler directement','Simulate now')}</button></div></section>`;
-  const mini=sortedTable(G).map((r,i)=>{const t=G.teams[r.id];return `<tr class="${t.id===u.id?'me':''}"><td class="num">${i+1}</td><td>${badge(t)}</td><td class="num">${r.p}</td><td class="num">${r.gf-r.ga>0?'+':''}${r.gf-r.ga}</td><td class="num">${r.pts}</td></tr>`;}).join('');
+  // UI-50 : 5 clubs, 2 au-dessus et 2 au-dessous du club du joueur ; premier : le club puis les 4 suivants ; dernier : le club puis les 4 précédents (le rang affiché reste le vrai rang)
+  const st5=sortedTable(G),me5=st5.findIndex(r=>r.id===u.id),i0=clamp(me5-2,0,Math.max(0,st5.length-5));
+  const mini=st5.slice(i0,i0+5).map((r,k)=>{const t=G.teams[r.id],i=i0+k;return `<tr class="${t.id===u.id?'me':''}"><td class="num">${i+1}</td><td>${badge(t)}</td><td class="num">${r.p}</td><td class="num">${r.gf-r.ga>0?'+':''}${r.gf-r.ga}</td><td class="num">${r.pts}</td></tr>`;}).join('');
   const nw=G.news.length?G.news.slice(0,5).map(n=>`<div><span>J${n.d}</span><p>${n.a?jAlert()+' ':''}${esc(n.s)}</p></div>`).join(''):`<p class="hint">${L('Aucune nouvelle pour le moment.','No news yet.')}</p>`;
   const last=G.finLog[0],C=G.coach,nw1=netIf(true,home),nw0=netIf(false,home),cl=coachLvl(C);
   const fin=`<section class="panel">${blockHd(L('Finances','Finances'),'finance')}<div class="stack tight"><div class="frow"><span class="muted">${L('Budget','Budget')}</span><b class="mono">${fmt(G.cash)} gils</b></div>
@@ -2207,25 +2396,30 @@ function seasonEndHTML(){
 
 // ---------- Bureau : effectif et marché ----------
 function squadHTML(){
-  const u=U(),list=u.players.slice().sort(sortFn(UI.sort,UI.sdir));
-  if(!u.players.find(p=>p.id===UI.sel))UI.sel=list[0].id;
-  const p=u.players.find(x=>x.id===UI.sel),pend=sum(u.players.map(x=>x.pts));
+  const u=U(),f=fget('s'),list=u.players.slice().sort(sortFn(UI.sort,UI.sdir)).filter(p=>fltPass(p,f));
+  if(!list.find(p=>p.id===UI.sel))UI.sel=list.length?list[0].id:null;   // sélection de repli : jamais d'ouverture de la feuille (UI-53)
+  const p=list.length?u.players.find(x=>x.id===UI.sel):null,pend=sum(u.players.map(x=>x.pts));
   return `<div class="split"><div class="stack"><div class="row between"><h2>${L('Effectif','Squad')} · ${u.players.length} ${L('joueurs','players')}</h2>
   <button class="btn small" data-a="allocall" ${pend?'':'disabled'}>${L('Répartir tous les points','Spend all points')} (${pend})</button></div>
-  ${sortSel('s')}
-  <div class="plist" id="plist">${listHead('s')}${list.map(squadRow).join('')}</div>
-  ${helpRow('stats')}</div>${playerPanel(p,'squad')}</div>`;
+  ${listBar('s',list.length,u.players.length)}
+  <div class="plist" id="plist">${listHead('s')}${list.length?list.map(squadRow).join(''):`<p class="hint">${L('Aucun joueur ne correspond aux filtres.','No player matches the filters.')}</p>`}</div>
+  ${helpRow('stats')}</div>${narrow()?'':p?playerPanel(p,'squad'):`<aside class="panel"><p class="hint">${L('Aucun joueur ne correspond aux filtres.','No player matches the filters.')}</p></aside>`}</div>`;
 }
+// UI-56 : jours (journées à jouer) avant le prochain tirage du Marché. Le tirage a lieu dans completeDay quand le nouveau numéro de journée est un multiple de MARKET_EVERY et qu'il reste des journées ;
+// rien n'est lu dans le moteur (G.day et G.schedule seulement). 0 = plus de tirage cette saison (le suivant a lieu au lancement de la saison).
+const MARKET_EVERY=3;
+const marketDraw=()=>{const k=MARKET_EVERY-G.day%MARKET_EVERY;return G.day+k<G.schedule.length?k:0;};
 function marketHTML(){
-  const u=U(),list=G.market.slice().sort(sortFn(UI.msort,UI.mdir));
-  if(!G.market.find(p=>p.id===UI.msel))UI.msel=list.length?list[0].id:null;
-  const sel=G.market.find(p=>p.id===UI.msel);
+  const u=U(),f=fget('m'),list=G.market.slice().sort(sortFn(UI.msort,UI.mdir)).filter(p=>fltPass(p,f)),dd=marketDraw();
+  if(!list.find(p=>p.id===UI.msel))UI.msel=list.length?list[0].id:null;
+  const sel=list.length?G.market.find(p=>p.id===UI.msel):null;
   return `<div class="split"><div class="stack"><div class="row between"><h2>${L('Agents libres','Free agents')}</h2><span class="mono muted" style="font-size:13px">${L('Budget','Budget')} <b style="color:var(--ink)">${fmt(G.cash)}</b> gils · ${L('Effectif','Squad')} ${u.players.length}/14</span></div>
-  ${sortSel('m')}
-  <div class="plist" id="plist">${listHead('m')}${list.map(marketRow).join('')}</div>
+  <p class="hint nxd">${dd?L(`Prochain tirage : dans ${dd} jour${dd>1?'s':''}`,`Next draw: in ${dd} day${dd>1?'s':''}`):L('Prochain tirage : à la saison suivante','Next draw: next season')}</p>
+  ${listBar('m',list.length,G.market.length)}
+  <div class="plist" id="plist">${listHead('m')}${list.length?list.map(marketRow).join(''):`<p class="hint">${G.market.length?L('Aucun joueur ne correspond aux filtres.','No player matches the filters.'):L('Aucun joueur disponible.','No player available.')}</p>`}</div>
 
   ${helpRow('stats')}</div>
-  ${sel?playerPanel(sel,'market'):`<aside class="panel"><p class="hint">${L('Aucun joueur disponible.','No player available.')}</p></aside>`}</div>`;
+  ${narrow()?'':sel?playerPanel(sel,'market'):`<aside class="panel"><p class="hint">${G.market.length?L('Aucun joueur ne correspond aux filtres.','No player matches the filters.'):L('Aucun joueur disponible.','No player available.')}</p></aside>`}</div>`;
 }
 
 // ---------- Carte club (Classement) ----------
@@ -2262,6 +2456,20 @@ function trophyCards(){
   CUPS.forEach(([n,t])=>{const on=G.coach.w>=n;out.push(`<div class="cupc ${on?'':'lock'}">${cupSvg(CUPCOL[t])}<b>${L(`Coupe des ${n} victoires`,`${n}-win cup`)}</b><span>${on?L('Obtenue','Earned'):`${G.coach.w}/${n}`}</span></div>`);});
   return out.join('');
 }
+// UI-39 : nom de l'entraîneur avec un crayon ; clic = champ en ligne (Entrée valide, Échap annule, quitter le champ valide).
+const PENCIL='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M13 7l4 4" stroke="currentColor" stroke-width="2"/></svg>';
+function coachNameHTML(){
+  if(UI.cedit)return `<input type="text" id="coach-name" data-c="coachname" maxlength="${COACH_MAX}" value="${esc(G.coach.name)}" placeholder="${L('Entraîneur','Coach')}" aria-label="${L('Nom de l’entraîneur','Coach name')}" autocomplete="off" spellcheck="false">`;
+  const t=L('Renommer l’entraîneur','Rename the coach');
+  return `<span class="cn">${esc(coachName())}</span><button type="button" class="ibtn" data-a="cedit" aria-label="${t}" title="${t}">${PENCIL}</button>`;
+}
+// UI-20b : emplacement du portrait de l'entraîneur (cadre 3:4 comme UI-13) + icône « changer » sans action pour l'instant (aucune donnée, G inchangé ; le portrait viendra avec CON-04 / PRO-07)
+const SWAPIC='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 9h13l-3-3M20 15H7l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function coachPortraitHTML(){
+  const t=L('Changer le portrait (bientôt disponible)','Change portrait (coming soon)');
+  return `<div class="cport"><div class="pframe" role="img" aria-label="${L('Portrait de l’entraîneur (emplacement provisoire)','Coach portrait (placeholder)')}">${PORTRAIT_SIL}</div><button type="button" class="ibtn cpchg" aria-disabled="true" aria-label="${t}" title="${t}">${SWAPIC}</button></div>`;
+}
+function endCoachEdit(){UI.cedit=false;const n=document.getElementById('cname');if(n)n.innerHTML=coachNameHTML();}
 function coachHTML(){
   const C=G.coach,u=U(),pct=C.m?Math.round(C.w/C.m*100):0;
   const comps=Object.entries(C.comps).map(([k,v])=>{const [f,s,pr]=k.split('|');return{f,s,pr:+pr,...v};}).sort((a,b)=>b.p-a.p||b.w-a.w);
@@ -2269,8 +2477,7 @@ function coachHTML(){
   const crow=comps.map(c=>{const r=Math.round(c.w/c.p*100);return `<tr class="${best===c?'me':''}"><td class="mono"><b>${c.f}</b></td><td>${nN(c.s)}</td><td class="x">${pN(c.pr)}</td><td class="num">${c.p}</td><td><div class="wbar">${barH(r)}<span class="mono">${r}%</span></div></td><td class="num x">${(c.gf/c.p).toFixed(1)}</td><td class="num x">${(c.ga/c.p).toFixed(1)}</td></tr>`;}).join('');
   const bd=BADGES.map(b=>{const g=C.badges[b.id];return `<div class="bdg ${g?'':'lock'}">${medal(!!g)}<div><b>${P(b.n)}</b><small>${P(b.d)}</small><small>${g?L(`Obtenu saison ${g.s}, journée ${g.d}`,`Earned season ${g.s}, matchday ${g.d}`):L('À débloquer','Locked')}</small></div></div>`;}).join('');
   return `<div class="stack"><h2>${L(`Profil d'entraîneur`,'Coach profile')}</h2>
-  <section class="panel stack"><div class="row between"><div class="who">${badge(u,true)}<div><div style="font:600 17px var(--font-display)">${esc(coachName())}</div><span class="muted">${esc(u.name)} · ${L('Saison','Season')} ${G.season}</span></div></div>
-  <label class="f" style="min-width:220px">${L('Nom de l’entraîneur','Coach name')}<input type="text" id="coach-name" data-c="coachname" maxlength="${COACH_MAX}" value="${esc(C.name)}" placeholder="${L('Entraîneur','Coach')}"></label></div>
+  <section class="panel stack"><div class="row between"><div class="who">${coachPortraitHTML()}${badge(u,true)}<div class="grow"><div id="cname" class="cname">${coachNameHTML()}</div><span class="muted">${esc(u.name)} · ${L('Saison','Season')} ${G.season}</span></div></div></div>
   ${coachBar()}${specPanel()}<div class="kpis k5">${kpi(C.m,L('Matchs','Matches'))}${kpi(C.w,L('Victoires','Wins'))}${kpi(C.l,L('Défaites','Losses'))}${kpi(pct+'%',L('Taux de victoire','Win rate'))}${kpi(C.gf,L('Buts marqués','Goals for'))}${kpi(C.ga,L('Buts encaissés','Goals against'))}${kpi(C.cs,L('Matchs sans encaisser','Clean sheets'))}${kpi(C.best,L('Meilleure série','Best streak'))}${kpi(C.ow,L('Victoires en prolongation','Overtime wins'))}${kpi(Object.keys(C.badges).length+'/'+BADGES.length,'Badges')}</div></section>
   <section class="panel"><h3>${L('Compositions jouées','Line-ups used')}</h3>
   ${comps.length?`<div class="tbl" style="margin-top:12px"><table><thead><tr><th>${L('Formation','Formation')}</th><th>${L('Style','Style')}</th><th class="x">${L('Pressing','Pressing')}</th><th class="num">${L('Joués','Played')}</th><th>${L('Victoires','Win rate')}</th><th class="num x">${L('BP/m','GF/m')}</th><th class="num x">${L('BC/m','GA/m')}</th></tr></thead><tbody>${crow}</tbody></table></div>
@@ -2363,19 +2570,13 @@ function settingsHTML(){
   return `<div class="stack"><h2>${L('Paramètres','Settings')}</h2>
   <section class="panel"><div class="optrow"><div><b>${L('Langue','Language')}</b><span class="hint">${L('Français par défaut. Les journaux déjà écrits gardent leur langue d’origine.','French by default. Journal entries already written keep their original language.')}</span></div>${seg([['fr','Français'],['en','English']],PREFS.lang,'lang')}</div>
   <div class="optrow"><div><b>${L('Thème','Theme')}</b><span class="hint">${L('Auto suit le réglage de ton appareil.','Auto follows your device setting.')}</span></div>${seg([['auto','Auto'],['light',L('Clair','Light')],['dark',L('Sombre','Dark')]],PREFS.theme,'theme')}</div>
-  <div class="optrow"><div><b>${L('Navigation mobile','Mobile navigation')}</b><span class="hint">${L('Barre du bas (icônes) ou onglets en haut, sur écran étroit.','Bottom bar (icons) or tabs at the top, on narrow screens.')}</span></div>${seg([['bar',L('Barre du bas','Bottom bar')],['tabs',L('Onglets','Tabs')]],PREFS.nav,'nav')}</div>
+  <div class="optrow"><div><b>${L('Navigation mobile','Mobile navigation')}</b><span class="hint">${L('Sections en bas (icônes) ou en haut (onglets), sur écran étroit.','Sections at the bottom (icons) or at the top (tabs), on narrow screens.')}</span></div>${seg([['bar',L('Barre en bas','Bottom bar')],['tabs',L('Barre en haut','Top bar')]],PREFS.nav,'nav')}</div>
   <div class="optrow"><div><b>${T('s.welcome')}</b><span class="hint">${T('s.welcome.h')}</span></div>${seg([['on',L('Oui','Yes')],['off',L('Non','No')]],PREFS.hideWelcome?'off':'on','wpref')}</div>
   <div class="optrow"><div><b>${T('x.title')}</b><span class="hint">${T('x.hint')}${live?'':' '+T('x.noexp')}</span></div><div class="stack tight xbtns"><div class="row"><button class="btn" data-a="exp"${live?'':' disabled'}>${T('x.exp')}</button><button class="btn" data-a="copysave"${live?'':' disabled'}>${T('x.copy')}</button></div><div class="row"><button class="btn" data-a="imp">${T('x.imp')}</button><button class="btn" data-a="pastesave" aria-expanded="${UI.xpaste}">${T('x.paste')}</button></div><input type="file" id="impfile" data-c="impfile" accept=".json,application/json" hidden></div></div>
   ${xmsgHTML()}${xboxHTML()}
   ${live?`<div class="optrow"><div><b>${T('s.title')}</b><span class="hint">${conf?T('s.title.live'):T('s.title.h')}</span></div><button class="btn${conf?' danger':''}" data-a="totitle">${conf?T('s.title.sure'):T('s.title.go')}</button></div>`:''}</section></div>`;
 }
 // ---------- Terrain : composition, style, entraînement ----------
-function styleBlock(){
-  const u=U();
-  const seg=(items,cur,act)=>`<div class="seg">${items.map(([k,l])=>`<button class="chip" data-a="${act}" data-v="${k}" aria-pressed="${String(cur)===String(k)}">${l}</button>`).join('')}</div>`;
-  return `<section class="panel"><h3>${L('Style de jeu','Playstyle')}</h3>${seg(Object.keys(NAMES).map(k=>[k,nN(k)]),u.style,'style')}<p class="hint" style="margin-top:10px">${P(STYLE_DESC[u.style])}</p></section>
-  <section class="panel"><h3>Pressing</h3>${seg(['-1','0','1'].map(k=>[k,pN(k)]),u.press,'press')}<p class="hint" style="margin-top:10px">${P(PRESS_DESC[u.press])}</p></section>`;
-}
 
 
 // ---------- Options : règles et lecture des stats ----------
@@ -2391,7 +2592,7 @@ function rulesHTML(){
     body=`<div class="grid2">${sec('Saison','Season',li([L('8 clubs en matchs aller-retour : 14 journées.','8 clubs, home and away: 14 matchdays.'),L('Victoire 3 points ; victoire en prolongation 2 ; défaite en prolongation 1 ; défaite 0.','Win 3 points; overtime win 2; overtime loss 1; loss 0.'),L(`Prime de fin de saison de ${fmt(PRIZES[0])} gils (champion) à ${fmt(PRIZES[PRIZES.length-1])} (dernier).`,`End-of-season prize from ${fmt(PRIZES[0])} gil (champions) to ${fmt(PRIZES[PRIZES.length-1])} (last).`),L('À chaque nouvelle saison, les joueurs vieillissent d’un an ; à 35 ans ils prennent leur retraite et un jeune les remplace. Dès 30 ans, les stats déclinent légèrement.','Every new season players age a year; at 35 they retire and a youngster replaces them. From 30, stats decline slightly.')]))}
     ${sec('Match','Match',li([L('Six joueurs par équipe : un gardien et cinq joueurs de champ selon la formation.','Six players a side: one keeper and five outfield players depending on the formation.'),L('Deux périodes de cinq minutes (36 phases). En cas d’égalité : mort subite, puis départage.','Two five-minute halves (36 phases). If level: sudden death, then a tiebreak.'),L('Chaque phase : possession, portée du ballon (AT contre PH), jusqu’à deux passes (PS contre IN), tir (TI contre IN) puis arrêt (AR).','Each phase: possession, carrying the ball (AT vs PH), up to two passes (PS vs IN), a shot (TI vs IN), then a save (AR).'),L('Trois remplacements par match, à la mi-temps ou en direct.','Three substitutions per match, at half-time or live.'),L('Trois consignes, données en pause à tout moment du match, mi-temps comprise : Souffler, Verrouiller, Pousser. Une réserve de 3 blocs de 6 phases par match à répartir entre elles (1 à 3 blocs par consigne, dans la limite de la fin du match). Souffler est instantané ; Verrouiller et Pousser durent leurs blocs, une seule à la fois : en changer fait perdre les phases restantes. Impossible en prolongation. L’adversaire en donne aussi.'+(HALF_POWER>0?'':' Leurs effets sont provisoirement désactivés, le temps du rééquilibrage.'),'Three instructions, given while paused at any point in the match, half-time included: Catch breath, Lock down, Push forward. A reserve of 3 blocks of 6 phases per match to spend on them (1 to 3 blocks per instruction, within what is left of the match). Catch breath is instant; Lock down and Push forward last for their blocks, one at a time: switching loses the remaining phases. Not possible in overtime. The opponent gives instructions too.'+(HALF_POWER>0?'':' Their effects are temporarily switched off until the game is rebalanced.')),L('En direct, chaque phase du fil se déplie pour montrer ses duels : stats comparées, probabilité du tacle, facteurs (style, pressing, poste, trait, HP). Vert : favorable à ton équipe ; rouge : défavorable ; ✓ ou ✗ : l’action de celui qui la tente réussit ou non.','Live, every feed phase unfolds to show its duels: compared stats, tackle probability, factors (style, pressing, position, trait, HP). Green: good for your team; red: bad for it; ✓ or ✗: the action succeeds or fails for the player attempting it.'),L('Infos de match : possession cumulée et sur les 6 dernières phases ; la jauge de HP de tes joueurs passe de OK à fatigué (HP à 25 % du maximum ou moins) puis épuisé (moins de 10 HP) ; un bandeau et le fil signalent chaque joueur qui passe épuisé.','Match info: total possession and possession over the last 6 phases; your players’ HP gauge goes from OK to tired (HP at 25% of max or less) then spent (under 10 HP); a banner and the feed flag every player who becomes spent.'),L('La Sphère est ronde : le club qui reçoit joue vers la droite, le visiteur vers la gauche. Une consigne de ligne colore la ligne visée (bande hachurée et symbole) tant qu’elle dure ; Souffler entoure brièvement les six titulaires d’un halo. Seul le dessin change : aucune distance ne compte dans les duels.','The Sphere is round: the home club attacks to the right, the visitor to the left. A line instruction marks the targeted line (hatched band and symbol) while it lasts; Catch breath briefly puts a halo around the six starters. Only the picture changes: no distance counts in the duels.'),L('Dans un duel de passe, la phrase nomme le passeur, le receveur et le défenseur qui gêne : passe sans gêne, passe affaiblie, interception ou passe qui s’éteint.','In a pass duel, the sentence names the passer, the receiver and the defender who hampers it: clean pass, weakened pass, interception or a pass that fades out.'),L('Avant le coup d’envoi, « Tactique rapide » règle le style, le pressing et la formation ; le détail est dans Effectif › Tactique. Changer de formation refait le Six de départ en automatique.','Before kick-off, “Quick tactics” sets style, pressing and formation; details are in Squad › Tactics. Changing formation resets the starting six to automatic.')]))}</div>
     ${sec('Fatigue et blessures','Fatigue and injuries',li([L('Porter le ballon, passer et tirer coûtent des HP ; un joueur qui ne participe pas à l’action en récupère un peu. Sous 10 HP, PS et TI sont divisés par 2.','Carrying, passing and shooting cost HP; a player not involved in the action recovers a little. Below 10 HP, PS and TI are halved.'),L('Après chaque journée, tout le monde récupère une partie de ses HP.','After every matchday everyone recovers part of their HP.'),L('Un joueur très fatigué risque davantage de se blesser (1 à 3 journées d’absence).','A very tired player is more likely to get injured (1 to 3 matchdays out).')]))}
-    ${sec('Navigation et alertes','Navigation and alerts',li([L('Cinq sections : Tableau de bord, Club, Effectif, Jouer, Options. Sur mobile, la barre du bas les garde sous le pouce ; le réglage Options › Paramètres › Navigation mobile permet de revenir aux onglets en haut.','Five sections: Dashboard, Club, Squad, Play, Options. On mobile the bottom bar keeps them under your thumb; Options › Settings › Mobile navigation switches back to tabs at the top.'),L('Club : Entraîneur, Finances, Fiche du club, Personnalisation, Journal. Effectif : Joueurs, Tactique, Entraînement, Marché. Jouer : Match, Calendrier, Classement.','Club: Coach, Finances, Club sheet, Customisation, Journal. Squad: Players, Tactics, Training, Market. Play: Match, Fixtures, Table.'),L('Le bouton ▶ en haut mène au prochain match, reprend le match en cours (ou son bilan) ou lance la saison suivante.','The ▶ button at the top goes to the next match, resumes the match in progress (or its report) or starts the next season.'),L('Une pastille chiffrée sur une section signale ce qui reste à faire : titulaire blessé ou sous 50 % de HP, budget négatif, points de talent à répartir, spécialité d’entraîneur à choisir. Rouge : un titulaire blessé ; ambre : le reste. Le chiffre et l’infobulle donnent le détail.','A numbered badge on a section flags what is left to do: an injured starter or one under 50% HP, a negative budget, talent points to spend, a coach specialty to pick. Red: an injured starter; amber: the rest. The number and the tooltip give the detail.'),L('Tableau de bord : « À faire avant le match » liste ces mêmes alertes, chacune avec son lien ; la fiche de l’adversaire donne son rang, sa forme, sa force par ligne et ses joueurs marquants.','Dashboard: “To do before the match” lists the same alerts, each with its link; the opponent card gives its rank, form, strength by line and standout players.'),L('Club › Journal : les 100 derniers événements, groupés par saison et journée ; les puces filtrent par catégorie (⚠ alertes, match, effectif, marché, club, finances).','Club › Journal: the last 100 events, grouped by season and matchday; the chips filter by category (⚠ alerts, match, squad, market, club, finances).')]))}
+    ${sec('Navigation et alertes','Navigation and alerts',li([L('Cinq sections : Tableau de bord, Club, Effectif, Jouer, Options. Sur mobile, la barre du bas les garde sous le pouce, avec Jouer au centre en ambre ; le réglage Options › Paramètres › Navigation mobile la place en haut.','Five sections: Dashboard, Club, Squad, Play, Options. On mobile the bottom bar keeps them under your thumb, with Play in the middle in amber; Options › Settings › Mobile navigation moves it to the top.'),L('Club : Entraîneur, Finances, Fiche du club, Personnalisation, Journal. Effectif : Joueurs, Tactique, Entraînement, Marché. Jouer : Match, Calendrier, Classement.','Club: Coach, Finances, Club sheet, Customisation, Journal. Squad: Players, Tactics, Training, Market. Play: Match, Fixtures, Table.'),L('Le bouton ▶ en haut mène au prochain match, reprend le match en cours (ou son bilan) ou lance la saison suivante.','The ▶ button at the top goes to the next match, resumes the match in progress (or its report) or starts the next season.'),L('Une pastille chiffrée sur une section signale ce qui reste à faire : titulaire blessé ou sous 50 % de HP, budget négatif, points de talent à répartir, spécialité d’entraîneur à choisir, bilan de match à valider (Jouer). Rouge : un titulaire blessé ; ambre : le reste. Le chiffre et l’infobulle donnent le détail.','A numbered badge on a section flags what is left to do: an injured starter or one under 50% HP, a negative budget, talent points to spend, a coach specialty to pick, a match report to confirm (Play). Red: an injured starter; amber: the rest. The number and the tooltip give the detail.'),L('Tableau de bord : « À faire avant le match » liste ces mêmes alertes, chacune avec son lien ; la fiche de l’adversaire donne son rang, sa forme, sa force par ligne et ses joueurs marquants.','Dashboard: “To do before the match” lists the same alerts, each with its link; the opponent card gives its rank, form, strength by line and standout players.'),L('Club › Journal : les 100 derniers événements, groupés par saison et journée ; les puces filtrent par catégorie (⚠ alertes, match, effectif, marché, club, finances).','Club › Journal: the last 100 events, grouped by season and matchday; the chips filter by category (⚠ alerts, match, squad, market, club, finances).')]))}
     ${sec('Sauvegarde','Save',li([L('La partie se sauvegarde toute seule dans ce navigateur.','The game saves itself in this browser.'),L('Options › Paramètres : Exporter télécharge un fichier, Copier la sauvegarde copie son texte. Importer lit un fichier, Coller une sauvegarde importe un texte copié. Si le téléchargement est bloqué, utilise Copier et Coller.','Options › Settings: Export downloads a file, Copy save copies its text. Import reads a file, Paste a save imports copied text. If downloads are blocked, use Copy and Paste.')]))}`;
   }else if(t==='stats'){
     const ex=demoPlayer();
@@ -2484,17 +2685,31 @@ function tableHTML(){
 }
 function specPanel(){
   const C=G.coach,lv=coachLvl(C).lvl,ok=lv>=SPEC_MIN,k=specTier(C),cur=C.spec;
-  const chips=SPEC_KEYS.map(s=>`<button class="chip" data-a="cspec" data-v="${s}" aria-pressed="${cur===s}" ${ok?'':'disabled'} title="${esc(P(SPECS[s].d))}">${P(SPECS[s].n)}</button>`).join('');
+  const pend=UI.confirm&&String(UI.confirm).startsWith('spec:')?UI.confirm.slice(5):null,pv=pend&&ok&&SPECS[pend]&&pend!==cur?pend:null;
+  const chips=SPEC_KEYS.map(s=>`<button class="chip${pv===s?' pend':''}" data-a="cspec" data-v="${s}" aria-pressed="${cur===s}" ${ok?'':'disabled'} title="${esc(P(SPECS[s].d))}">${P(SPECS[s].n)}</button>`).join('');
+  const cost=cur?SPEC_COST:0,
+    cfm=pv?`<div class="cfm" role="group" aria-live="polite"><span>${cur?L(`Passer à <b>${P(SPECS[pv].n)}</b> ? Coût : <b class="mono">${fmt(cost)}</b> gils.`,`Switch to <b>${P(SPECS[pv].n)}</b>? Cost: <b class="mono">${fmt(cost)}</b> gil.`):L(`Choisir <b>${P(SPECS[pv].n)}</b> ? Gratuit cette fois.`,`Pick <b>${P(SPECS[pv].n)}</b>? Free this time.`)}</span><span class="row"><button class="btn small primary" data-a="cspecok" data-v="${pv}">${L('Confirmer','Confirm')}</button><button class="btn small" data-a="cspecno">${L('Annuler','Cancel')}</button></span></div>`:'';
   const info=!ok?L(`Se débloque au niveau d’entraîneur ${SPEC_MIN}.`,`Unlocks at coach level ${SPEC_MIN}.`):cur?`<b>${P(SPECS[cur].n)}</b> · ${L('palier','tier')} ${k}/5 — ${P(SPECS[cur].d)}`:L('Choisis une spécialité (gratuit la première fois).','Pick a specialty (free the first time).');
-  return `<section class="panel stack tight"><div class="row between"><h3>${L('Spécialité d’entraîneur','Coach specialty')}</h3>${cur&&ok?`<span class="mono muted" style="font-size:12px">${L('Changer','Change')} : ${fmt(SPEC_COST)} ${L('gils','gil')}</span>`:''}</div><div class="seg">${chips}</div><p class="hint">${info}</p></section>`;
+  return `<section class="panel stack tight"><div class="row between"><h3>${L('Spécialité d’entraîneur','Coach specialty')}</h3>${cur&&ok?`<span class="mono muted" style="font-size:12px">${L('Changer','Change')} : ${fmt(SPEC_COST)} ${L('gils','gil')}</span>`:''}</div><div class="seg">${chips}</div>${cfm}<p class="hint">${info}</p></section>`;
 }
 function coachBar(){
   const c=coachLvl(G.coach),next=Object.entries(FORM_UNLOCK).filter(([f,l])=>l>c.lvl).sort((a,b)=>a[1]-b[1])[0];
   return `<div class="stack tight"><div class="row between"><b>${L('Niveau d’entraîneur','Coach level')} ${c.lvl}</b><span class="mono muted">${c.rem}/${c.need} XP</span></div>${barH(c.rem/c.need*100,'var(--ball)')}</div>`;
 }
+// TAC-09 : forces de zone et lecture fort / faible. Lecture seule de lineVals ; seuil d'écart ZONE_TH (constante d'interface, hors G) comparé au pourcentage arrondi affiché.
+// Recalibré en v0.6.9 : 5 % sortait 59,6 % des zones (167/280, 10 ligues neuves, club n°3 contre ses 7 adversaires) ; 9 % en sort 30,7 % (cible : un tiers).
+const ZONE_TH=9,ZONES=[['gk',['Gardien','Keeper']],['def',['Défense','Defence']],['mid',['Milieu','Midfield']],['fwd',['Attaque','Attack']]];
+function zonesHTML(u,opp){
+  const me=lineVals(u),op=opp?lineVals(opp,true):null,W=[L('Faible','Weak'),L('Égal','Even'),L('Fort','Strong')],sg=n=>n>0?'+':n<0?'−':'';
+  const z=ZONES.map(([k,n])=>{const a=me[k],b=op&&op[k],pc=b?Math.round((a-b)/b*100):0;return {k,n:P(n),a,b,pc,s:Math.abs(pc)<ZONE_TH?0:pc>0?1:-1};});
+  const rows=z.map(r=>{const i=r.s+1,al=`${r.n} : ${Math.round(r.a)}${op?`, ${sg(r.pc)}${Math.abs(r.pc)} % ${L('face à l’adversaire','against the opponent')} (${W[i]})`:''}`;
+    return `<div class="zr z${i}" role="group" aria-label="${al}"><span class="zl">${r.n}</span><b class="mono">${Math.round(r.a)}</b>${barH(r.a,'var(--water)').replace('</i>',`</i>${op?`<u style="left:${clamp(r.b,0,100)}%"></u>`:''}`)}<span class="zs">${op?`<span aria-hidden="true">${['▼','=','▲'][i]}</span> ${W[i]} ${sg(r.pc)}${Math.abs(r.pc)} %`:''}</span></div>`;}).join('');
+  const hi=z.filter(r=>r.s>0).sort((x,y)=>y.pc-x.pc)[0],lo=z.filter(r=>r.s<0).sort((x,y)=>x.pc-y.pc)[0];
+  const rd=!op?'':!hi&&!lo?L('Équilibré','Balanced'):[hi&&`<b>${W[2]}</b> : ${hi.n}`,lo&&`<b>${W[0]}</b> : ${lo.n}`].filter(Boolean).join(' · ');
+  return `<div class="zb">${rows}</div>${rd?`<p class="zt">${rd}</p>`:''}`;
+}
 function lineupHTML(){
-  const u=U(),slots=slotsOf(u.formation),lan=lanesOf(u);
-  const forms=Object.keys(FORMATIONS).map(f=>{const ok=unlocked(G,f);return `<button class="chip" data-a="formation" data-v="${f}" aria-pressed="${u.formation===f}" ${ok?'':'disabled'} title="${ok?'':L(`Niveau d’entraîneur ${FORM_UNLOCK[f]} requis`,`Coach level ${FORM_UNLOCK[f]} required`)}">${f}${masteryTag(f)}${ok?'':` · ${L('niv','lv')} ${FORM_UNLOCK[f]}`}</button>`;}).join('');
+  const u=U(),slots=slotsOf(u.formation),lan=lanesOf(u),fx=todayFx(),opp=fx?G.teams[fx[0]===u.id?fx[1]:fx[0]]:null;
   const sels=slots.map((s,i)=>{
     const cur=u.players.find(p=>p.id===u.lineup[i]);
     const opts=u.players.slice().sort((a,b)=>eff(b,s,lan[i])-eff(a,s,lan[i])).map(p=>`<option value="${p.id}" ${p.id===u.lineup[i]?'selected':''} ${p.inj?'disabled':''}>${esc(p.name)} · ${posCode(p)} · ${Math.round(eff(p,s,lan[i]))} · ${P(FITS[fitTier(p,s,lan[i]).id])}${p.inj?' · '+L('bl.','inj.'):''}</option>`).join('');
@@ -2505,14 +2720,16 @@ function lineupHTML(){
     const st=p.inj?`<span class="tag bad">${L(fe(p,'Blessé','Blessée'),'Injured')}</span>`:hpPct(p)<.45?`<span class="tag warn">${L(fe(p,'Fatigué','Fatiguée'),'Tired')}</span>`:`<span class="tag good">${L('Apte','Fit')}</span>`;
     return `<div class="bench-row">${posTag(p)}<span class="ell">${esc(p.name)}</span><span class="mono">${ovr(p)}</span>${barH(hpPct(p)*100)}<span>${st}</span></div>`;
   }).join('');
-  const lv=lineVals(u);
-  return `<div class="stack"><h2>${L('Composition et tactique','Line-up and tactics')}</h2><div class="grid2"><div class="stack">
-  <section class="panel"><h3>${L('Formation (défense · milieu · attaque)','Formation (defence · midfield · attack)')}</h3><div class="seg" style="margin-top:8px">${forms}</div>
-  </section>
-  <section class="panel"><div class="row between"><h3>${L('Six de départ','Starting six')}</h3><button class="btn small" data-a="auto">${L('Composition auto','Auto line-up')}</button></div>
-  <div class="stack tight" style="margin-top:10px">${sels}</div></section></div>
-  <div class="stack">${styleBlock()}<section class="panel"><h3>${L('Lignes de l’équipe','Team lines')}</h3><div class="stack tight" style="margin-top:10px">${[['gk',L('Gardien','Keeper')],['def',L('Défense','Defence')],['mid',L('Milieu','Midfield')],['fwd',L('Attaque','Attack')]].map(([k,l])=>`<div class="sb" style="grid-template-columns:76px 28px 1fr"><span>${l}</span><b>${Math.round(lv[k])}</b>${barH(lv[k],'var(--water)')}</div>`).join('')}</div></section>
-  <section class="panel"><h3>${L('Remplaçants','Substitutes')}</h3><div class="stack tight" style="margin-top:8px">${bench}</div></section></div></div></div>`;
+  const seg=(items,cur,act)=>`<div class="seg">${items.map(([k,l])=>`<button class="chip" data-a="${act}" data-v="${k}" aria-pressed="${String(cur)===String(k)}">${l}</button>`).join('')}</div>`;
+  // UI-12c : une seule page ; formation, style, pressing, Sphère (positions = formation seule) + forces de zone, six de départ, remplaçants ; chaque clic refait la page (jetons repositionnés, forces recalculées)
+  return `<div class="stack"><h2>${L('Composition et tactique','Line-up and tactics')}</h2><div class="tacg">
+  <section class="panel stack tight tacctl"><div class="stack tight"><b class="qtl">${L('Formation · défense-milieu-attaque','Formation · defence-midfield-attack')}</b><div class="seg">${formBtns(u)}</div>${masteryBar(u.formation)}</div>
+  <div class="stack tight"><b class="qtl">${L('Style de jeu','Playstyle')}</b>${seg(Object.keys(NAMES).map(k=>[k,nN(k)]),u.style,'style')}<p class="hint">${P(STYLE_DESC[u.style])}</p></div>
+  <div class="stack tight"><b class="qtl">Pressing</b>${seg(['-1','0','1'].map(k=>[k,pN(k)]),u.press,'press')}<p class="hint">${P(PRESS_DESC[u.press])}</p></div></section>
+  <section class="panel tacsph"><div class="row between"><h3>${L('Sphère','Sphere')}</h3>${opp?`<span class="hint zleg"><u aria-hidden="true"></u>${L('adversaire (estimation)','opponent (estimate)')}</span>`:''}</div>${sphereSVG(specOfTeam(u,opp),{...sphereOpts(),zones:'off',id:'tsp'})}${zonesHTML(u,opp)}</section>
+  <section class="panel tacsix"><div class="row between"><h3>${L('Six de départ','Starting six')}</h3><button class="btn small" data-a="auto">${L('Composition auto','Auto line-up')}</button></div>
+  <div class="stack tight" style="margin-top:10px">${sels}</div></section>
+  <section class="panel tacben"><h3>${L('Remplaçants','Substitutes')}</h3><div class="stack tight" style="margin-top:8px">${bench}</div></section></div></div>`;
 }
 function trainHTML(){
   const u=U(),ord={GK:0,DF:1,MF:2,FW:3},n=indivCount(u);
@@ -2737,7 +2954,7 @@ function quickTacHTML(){
   const seg=items=>`<div class="seg">${items.map(([k,l,cur,act,dis,tip])=>`<button class="chip" data-a="${act}" data-v="${k}" aria-pressed="${cur}"${dis?' disabled':''}${tip?` title="${esc(tip)}"`:''}>${l}</button>`).join('')}</div>`;
   const sty=seg(Object.keys(NAMES).map(k=>[k,nN(k),u.style===k,'style']));
   const prs=seg(['-1','0','1'].map(k=>[k,pN(k),String(u.press)===k,'press']));
-  const frm=seg(Object.keys(FORMATIONS).map(f=>{const ok=unlocked(G,f);return [f,`${f}${masteryTag(f)}${ok?'':` · ${L('niv','lv')} ${FORM_UNLOCK[f]}`}`,u.formation===f,'formation',!ok,ok?'':L(`Niveau d’entraîneur ${FORM_UNLOCK[f]} requis`,`Coach level ${FORM_UNLOCK[f]} required`)];}));
+  const frm=`<div class="seg">${formBtns(u)}</div>`;
   return `<section class="panel stack quick"><h3>${L('Tactique rapide','Quick tactics')}</h3>
   <div class="stack tight"><b class="qtl">${L('Style de jeu','Playstyle')}</b>${sty}</div>
   <div class="stack tight"><b class="qtl">Pressing</b>${prs}</div>
@@ -3160,7 +3377,7 @@ function completeDay(Lv){
   afterDay(G);
   {const f0=G.finLog[0],f1=G.finLog[1];if(f0&&f0.bal<0&&!(f1&&f1.bal<0))news(L('Budget négatif : les recrutements sont bloqués.','Negative budget: signings are blocked.'),'finances',1);}
   G.day++;
-  if(G.day%3===0&&G.day<G.schedule.length)G.market=genMarket(G,8);
+  if(G.day%MARKET_EVERY===0&&G.day<G.schedule.length)G.market=genMarket(G,8);
   ensureLineup(u);
   checkBadges(G,{});
   UI.live=null;UI.tab='home';UI.resDay=null;
@@ -3186,6 +3403,7 @@ function toPanel(){if(window.innerWidth<=1040){const e=document.getElementById('
 function act(a,d){
   const u=G&&G.userId!=null?U():null;
   const pauseLive=()=>{if(UI.live&&!UI.live.done){UI.live.paused=true;stopTimer();}};
+  if(UI.dlg&&UI.dlg.k==='psheet'&&(a==='tab'||a==='goto'||a==='sect'||a==='oppcard'||a==='gorules'))closeSheet(false,true);   // changement de page ou de section : feuille fermée
   switch(a){
     case 'tab':{xreset();const t=tabId(d.t);if(t!=='match')pauseLive();UI.tab=t;UI.last[sectOf(t)]=t;UI.confirm=null;render();window.scrollTo(0,0);break;}
     case 'goto':{const t=tabId(d.t);UI.tab=t;UI.last[sectOf(t)]=t;render();window.scrollTo(0,0);break;}
@@ -3250,14 +3468,20 @@ function act(a,d){
       if(cur===d.k){if(m)UI.mdir=-UI.mdir;else UI.sdir=-UI.sdir;}
       else{if(m){UI.msort=d.k;UI.mdir=defDir(d.k);}else{UI.sort=d.k;UI.sdir=defDir(d.k);}}
       render();break;}
-    case 'sel':UI.sel=+d.id;UI.confirm=null;render();toPanel();break;
-    case 'msel':UI.msel=+d.id;render();toPanel();break;
+    case 'sel':UI.sel=+d.id;UI.confirm=null;render();if(narrow())openSheet('squad',+d.id);else toPanel();break;
+    case 'msel':UI.msel=+d.id;render();if(narrow())openSheet('market',+d.id);else toPanel();break;
+    case 'psclose':closeSheet(false,false);break;
+    case 'fltreset':{UI.fl[d.w==='m'?'m':'s']={};render();const f0=app.querySelector(`[data-c=flt][data-w="${d.w==='m'?'m':'s'}"][data-k=pos]`);if(f0)f0.focus({preventScroll:true});break;}
     case 'csel':UI.csel=+d.id;render();toPanel();break;
     case 'oppcard':{UI.csel=+d.id;UI.tab='table';UI.last.jouer='table';UI.confirm=null;render();window.scrollTo(0,0);break;}
     case 'jf':UI.jf=d.v;UI.jn=JPAGE;render();break;
     case 'jmore':UI.jn+=JPAGE;render();break;
     case 'ptab':UI.ptab=d.v;render();break;
-    case 'cspec':{const C=G.coach;if(coachLvl(C).lvl<SPEC_MIN||C.spec===d.v||!SPECS[d.v])break;const cost=C.spec?SPEC_COST:0;if(G.cash<cost){toast(L('Budget insuffisant.','Not enough budget.'),true);break;}G.cash-=cost;C.spec=d.v;save();render();toast(L('Spécialité choisie.','Specialty chosen.'));break;}
+    case 'cedit':{UI.cedit=true;const n=document.getElementById('cname');if(n){n.innerHTML=coachNameHTML();const i=document.getElementById('coach-name');if(i){i.focus();i.select();}}break;}
+    // UI-40 : un clic sur une spécialité ne dépense rien, il ouvre la confirmation (coût affiché) ; seule « Confirmer » débite.
+    case 'cspec':{const C=G.coach;if(coachLvl(C).lvl<SPEC_MIN||C.spec===d.v||!SPECS[d.v])break;const cost=C.spec?SPEC_COST:0;if(G.cash<cost){UI.confirm=null;toast(L('Budget insuffisant.','Not enough budget.'),true);render();break;}UI.confirm='spec:'+d.v;render();break;}
+    case 'cspecno':UI.confirm=null;render();break;
+    case 'cspecok':{const C=G.coach;if(UI.confirm!=='spec:'+d.v||coachLvl(C).lvl<SPEC_MIN||C.spec===d.v||!SPECS[d.v]){UI.confirm=null;render();break;}const cost=C.spec?SPEC_COST:0;if(G.cash<cost){UI.confirm=null;toast(L('Budget insuffisant.','Not enough budget.'),true);render();break;}G.cash-=cost;C.spec=d.v;UI.confirm=null;save();render();toast(L('Spécialité choisie.','Specialty chosen.'));break;}
     case 'rtab':UI.rtab=d.v;render();break;
     case 'gorules':pauseLive();UI.rtab=d.v;UI.tab='rules';UI.last.options='rules';render();window.scrollTo(0,0);break;
     case 'ctab':UI.ctab=d.v;render();break;
@@ -3321,37 +3545,42 @@ function act(a,d){
     case 'cont':completeDay(UI.live);break;
     case 'endseason':endSeasonUI();break;
   }
+  if(UI.dlg&&UI.dlg.k==='psheet')syncSheet();
 }
 app.addEventListener('click',e=>{
+  const tk=e.target.closest('.tacsph .pl');   // UI-12c : toucher un jeton de son équipe = aller à sa ligne du six de départ
+  if(tk&&/^p-h-\d+$/.test(tk.id)){const sl=document.getElementById('slot-'+tk.id.slice(4));if(sl)sl.focus();return;}
   const el=e.target.closest('[data-a]');if(!el||el.disabled)return;
   act(el.dataset.a,el.dataset);
 });
 app.addEventListener('keydown',e=>{
   if((e.key==='Enter'||e.key===' ')&&e.target.matches('tr[data-a]')){e.preventDefault();act(e.target.dataset.a,e.target.dataset);}
+  if((e.key==='Enter'||e.key===' ')&&narrow()&&e.target.matches('.pr[data-a]')){e.preventDefault();act(e.target.dataset.a,e.target.dataset);}   // UI-53 : la ligne ouvre la feuille aussi au clavier
   if(e.key==='Enter'&&e.target.id==='coach-draft'){e.preventDefault();act('coachok',{});}
+  if(e.target.id==='coach-name'&&UI.cedit){
+    if(e.key==='Enter'){e.preventDefault();e.target.blur();}
+    else if(e.key==='Escape'){e.preventDefault();e.target.value=G.coach.name;endCoachEdit();}
+  }
 });
+// UI-40 : Échap annule la confirmation de spécialité (le focus est souvent sur <body> après le rendu, d'où l'écoute sur document).
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&UI.confirm&&String(UI.confirm).startsWith('spec:')&&!UI.dlg){UI.confirm=null;render();}});
+app.addEventListener('focusout',e=>{if(e.target.id==='coach-name'&&UI.cedit&&UI.scr!=='flow')endCoachEdit();});
 document.addEventListener('keydown',dlgKeys);
 app.addEventListener('change',e=>{
   const el=e.target.closest('[data-c]');if(!el)return;
   const u=G&&G.userId!=null?U():null;
   switch(el.dataset.c){
     case 'train':G.training=el.value;save();toast(L('Entraînement : ','Training: ')+trName(el.value));render();break;
-    case 'ptrain':{
-      const p=u.players.find(x=>x.id===+el.dataset.id),v=el.value;
-      if(!p)break;
-      if(v==='team'){p.train=null;}
-      else if(v==='ar'&&p.pos!=='GK'){toast(L('AR est réservé aux gardiens.','AR is for keepers only.'),true);}
-      else if(!p.train&&indivCount(u)>=MAX_INDIV){toast(L(`${MAX_INDIV} programmes individuels au maximum.`,`Maximum ${MAX_INDIV} individual programmes.`),true);}
-      else p.train=v;
-      save();render();break;}
+    case 'ptrain':ptrainChange(el);break;
+    case 'flt':{const w=el.dataset.w==='m'?'m':'s',k=el.dataset.k;fget(w)[k]=el.value;render();const s2=app.querySelector(`[data-c=flt][data-w="${w}"][data-k="${k}"]`);if(s2)s2.focus({preventScroll:true});break;}
     case 'slot':{const i=+el.dataset.i,id=+el.value,j=u.lineup.indexOf(id);if(j>=0&&j!==i)u.lineup[j]=u.lineup[i];u.lineup[i]=id;save();render();break;}
-    case 'tname':{const v=el.value.trim();if(v)u.name=v.slice(0,28);save();render();break;}
+    case 'tname':{const v=el.value.trim();if(v){const old=u.name;u.name=v.slice(0,28);renameWelcome(old,u.name);}save();render();break;}
     case 'tshort':{const v=el.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,4);if(v.length>=2)u.short=v;save();render();break;}
     case 'sortsel':{if(el.dataset.w==='m'){UI.msort=el.value;UI.mdir=defDir(el.value);}else{UI.sort=el.value;UI.sdir=defDir(el.value);}render();break;}
     case 'sname':{G.stadium.name=el.value.trim().slice(0,30);save();render();break;}
     case 'coachname':{
       if(UI.scr==='flow'){UI.draft.coach=cleanCoachName(el.value);el.value=UI.draft.coach;break;}
-      G.coach.name=cleanCoachName(el.value);save();render();break;}
+      G.coach.name=cleanCoachName(el.value);save();if(el.id==='coach-name'){endCoachEdit();break;}render();break;}
     case 'impfile':{const f=el.files&&el.files[0];el.value='';if(f)readImport(f);break;}
     case 'xptxt':UI.xptxt=el.value;break;
     case 'pname':{const tm=u||G.teams[UI.prev];const p=tm&&tm.players.find(x=>x.id===+el.dataset.id),v=el.value.trim();if(p&&v)p.name=v.slice(0,22);if(G.started)save();if(UI.scr==='flow'){if(p)el.value=p.name;}else render();break;}
