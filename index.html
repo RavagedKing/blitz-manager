@@ -103,8 +103,8 @@ h3{font:700 12px/1.2 var(--font-body);letter-spacing:.1em;text-transform:upperca
 .zr{display:grid;grid-template-columns:62px 22px minmax(0,1fr) 92px;gap:8px;align-items:center;font:600 12px/18px var(--font-body)}
 .zr .zl{color:var(--muted)}.zr .mono{font-size:12px}
 .zr .bar>u{background:var(--muted);margin-left:-1px;box-shadow:0 0 0 1.5px var(--surface)}
-.zr .zs{white-space:nowrap}.zr .zs [aria-hidden]{display:inline-block;width:12px;text-align:center}
-.zr.z2 .zs{color:var(--good);color:color-mix(in srgb,var(--good) 78%,var(--ink))}.zr.z0 .zs{color:var(--bad);color:color-mix(in srgb,var(--bad) 82%,var(--ink))}.zr.z1 .zs{color:var(--muted)}
+.zr .zs,.cmp .zs{white-space:nowrap}.zr .zs [aria-hidden]{display:inline-block;width:12px;text-align:center}
+.zr.z2 .zs,.cmp.z2 .zs{color:var(--good);color:color-mix(in srgb,var(--good) 78%,var(--ink))}.zr.z0 .zs,.cmp.z0 .zs{color:var(--bad);color:color-mix(in srgb,var(--bad) 82%,var(--ink))}.zr.z1 .zs,.cmp.z1 .zs{color:var(--muted)}
 .zt{margin:6px 0 0;font-size:12.5px;line-height:18px}
 .zleg u{display:inline-block;width:2px;height:10px;margin-right:6px;background:var(--muted);vertical-align:-1px}
 /* UI-12c : Tactique sur une page (mobile : formation / style / pressing, Sphère, six, remplaçants ; ≥ 980 px : Sphère à gauche) */
@@ -362,7 +362,7 @@ td,th{white-space:normal}
 .tabsm{display:flex;gap:2px;border-bottom:1px solid var(--line);margin:-4px 0 0}
 .tabsm button{background:none;border:0;border-bottom:3px solid transparent;padding:8px 12px 6px;color:var(--muted);font:600 13px var(--font-body);cursor:pointer}
 .tabsm button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ball)}
-.sticky{position:sticky;top:140px}
+.sticky{position:sticky;top:calc(var(--hh,128px) + 12px)}
 @media (max-width:1040px){.sticky{position:static}}
 .ppanel{padding:14px}
 .ppanel .radar{max-width:230px}
@@ -647,10 +647,39 @@ td select,.tbl select{max-width:150px}
 /* ---- v0.6.2 (UI-12a) : navigation en 5 sections, barre mobile, pastilles « à faire » ---- */
 .mshort,.ns{display:none}
 .bnav{display:none}
-.nextbtn{white-space:nowrap;min-height:36px;padding:7px 14px;font-size:13px}
 .sect{position:relative;display:inline-flex;align-items:center;justify-content:center}
-.pill{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:7px;border-radius:9px;background:var(--ball);color:var(--ball-ink);font:700 12px/1 var(--font-mono);letter-spacing:0}
-.pill.block{background:var(--bad);color:var(--on-bad)}
+/* UI-70 : l'onglet Jouer porte l'état du jeu (icône ▶, bordure jaune fine permanente, texte gras) ; plein jaune seulement quand une action est attendue (.act).
+   La bordure est --warn-fill (≥ 3:1 sur le fond en clair comme en sombre) : le jaune vif --ball seul ne l'atteint pas (écart connu UI-66). */
+.sect.play,.sect.play[aria-current="true"]{border:2px solid var(--warn-fill);border-bottom:0;font-weight:800;gap:7px}
+.sect.play .pi{font-size:12px;line-height:1}
+.sect.play.act,.sect.play.act[aria-current="true"]{background:var(--ball);color:var(--ball-ink)}
+/* UI-71 : cloche de notifications (remplace le bouton jaune et les pastilles) */
+.bellw{position:relative;flex:none}
+.bellbtn{position:relative;display:inline-grid;place-items:center;width:40px;height:40px;padding:0;border-radius:10px}
+.bcnt{position:absolute;top:-6px;right:-6px;display:grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--ball);color:var(--ball-ink);font:700 12px/1 var(--font-mono);letter-spacing:0;box-shadow:0 0 0 2px var(--bg)}
+.bcnt.block{background:var(--bad);color:var(--on-bad)}
+.bellmenu{position:absolute;right:0;top:calc(100% + 8px);z-index:35;width:min(380px,calc(100vw - 32px));max-height:calc(100vh - var(--hh,128px) - 24px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:0 12px 32px rgba(0,0,0,.2)}
+.bellmenu[hidden]{display:none}
+.bellmenu h3{margin:0}
+/* NAR-05 : sélecteur de mode (défile avec le contenu, hors de l'en-tête collant) */
+.modes{display:flex;width:max-content;max-width:100%;padding:3px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.mseg{flex:1 1 auto;min-width:0;min-height:36px;padding:6px 18px;border:0;border-radius:7px;background:none;color:var(--muted);font:600 13px var(--font-body);white-space:nowrap;cursor:pointer}
+.mseg[aria-selected="true"]{background:var(--water);color:var(--on-water);font-weight:800}
+.mseg[aria-selected="true"]::before{content:"✓";margin-right:6px}
+.mseg:focus-visible{outline:2px solid var(--water);outline-offset:2px}
+@media (max-width:700px){.modes{width:100%}}
+/* NAR-06 : match d'entraînement (bandeau permanent, choix de l'adversaire) */
+.trban{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border:1px dashed var(--warn-fill);border-radius:8px;background:var(--surface);font:700 13px var(--font-body)}
+.trban .trt{min-width:0;overflow-wrap:anywhere}
+.trpick{align-items:start}
+.trlist{display:grid;gap:8px}
+.trop{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);font:600 14px var(--font-body);text-align:left;cursor:pointer}
+.trop .nm{min-width:0;overflow-wrap:anywhere}
+.trop[aria-pressed="true"]{border-color:var(--water);box-shadow:inset 0 0 0 2px var(--water);background:var(--water-soft)}
+.trop[aria-pressed="true"] .nm::before{content:"✓ "}
+.trop:focus-visible{outline:2px solid var(--water);outline-offset:2px}
+/* UI-69 : l'en-tête collant (--hh) et la barre du bas (--bh) ne masquent plus ce vers quoi on défile (focus clavier, scrollIntoView) */
+html{scroll-padding-top:calc(var(--hh,0px) + 8px);scroll-padding-bottom:calc(var(--bh,0px) + 8px)}
 .sub{font:700 14px var(--font-display);margin-top:6px}
 @media (max-width:700px){
   .bt,.mfull,.nl{display:none}
@@ -658,34 +687,28 @@ td select,.tbl select{max-width:150px}
   .topin{flex-wrap:nowrap;gap:8px;padding-block:6px}
   .brand svg{width:24px;height:24px}
   .meta{flex:1 1 auto;min-width:0;flex-wrap:nowrap;gap:0 10px;font-size:12px;white-space:nowrap;overflow:hidden}
-  .nextbtn{padding:7px 12px;flex:none}
   .tabs{display:flex;flex-wrap:nowrap;padding-inline:2px;border-radius:8px 8px 0 0}
   .tab{flex:1 1 auto;padding:10px 4px 8px;font-size:12.5px;text-align:center}
   .top.navtabs .sects{gap:2px}
   .top.navtabs .sect{flex:1 1 0;min-width:0;padding:8px 1px;font-size:12px;letter-spacing:0;margin-left:0;border-radius:6px 6px 0 0}
   .top.navtabs .sect{text-transform:none;font-size:12px;font-weight:600}
-  .top.navtabs .sect .pill{position:static;margin-left:3px;min-width:15px;height:15px;font-size:12px;padding:0 3px}
-  .bn .pill{position:absolute;top:1px;right:1px;margin:0;min-width:16px;height:16px;font-size:12px;padding:0 4px}
+  .top.navtabs .sect .pi{display:none}
   .top.navbar .sects{display:none}
   .bnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
   .bn{flex:1 1 0;min-width:0;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px 5px;background:none;border:0;border-top:3px solid transparent;color:var(--muted);font:600 12px var(--font-body);cursor:pointer;position:relative}
   .bn[aria-current="true"]{color:var(--water);border-top-color:var(--water)}
   .bn .si{display:grid;place-items:center;height:22px}
   .bn .sl{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .bn .pill{right:calc(50% - 22px);top:2px}
   .bn:focus-visible{outline:2px solid var(--water);outline-offset:-3px}
   /* UI-38 : Jouer au centre, ambre, mis en évidence (la hauteur de la barre ne change pas) ; pastille accrochée hors de la capsule */
   .bn.play .si{width:46px;border-radius:11px;background:var(--ball);color:var(--ball-ink)}
   .bn.play .sl{color:var(--ink);font-weight:800}
   .bn.play[aria-current="true"]{border-top-color:var(--ball)}
   .bn.play[aria-current="true"] .si{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
-  .bn.play .pill{right:calc(50% - 36px);top:0;box-shadow:0 0 0 2px var(--surface)}
   /* même ordre et même mise en évidence quand la barre est en haut (réglage « Barre en haut ») */
   .top.navtabs .sect[data-s=accueil]{order:1}.top.navtabs .sect[data-s=club]{order:2}.top.navtabs .sect.play{order:3}.top.navtabs .sect[data-s=effectif]{order:4}.top.navtabs .sect[data-s=options]{order:5}
   .top.navtabs .sect.play{background:var(--ball);border-color:var(--ball);color:var(--ball-ink);font-weight:800}
   .top.navtabs .sect.play[aria-current="true"]{box-shadow:inset 0 0 0 2px var(--ink)}
-  .top.navtabs .sect.play .pill{background:var(--ink);color:var(--surface)}
-  .top.navtabs .sect.play .pill.block{background:var(--bad);color:var(--on-bad)}
   body:has(.bnav){padding-block-end:calc(52px + env(safe-area-inset-bottom,0px) + 20px)}
   body:has(.bnav) .toast{bottom:calc(52px + 14px + env(safe-area-inset-bottom,0px))}
 }
@@ -857,6 +880,7 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
 .hstk>p.on{visibility:visible}
 .zt{min-height:18px}
 /* UI-34a : disposition PC. Sous 700 px : ordre et hauteurs de la v0.6.9 (aucune règle ci-dessous) */
+.lvk1,.lvk2,.lvk3{display:contents}   /* UI-67 : transparents sous 1 100 px */
 @media (min-width:700px){
   .lv{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"main main" "team feed" "style info" "half stats";align-items:start;grid-auto-rows:auto}
   .lvmain{grid-area:main}.lvteam{grid-area:team}.lvfeed{grid-area:feed}.lvstyle{grid-area:style}.lvinfo{grid-area:info}.lvhalf{grid-area:half}.lvstats{grid-area:stats}
@@ -866,29 +890,42 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
   .pre>.quick{grid-column:1/-1}
 }
 @media (min-width:1100px){
-  .lv{grid-template-columns:minmax(260px,300px) minmax(0,1fr) minmax(280px,340px);grid-template-areas:"team main feed" "style main info" ". main stats" ". half .";grid-template-rows:auto auto 1fr auto}
+  /* UI-67 : trois colonnes indépendantes (plus de ligne commune) ; Consigne reste sous le terrain */
+  .lv{grid-template-columns:minmax(260px,300px) minmax(0,1fr) minmax(280px,340px);grid-template-areas:none;grid-template-rows:none}
+  .lvk1,.lvk2,.lvk3{display:grid;gap:16px;align-content:start;min-width:0;grid-row:1}
+  .lvk1{grid-column:1}.lvk2{grid-column:2}.lvk3{grid-column:3}
+  .lvk1>.panel,.lvk2>.panel,.lvk3>.panel{grid-area:auto}
   .lv .sphere{max-width:520px}
   .tacg{grid-template-columns:minmax(260px,320px) minmax(0,1fr) minmax(300px,380px);grid-template-areas:"ctl sph six" "ctl sph ben";grid-template-rows:auto 1fr}
   .tacg .tacctl{align-self:start}
   .pre{grid-template-columns:repeat(3,minmax(0,1fr))}
   .pre>.quick{grid-column:auto}
 }
-/* UI-52 : Accueil, bande 1 « Action » et bande 2 « Suivi » en deux colonnes indépendantes */
-.hm{display:grid;gap:16px}
-.hb1{display:grid;gap:16px;align-items:start}
-.hb2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
-.hcol{display:grid;gap:16px;align-content:start;min-width:0}
-.hb1>*,.hb2>*{min-width:0}
-@media (min-width:1100px){.hb1{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+/* UI-72 : Tableau de bord. Sous 1 200 px : une colonne dans l'ordre hb1 À faire, hb2 Prochain match, hb3 Classement, hb4 Journal, hb5 Entraîneur, hb6 Finances (.hcA, .hcB et .hpr sont transparents, display:contents ; les cartes se rangent par order).
+   À ≥ 1 200 px : deux colonnes indépendantes, donc sans trou : A (À faire, Prochain match) | B (.hpr : Classement et Entraîneur côte à côte à demi-largeur, puis Journal, puis Finances). */
+.hm{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+.hcA,.hcB,.hpr{display:contents}
+.hm .panel{min-width:0}
+.hb1{order:1}.hb2{order:2}.hb3{order:3}.hb4{order:4}.hb5{order:5}.hb6{order:6}.hm>.helprow{order:7}
+@media (min-width:1200px){
+  .hm{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .hcA,.hcB{display:grid;gap:16px;align-content:start;min-width:0}
+  .hpr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:stretch;min-width:0}
+  .hb1,.hb2,.hb3,.hb4,.hb5,.hb6{order:0}
+  .hm>.helprow{grid-column:1/-1}
+  .hpr .panel{padding:12px}
+  .hpr .hx{display:none}
+  .hpr .tbl th,.hpr .tbl td{padding:6px 5px}
+  .hpr .tbl th{letter-spacing:.03em}
+}
 @media (max-width:480px){
-  .hb2,.hcol{gap:10px}
-  .hcol>.panel{padding:10px}
-  .hcol .hx{display:none}
-  .hcol .tbl th,.hcol .tbl td{padding-inline:5px}
-  .hcol .tbl th{letter-spacing:.03em}
-  .hcol .news div{grid-template-columns:30px minmax(0,1fr);gap:6px}
-  .hcol .news div:nth-child(n+4){display:none}
-  .hcol .news p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+  .hm{gap:10px}
+  .hm .panel{padding:12px}
+  .hm .hx{display:none}
+  .hm .tbl th,.hm .tbl td{padding-inline:5px}
+  .hm .news div:nth-child(n+4){display:none}
+  .hm .news div{grid-template-columns:30px minmax(0,1fr);gap:6px}
+  .hm .news p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 }
 /* colonne gauche étroite (3 colonnes, 1 100 à 1 279 px) : la ligne d'un titulaire passe sur deux rangées pour garder le nom lisible */
 @media (min-width:1100px){
@@ -940,8 +977,18 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
 /* UI-42 : six de départ éditable et barres de zone sur l'avant-match ; repère d'effet sous chaque bouton de formation, de style et de pressing */
 .lu-row .nm select{width:100%}
 .pre-r select{padding:6px 8px;font-size:13px}
-.zbp{display:grid;gap:2px;margin-top:10px}
-.zbp .zleg{justify-self:end}
+.pre{align-items:start}   /* UI-68 : chaque carte garde la hauteur de son contenu (plus de carte « Journée » étirée et vide avant le coup d'envoi) */
+/* UI-73 : comparatif fusionné. Étroit : libellé et écart sur une ligne, puis valeurs et barre ; à partir de 460 px de large (conteneur) : tout sur une seule ligne par rubrique */
+.fcm{container-type:inline-size;display:grid;gap:8px}
+.fcm .lab{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.cmp .zs{font:700 12px var(--font-body);letter-spacing:0;text-transform:none}
+.fcf{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.fcf .zt{margin:0;min-height:0}
+@container (min-width:460px){
+  .fcm .cmp.tn{grid-template-columns:112px 46px minmax(0,1fr) 46px 104px}
+  .fcm .lab{display:contents}
+  .fcm .lab .zs{order:9;text-align:right}
+}
 .optc{display:inline-flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
 .rep{font:600 12px/1.2 var(--font-body);color:var(--muted);white-space:nowrap;min-height:15px}
 .rep i{font-style:normal}
@@ -1136,9 +1183,12 @@ const SPEC_KEYS=['GK','DF','MF','FW','cond','star'];
 const specTier=C=>coachLvl(C).lvl>=SPEC_MIN?Math.min(5,coachLvl(C).lvl-1):0;
 const specOn=(C,k)=>C&&C.spec===k?specTier(C):0;
 // f (v0.6.10, optionnel) : formation dont on évalue la maîtrise ; absente = la formation actuelle du club (comportement de toujours). Sert à lineValsFor (aperçu d'une autre formation).
+// v0.7 (NAR-06) : TRAIN_T relie chaque joueur de la COPIE du club du joueur (match d'entraînement, newTraining) à cette copie : le bonus d'entraîneur s'applique aux copies en lecture seule. Vide hors entraînement : comportement et tirages inchangés.
+const TRAIN_T=new WeakMap();
 function bonusOf(p,f){
   if(typeof G==='undefined'||!G||!G.coach||!G.teams)return 1;
-  const t=G.teams[G.userId];if(!t||!t.players.includes(p))return 1;
+  let t=G.teams[G.userId];if(!t)return 1;
+  if(!t.players.includes(p)){t=TRAIN_T.get(p);if(!t)return 1;}
   let k=1+MASTER_K*masteryOf(G.coach,f||t.formation);
   if(['GK','DF','MF','FW'].includes(G.coach.spec)&&p.pos===G.coach.spec)k*=1+SPEC_K*specOn(G.coach,G.coach.spec);
   return k;
@@ -1849,25 +1899,110 @@ function newSeason(G){
   G.market=genMarket(G);
   return retired;
 }
+// ---- v0.7 (NAR-06) : match d'entraînement (bac à sable). Additif ; G.v reste 6, aucun champ ajouté à G. ----
+// newTraining(G, oppId) → M | null (null : G sans équipe du joueur, oppId invalide ou égal au club du joueur). Lecture seule de G (G peut être gelé) : le match se joue sur des COPIES JSON des deux clubs
+// (id conservés), HP à maxHP des deux côtés ; l'adversaire reçoit prepAI (formation, style, pressing, composition auto : même pilotage qu'un match de saison, 2 rnd() de style/pressing). Le club du joueur est M.h, l'adversaire M.a ;
+// M.train = true. Le bonus d'entraîneur (maîtrise, spécialité) s'applique aux copies via TRAIN_T (lecture de G.coach seulement). Les réglages faits pendant le match (composition, formation, style, pressing) restent sur la copie.
+// Réutilisés tels quels : phase, applyHalf, aiLive, aiSubs, simAuto, liveStep, halfStep, finalizeMatch, teamStats. finalizeMatch n'écrit que dans les joueurs de M (donc jamais dans G quand M.train) ; il ne lit G nulle part
+// (seul bonusOf lit G, globalement) ; newMatch(home, away) prend ses deux équipes en argument. Un titulaire blessé : l'UI bloque le lancement (newMatch remplacerait le blessé par la composition auto de la copie).
+function newTraining(G,oppId){
+  const u=G&&Array.isArray(G.teams)?G.teams[G.userId]:null,o=Number.isInteger(oppId)&&G&&Array.isArray(G.teams)?G.teams[oppId]:null;
+  if(!u||!o||o===u)return null;
+  const cp=t=>JSON.parse(JSON.stringify(t)),hu=cp(u),ha=cp(o);
+  [hu,ha].forEach(t=>t.players.forEach(p=>{p.hp=maxHP(p);p.newInj=false;}));
+  prepAI(ha);
+  hu.players.forEach(p=>TRAIN_T.set(p,hu));
+  const M=newMatch(hu,ha);M.train=true;
+  return M;
+}
+// closestOpp(G) → id du club adverse (≠ club du joueur) le plus proche en force de l'équipe du joueur, ou null. Force = meilleure moyenne de eff des titulaires sur les formations de départ, à HP maxi (comme prepAI) ;
+// bonus d'entraîneur compris pour le club du joueur. Égalité : plus petit id. Pure, aucun rnd(), ne modifie ni G ni les clubs.
+function closestOpp(G){
+  const u=G&&Array.isArray(G.teams)?G.teams[G.userId]:null;if(!u)return null;
+  const force=t=>Math.max(...FORM_BASE.map(f=>{const sl=slotsOf(f),ss=lanesOf(t,f);return avg(bestLineup(t,f).map((p,i)=>eff(p,sl[i],ss[i])/(.75+.25*hpPct(p))));}));
+  const fu=force(u);let best=null,bd=Infinity;
+  G.teams.forEach(t=>{if(t===u)return;const d=Math.abs(force(t)-fu);if(d<bd-1e-9){bd=d;best=t.id;}});
+  return best;
+}
+// ---- v0.7 (TEC-10) : journal de test (local, jamais envoyé). Constructeurs PURS : lecture seule, aucun rnd(), aucun accès au stockage ni au DOM (stockage, export, erreurs : UI). Hors G. ----
+// Format du journal stocké par l'UI : {logv:LOG_V, parts:[{…en-tête de partie posé par l'UI (version, club, niveau)…, e:[entrée, …]}]} ; une partie par « Nouvelle partie ». Entrées (clé k) :
+//   match  {k:'m', m:'s', s:saison, d:journée (1…), o:code adverse, h:1 domicile|0, sc:[buts du club, buts adverses], x:0|1 prolongation|2 tirs au but, f:formation, st:style, pr:pressing,
+//           c?:[[s|v|p (souffler/verrouiller/pousser), phase, blocs], …], sb:remplacements, sh:[tirs, tirs adverses], po:possession %, hp:HP moyen des titulaires en fin de match (% de maxHP), ij:nouvelles blessures}
+//   entraînement {k:'m', m:'t', o, sc, x, f}      jour {k:'d', s, d:matchs joués, cash, fans, lv:niveau moyen, pt:points de talent non dépensés, rk:rang}
+//   fin de saison {k:'f', s, rk, pts, w, l, gf, ga, tb:[[code, pts, diff] ×clubs], tr:titres, bd:[badges obtenus cette saison]}      erreur (posée par l'UI) {k:'e', …}
+// Codes de clubs seulement : ni nom d'entraîneur, ni noms de joueurs ou de clubs. v0.8 : le champ mc (MERCY) s'ajoutera à l'entrée de match.
+const LOG_V=1,LOG_MAX=131072,LOG_ERR_MAX=20;
+// logMatch(M, G) → entrée ou null (match non terminé, club du joueur absent du match). À appeler APRÈS finalizeMatch (les blessures lisent p.newInj) et AVANT G.day++ (la journée est G.day + 1) ;
+// pour un match d'entraînement (M.train) G n'est pas lu.
+function logMatch(M,G){
+  if(!M||!M.over)return null;
+  const uid=G?G.userId:null,sd=M.train?'h':M.h.team.id===uid?'h':M.a.team.id===uid?'a':null;
+  if(!sd)return null;
+  const od=sd==='h'?'a':'h',U=M[sd],O=M[od],gu=sd==='h'?M.hs:M.as,go=sd==='h'?M.as:M.hs,x=M.so?2:M.ot?1:0;
+  if(M.train)return{k:'m',m:'t',o:O.team.short,sc:[gu,go],x,f:U.team.formation};
+  const ts=teamStats(M),c=[];
+  M.log.forEach(e=>{   // consignes du club : lues dans les lignes « sys » du fil (texte de applyHalf), phase = inverse de clk
+    if(e.type!=='sys'||e.sd!==sd||typeof e.txt!=='string'||!/Consigne|instruction/.test(e.txt))return;
+    const o=HALF_OPTS.find(q=>e.txt.indexOf(': '+q.n[0])>=0||e.txt.indexOf(': '+q.n[1])>=0);if(!o)return;
+    const b=/· (\d)/.exec(e.txt),t=/^(\d+):(\d+)$/.exec(e.t||'');
+    c.push([o.id[0],t?Math.round((+t[1]*60+ +t[2])*36/600):0,b?+b[1]:3]);
+  });
+  const en={k:'m',m:'s',s:G.season,d:G.day+1,o:O.team.short,h:sd==='h'?1:0,sc:[gu,go],x,f:U.team.formation,st:U.style,pr:U.press};
+  if(c.length)en.c=c;
+  en.sb=U.subs;en.sh=[ts[sd].sh,ts[od].sh];en.po=ts[sd].poss;en.hp=Math.round(avg(U.lu.map(hpPct))*100);
+  en.ij=U.team.players.filter(p=>p.newInj&&p.inj>0).length;
+  return en;
+}
+// logDay(G) → entrée de jour ou null. À appeler après la journée (G.day = matchs joués).
+function logDay(G){
+  const u=G&&Array.isArray(G.teams)?G.teams[G.userId]:null;if(!u)return null;
+  const rk=G.table&&G.table.length?sortedTable(G).findIndex(r=>r.id===u.id)+1:0;
+  return{k:'d',s:G.season,d:G.day,cash:G.cash,fans:G.fans,lv:Math.round(avg(u.players.map(p=>p.lvl))*10)/10,pt:sum(u.players.map(p=>p.pts||0)),rk};
+}
+// logSeason(G) → entrée de fin de saison ou null. À appeler AVANT newSeason (classement de la saison) ; indépendante de l'ordre avec G.honors.push (les titres des saisons précédentes sont relus, celui de la saison courante vient du rang).
+function logSeason(G){
+  const u=G&&Array.isArray(G.teams)?G.teams[G.userId]:null;if(!u||!G.table||!G.table.length)return null;
+  const st=sortedTable(G),rk=st.findIndex(r=>r.id===u.id)+1,me=G.table[u.id],bg=(G.coach&&G.coach.badges)||{};
+  return{k:'f',s:G.season,rk,pts:me.pts,w:me.w,l:me.l+me.otl,gf:me.gf,ga:me.ga,tb:st.map(r=>[G.teams[r.id].short,r.pts,r.gf-r.ga]),
+    tr:(G.honors||[]).filter(h=>h.rank===1&&h.s!==G.season).length+(rk===1?1:0),bd:Object.keys(bg).filter(id=>bg[id]&&bg[id].s===G.season)};
+}
+// logTrim(log, max = LOG_MAX) → copie du journal dont le JSON fait au plus max caractères (≈ octets : entrées en ASCII). Le journal reçu n'est pas modifié. Tampon circulaire : on retire d'abord les matchs les plus anciens (toutes parties),
+// puis les jours, les erreurs, en dernier recours les résumés de saison, enfin les parties entières les plus anciennes (la dernière partie reste). Les résumés de saison restent donc tant que possible.
+function logTrim(log,max){
+  if(max==null)max=LOG_MAX;
+  if(!log||!Array.isArray(log.parts))return log;
+  const out={...log,parts:log.parts.map(p=>({...p,e:Array.isArray(p.e)?p.e.slice():[]}))},size=()=>JSON.stringify(out).length;
+  let s=size();if(s<=max)return out;
+  const RK={m:0,d:1,e:2,f:3},cand=[];
+  out.parts.forEach((p,pi)=>p.e.forEach(e=>cand.push({pi,e,r:RK[e&&e.k]!=null?RK[e.k]:2,len:JSON.stringify(e).length+1,q:cand.length})));
+  cand.sort((a,b)=>a.r-b.r||a.q-b.q);
+  const drop=c=>{const a=out.parts[c.pi].e,i=a.indexOf(c.e);if(i>=0)a.splice(i,1);};
+  let i=0;
+  for(;i<cand.length&&s>max;i++){drop(cand[i]);s-=cand[i].len;}   // estimation (entrée + virgule), puis vérification exacte
+  while(i<cand.length&&size()>max)drop(cand[i++]);
+  while(out.parts.length>1&&size()>max)out.parts.shift();
+  return out;
+}
 // ==ENGINE END==
 
 // ==UI START==
 const app=document.getElementById('app');
 let G=null;
-const UI={prev:null,sect:'accueil',tab:'home',last:lastDef(),ptab:'ov',rtab:'game',csel:null,ctab:'ov',sort:'pos',sdir:1,msort:'ovr',mdir:-1,sel:null,msel:null,confirm:null,cedit:false,live:null,timer:null,resDay:null,toastT:null,scr:'title',step:1,draft:{coach:''},saved:null,dlg:null,fs:null,fl:{s:{},m:{}},newsI:0,jf:'all',jn:30,warn:false,demo:null,xmsg:null,xpend:null,xtxt:null,xpaste:false,xptxt:''};
+const UI={prev:null,sect:'accueil',tab:'home',last:lastDef(),ptab:'ov',rtab:'game',csel:null,ctab:'ov',sort:'pos',sdir:1,msort:'ovr',mdir:-1,sel:null,msel:null,confirm:null,cedit:false,live:null,timer:null,resDay:null,toastT:null,scr:'title',step:1,draft:{coach:''},saved:null,dlg:null,fs:null,fl:{s:{},m:{}},newsI:0,jf:'all',jn:30,warn:false,demo:null,xmsg:null,xpend:null,xtxt:null,xpaste:false,xptxt:'',mode:'season',tr:{opp:null,how:'live'},bell:false,ltxt:null,lconf:false};
 const KEY='blitz-manager-v2',PKEY='blitz-manager-prefs';
-const PREFS={lang:'fr',theme:'auto',nav:'bar',hideWelcome:false};
+const PREFS={lang:'fr',theme:'auto',nav:'bar',hideWelcome:false,log:true};   // log (TEC-10) : enregistrement du journal de test, actif par défaut ; préférence hors de G
+let LOGC=null,LOGDEAD=false,LOGBOUND=false;   // TEC-10 : journal en mémoire (miroir de localStorage), arrêt silencieux après un échec d'écriture, partie courante rattachée
 function applyPrefs(){LANG=PREFS.lang;const r=document.documentElement;r.lang=LANG;if(PREFS.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',PREFS.theme);}
-function loadPrefs(){try{const s=JSON.parse(localStorage.getItem(PKEY)||'null');if(s){if(s.lang==='en'||s.lang==='fr')PREFS.lang=s.lang;if(['auto','light','dark'].includes(s.theme))PREFS.theme=s.theme;if(s.nav==='bar'||s.nav==='tabs')PREFS.nav=s.nav;if(s.hideWelcome===true)PREFS.hideWelcome=true;}}catch(e){}applyPrefs();}
+function loadPrefs(){try{const s=JSON.parse(localStorage.getItem(PKEY)||'null');if(s){if(s.lang==='en'||s.lang==='fr')PREFS.lang=s.lang;if(['auto','light','dark'].includes(s.theme))PREFS.theme=s.theme;if(s.nav==='bar'||s.nav==='tabs')PREFS.nav=s.nav;if(s.hideWelcome===true)PREFS.hideWelcome=true;if(s.log===false)PREFS.log=false;}}catch(e){}applyPrefs();}
 function savePrefs(){try{localStorage.setItem(PKEY,JSON.stringify(PREFS));}catch(e){}}
 // ---------- v0.6.3 (UI-19 / UI-20a / UI-21 / TEC-01 UI) : constantes et textes ----------
-const VERSION='v0.6.10';                     // source unique : écran titre, À propos, test d'actualité
+const VERSION='v0.7';                   // source unique : écran titre, À propos, test d'actualité
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 // Actualités du titre : {t:[fr,en], b:[fr,en] | () => texte, v?:version}. Une entrée sans titre ou sans corps n'est jamais affichée.
 const TITLE_NEWS=[
   {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-  {v:VERSION,t:['Nouveautés','What’s new'],b:['v0.6.10 « Match et navigation » : trois plans d’équipe à enregistrer, disposition en colonnes sur PC, Sphère en plein écran, Accueil plus compact, Marché de 12 joueurs et remplacements libres avant le coup d’envoi.','v0.6.10 “Match and navigation”: three team plans to save, column layout on desktop, full-screen Sphere, a more compact Home, a 12-player Market and free substitutions before kick-off.']}
+  {v:VERSION,t:['Nouveautés','What’s new'],b:['v0.7 · Modes. Nouveau : choisis Saison ou Entraînement dans Jouer ; le match d’entraînement n’a aucun effet sur ta saison. L’onglet Jouer indique la suite, une cloche regroupe ce qu’il reste à faire, et la mise en page est corrigée sur grand écran. Un journal de test, enregistré sur ton appareil et jamais envoyé, peut être exporté depuis Options.','v0.7 · Modes. New: pick Season or Training in Play; a training match has no effect on your season. The Play tab shows what comes next, a bell gathers what is left to do, and the large-screen layout is fixed. A test log, stored on your device and never sent, can be exported from Options.']}
 ];
 // Textes (ids de la fiche UI-19-20a-21 §3, plus x.* pour Exporter / Importer). Les valeurs {x} sont remplacées par T() ; l'appelant échappe ce qui vient du jeu.
 const TX={
@@ -1927,7 +2062,14 @@ const TX={
   'x.sel':['Sélectionner tout','Select all'],'x.close':['Fermer','Close'],
   'x.paste.go':['Importer ce texte','Import this text'],'x.paste.no':['Annuler','Cancel'],
   'x.err.json.t':['Ce texte n’est pas lisible : ce n’est pas un JSON valide.','This text can’t be read: it isn’t valid JSON.'],
-  'x.err.format.t':['Ce texte n’est pas une sauvegarde de Blitz Manager.','This text isn’t a Blitz Manager save.']
+  'x.err.format.t':['Ce texte n’est pas une sauvegarde de Blitz Manager.','This text isn’t a Blitz Manager save.'],
+  // TEC-10 : journal de test (local, jamais envoyé)
+  'l.pref':['Enregistrer le journal (local)','Record the test log (local)'],'l.pref.h':['Rien n’est envoyé : le fichier reste sur cet appareil.','Nothing is sent: the file stays on this device.'],
+  'l.title':['Journal de test','Test log'],'l.exp':['Exporter le journal','Export log'],'l.copy':['Copier','Copy'],'l.clear':['Effacer','Clear'],
+  'l.clear.go':['Confirmer l’effacement','Confirm clearing'],'l.clear.no':['Annuler','Cancel'],
+  'l.ok.exp':['Journal exporté.','Log exported.'],'l.ok.copy':['Journal copié.','Log copied.'],'l.cleared':['Journal effacé.','Log cleared.'],
+  'l.none':['Le journal est vide.','The log is empty.'],'l.err.exp':['Export impossible dans ce navigateur : utilise Copier.','Export isn’t possible in this browser: use Copy.'],
+  'l.copy.lbl':['Texte du journal','Log text']
 };
 const T=(id,v)=>{let s=P(TX[id]);if(v)for(const k in v)s=s.split('{'+k+'}').join(v[k]);return s;};
 const U=()=>G.teams[G.userId];
@@ -1975,7 +2117,11 @@ const SECT={
 // anciennes pages fusionnées : style → Tactique (lineup), arena → Finances ; toute référence ouvre la page qui les contient. (cust est de nouveau une page à part entière : Club › Personnalisation.)
 const TABALIAS={style:'lineup',arena:'finance'};
 const tabId=t=>TABALIAS[t]||t;
-const sectOf=t=>{t=tabId(t);for(const s in SECT)if(SECT[s].some(x=>x[0]===t))return s;return 'accueil';};
+const sectOf=t=>{t=tabId(t);if(t==='tmatch')return 'jouer';for(const s in SECT)if(SECT[s].some(x=>x[0]===t))return s;return 'accueil';};
+// NAR-05 : modes de la section Jouer (état de session UI.mode, jamais sauvegardé). Registre : le Défi (v0.13) ajoutera une entrée ; aucune entrée vide avant sa version.
+// pages : ids des pages du mode ; Saison = Match · Calendrier · Classement (SECT.jouer), Entraînement = une page (tmatch, hors SECT : pas de rangée d'onglets).
+const MODES=[{id:'season',n:['Saison','Season'],pages:['match','calendar','table']},{id:'training',n:['Entraînement','Training'],pages:['tmatch']}];
+const pagesOf=sect=>sect==='jouer'&&UI.mode==='training'?[['tmatch',['Entraînement','Training']]]:SECT[sect];
 function lastDef(){return{accueil:'home',club:'club',effectif:'squad',jouer:'match',options:'settings'};}
 const NAVICO={
   accueil:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
@@ -2058,11 +2204,12 @@ function lineVals(team,auto){
   return lines({lu,slots:sl,sides:lanesOf(team),style:team.style,press:team.press});
 }
 // tone (UI-51, comparatif de forces seulement) : chaque valeur en vert (plus forte), rouge (moins forte) ou jaune (égale), toujours avec ▲ ▼ = et un aria-label sur la ligne (jamais la couleur seule) ; sur les valeurs affichées (arrondies)
-function cmpRow(label,a,b,tone){
+// UI-73 : st/si = libellé d'écart (Faible, Égal, Fort + %) et son indice 0-2, affichés sur la ligne du libellé (cmpFused)
+function cmpRow(label,a,b,tone,st,si){
   const t=a+b||1,hi=a>b?'a':b>a?'b':'',ra=Math.round(a),rb=Math.round(b);
   const v=(x,y,w)=>`<b class="${hi===w?'hi':hi?'lo':''}${tone?(x>y?' up':x<y?' dn':' eq'):''}">${tone?`<span class="tg" aria-hidden="true">${x>y?'▲':x<y?'▼':'='}</span>`:''}${x}</b>`;
   const al=tone?` role="group" aria-label="${label} : ${ra} ${L('contre','vs')} ${rb}, ${ra>rb?L('plus fort','stronger'):ra<rb?L('moins fort','weaker'):L('égal','equal')}"`:'';
-  return `<div class="cmp${tone?' tn':''}"${al}><span class="lab">${label}</span>${v(ra,rb,'a')}<div class="cb"><i class="a" style="width:${a/t*100}%"></i><i class="b" style="width:${b/t*100}%"></i><u class="mk" aria-hidden="true"></u></div>${v(rb,ra,'b')}</div>`;
+  return `<div class="cmp${tone?' tn':''}${st?' z'+si:''}"${al}><span class="lab">${st?`<span>${label}</span><span class="zs">${st}</span>`:label}</span>${v(ra,rb,'a')}<div class="cb"><i class="a" style="width:${a/t*100}%"></i><i class="b" style="width:${b/t*100}%"></i><u class="mk" aria-hidden="true"></u></div>${v(rb,ra,'b')}</div>`;
 }
 const LOGO=`<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--water)" stroke-width="2.5"/><path d="M4 18c4-4 7 4 12 0s8 4 12 0" fill="none" stroke="var(--ball)" stroke-width="2.5" stroke-linecap="round"/><circle cx="21" cy="10" r="3" fill="var(--ball)"/></svg>`;
 const brandH=`<div class="brand">${LOGO}<span>BLITZ</span><span class="b2">MANAGER</span></div>`;
@@ -2247,7 +2394,7 @@ function playerPanel(p,ctx,sh){
 }
 // ---------- Rendu général ----------
 function render(){
-  if(UI.fs&&(UI.scr!=='game'||!G||(UI.fs.k==='match'?(UI.tab!=='match'||!UI.live||UI.live.done):UI.tab!=='lineup')))closeFS(true);   // UI-34b : la page change, le calque se ferme
+  if(UI.fs&&(UI.scr!=='game'||!G||(UI.fs.k==='match'?(!mpage()||!UI.live||UI.live.done):UI.tab!=='lineup')))closeFS(true);   // UI-34b : la page change, le calque se ferme
   if(UI.scr==='title'||(UI.scr!=='opts'&&!G)){UI.scr='title';app.innerHTML=titleHTML();return;}
   if(UI.scr==='opts'){app.innerHTML=optsTitleHTML();return;}
   if(UI.scr==='flow'){
@@ -2256,14 +2403,27 @@ function render(){
   }
   ensureLineup(U());
   UI.tab=tabId(UI.tab);UI.sect=sectOf(UI.tab);if(UI.tab!=='coach')UI.cedit=false;
-  const pages={home:homeHTML,coach:coachHTML,finance:financeHTML,club:()=>clubHTML(false),cust:custPageHTML,journal:journalHTML,squad:squadHTML,train:trainHTML,market:marketHTML,match:matchHTML,lineup:lineupHTML,calendar:calendarHTML,table:tableHTML,settings:settingsHTML,rules:rulesHTML,about:aboutHTML};
+  if(UI.tab!=='tmatch'&&UI.mode==='training')leaveTraining();   // NAR-05 : toute autre page (dont l'onglet Jouer) ramène à Saison ; NAR-06 : quitter un match d'entraînement ne demande rien
+  const pages={home:homeHTML,coach:coachHTML,finance:financeHTML,club:()=>clubHTML(false),cust:custPageHTML,journal:journalHTML,squad:squadHTML,train:trainHTML,market:marketHTML,match:matchHTML,tmatch:tmatchHTML,lineup:lineupHTML,calendar:calendarHTML,table:tableHTML,settings:settingsHTML,rules:rulesHTML,about:aboutHTML};
   const HELP={lineup:'tactics',train:'train',coach:'train',finance:'stade',club:'stade',cust:'stade'};
-  const by=todoBySect(G),fk=UI.fs?fsFocusKey():null;
+  const fk=UI.fs?fsFocusKey():null;
   if(UI.fs)fsDrop();   // UI-34b : la page se redessine, ses panneaux déplacés sont jetés puis remplacés par les neufs
-  app.innerHTML=headerHTML(by)+`<main class="wrap main${UI.tab==='match'?' pm':''}">${pages[UI.tab]()}${HELP[UI.tab]?helpRow(HELP[UI.tab]):''}</main>`+(PREFS.nav==='bar'?barHTML(by):'');
+  app.innerHTML=headerHTML()+`<main class="wrap main${mpage()?' pm':''}" id="pg">${modeRowHTML()}${pages[UI.tab]()}${HELP[UI.tab]?helpRow(HELP[UI.tab]):''}</main>`+(PREFS.nav==='bar'?barHTML():'');
+  syncBars();
   if(UI.fs){fsMount();fsRefocus(fk);}
-  if(UI.tab==='match'&&UI.live&&!UI.live.done)updateLive();
+  if(mpage()&&UI.live&&!UI.live.done)updateLive();
 }
+// UI-69 : hauteur de l'en-tête collant (--hh) et de la barre du bas (--bh) publiées en variables CSS : scroll-padding, panneaux collants et défilements programmés ne passent plus dessous
+const mpage=()=>UI.tab==='match'||UI.tab==='tmatch';
+function syncBars(){
+  try{
+    const r=document.documentElement.style,h=document.querySelector('.top'),b=document.querySelector('.bnav');
+    r.setProperty('--hh',(h?h.offsetHeight:0)+'px');
+    r.setProperty('--bh',(b&&getComputedStyle(b).display!=='none'?b.offsetHeight:0)+'px');
+  }catch(e){}   // hors navigateur (faux DOM des tests) : sans effet
+}
+if(window.addEventListener)window.addEventListener('resize',syncBars);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncBars);
 // UI-34b : le calque garde le focus clavier sur la même commande après un redessin de la page (Tactique)
 function fsFocusKey(){
   const a=document.activeElement,r=document.getElementById('fs');
@@ -2279,8 +2439,8 @@ function fsRefocus(k){
 // todoLines(G) : lignes « À faire avant le match », par priorité, calculées depuis G seul (aucune clé ajoutée à G, rien n'est stocké).
 // → [{id, go, sev, n, who?}] : go = page ciblée, sev = 'block' (bloquante) | 'warn' (ambre), n = nombre concerné ; le texte vient de todoText.
 // Les pastilles (en-tête, barre) la lisent dès 12a ; le bloc « À faire » de l'Accueil la réutilisera en 12b.
-// UI-37 : table « alerte → page » ; la section de la pastille est sectOf(page). 'rep' (bilan à valider) ne vit que dans les pastilles (navLines), jamais dans « À faire » de l'Accueil (UI-32).
-const ALERT_GO={inj:'lineup',tired:'lineup',cash:'finance',pts:'squad',spec:'coach',rep:'match'};
+// UI-37 / UI-71 : table « alerte → page » (la cloche de l'en-tête et le bloc « À faire » de l'Accueil lisent la même todoLines ; les pastilles d'onglet n'existent plus).
+const ALERT_GO={inj:'lineup',tired:'lineup',cash:'finance',pts:'squad',spec:'coach'};
 function todoLines(G){
   const out=[],t=G&&G.teams&&G.userId!=null?G.teams[G.userId]:null;
   if(!t)return out;
@@ -2301,46 +2461,53 @@ function todoText(l){
     case 'tired':return L(`${l.n} titulaire${l.n>1?'s':''} sous 50 % de HP`,`${l.n} starter${l.n>1?'s':''} under 50% HP`);
     case 'cash':return L('Budget négatif : recrutements bloqués','Negative budget: signings blocked');
     case 'pts':return L(`${l.n} point${l.n>1?'s':''} de talent à répartir`,`${l.n} talent point${l.n>1?'s':''} to spend`);
-    case 'rep':return L('Bilan du match à valider','Match report to confirm');
     default:return L('Choisis une spécialité (gratuite)','Pick a specialty (free)');
   }
 }
-// lignes des pastilles = todoLines + alerte d'interface lue hors de G (UI.live) : bilan de match terminé, pas encore validé (Continuer) → Jouer
-function navLines(G){const o=todoLines(G);if(UI.live&&UI.live.done)o.push({id:'rep',go:ALERT_GO.rep,sev:'warn',n:1});return o;}
-// {section: {n: nombre de lignes, block: au moins une bloquante, tips: textes}} ; l'Accueil n'a jamais de pastille
-function todoBySect(G){
-  const by={};
-  navLines(G).forEach(l=>{const s=sectOf(l.go);if(s==='accueil')return;const b=by[s]||(by[s]={n:0,block:false,tips:[]});b.n++;if(l.sev==='block')b.block=true;b.tips.push(todoText(l));});
-  return by;
-}
 const brandHd=`<div class="brand">${LOGO}<span class="bt">BLITZ</span><span class="b2 bt">MANAGER</span></div>`;
-// bouton principal de l'en-tête : prochain match, reprise du match en cours, bilan d'un match fini, ou nouvelle saison
-function nextBtn(){
-  const b=(a,t,full,short)=>`<button class="btn primary nextbtn" data-a="${a}"${t?` data-t="${t}"`:''}><span class="nl">▶ ${full}</span><span class="ns">▶ ${short}</span></button>`,Lv=UI.live;
-  if(G.day>=G.schedule.length)return b('endseason','',L(`Lancer la saison ${G.season+1}`,`Start season ${G.season+1}`),L(`Saison ${G.season+1}`,`Season ${G.season+1}`));
-  if(Lv&&Lv.done)return b('tab','match',L('Bilan du match','Match report'),L('Bilan','Report'));
-  if(Lv)return b('tab','match',L('Reprendre le match','Resume the match'),L('Reprendre','Resume'));
-  return b('tab','match',L('Prochain match','Next match'),'Match');
+// UI-70 : l'onglet Jouer est l'unique point d'entrée pour jouer ; il prend l'état du jeu. « Jouer » (on y est déjà) → « Prochain match » (ailleurs) → « Reprendre le match » (direct en cours) ;
+// « Bilan du match » et « Fin de saison » complètent la liste (ce que faisait le bouton jaune de l'en-tête). act = une action est attendue → plein jaune ; sinon bordure jaune fine, texte gras, icône ▶.
+// Un match d'entraînement (Lv.train, NAR-06) n'est jamais « le match en cours » de la saison.
+const seasonLive=()=>UI.live&&!UI.live.train?UI.live:null;
+function playState(){
+  const Lv=seasonLive();
+  if(G.day>=G.schedule.length&&!Lv)return{k:'end',go:1,act:1,full:L('Fin de saison','Season over'),short:L('Fin','End')};
+  if(Lv&&Lv.done)return{k:'report',go:1,act:1,full:L('Bilan du match','Match report'),short:L('Bilan','Report')};
+  if(Lv)return{k:'resume',go:1,act:1,full:L('Reprendre le match','Resume the match'),short:L('Reprendre','Resume')};
+  if(UI.sect==='jouer')return{k:'play',go:0,act:0,full:L('Jouer','Play'),short:L('Jouer','Play')};
+  return{k:'next',go:1,act:0,full:L('Prochain match','Next match'),short:L('Match','Match')};
 }
-// bouton de section (bureau et onglets en haut : texte ; barre du bas : icône + texte) ; pastille = chiffre + aria-label, jamais la couleur seule
-function sectBtn(s,by,cls,ico){
-  const b=by[s],lab=P(SECTN[s])+(b?` — ${b.n} ${L('à faire','to do')}${b.block?` (${L('bloquant','blocking')})`:''}`:'');
-  return `<button class="${cls}" data-a="sect" data-s="${s}" aria-current="${UI.sect===s}" aria-label="${esc(lab)}"${b?` title="${esc(b.tips.join(' · '))}"`:''}>${ico?`<span class="si">${navIcon(s)}</span>`:''}<span class="sl">${P(ico&&SECTB[s]?SECTB[s]:SECTN[s])}</span>${b?`<span class="pill${b.block?' block':''}" aria-hidden="true">${b.n>9?'9+':b.n}</span>`:''}</button>`;
+// bouton de section (bureau et onglets en haut : texte ; barre du bas : icône + texte). UI-71 : plus de pastille (la cloche de l'en-tête la remplace).
+function sectBtn(s,cls,ico){
+  if(s==='jouer'){
+    const st=playState(),icon=ico?`<span class="si">${navIcon(s)}</span>`:'<span class="pi" aria-hidden="true">▶</span>',lab=ico?st.short:st.full;
+    return `<button class="${cls}${st.act?' act':''}" data-a="sect" data-s="jouer" aria-current="${UI.sect===s}" aria-label="${esc(st.full)}">${icon}<span class="sl">${ico?esc(lab):`<span class="nl">${esc(st.full)}</span><span class="ns">${esc(st.short)}</span>`}</span></button>`;
+  }
+  return `<button class="${cls}" data-a="sect" data-s="${s}" aria-current="${UI.sect===s}">${ico?`<span class="si">${navIcon(s)}</span>`:''}<span class="sl">${P(ico&&SECTB[s]?SECTB[s]:SECTN[s])}</span></button>`;
 }
-function headerHTML(by){
+// UI-71 : cloche de notifications = la même liste que « À faire avant le match » (todoLines, une seule source) ; compteur = nombre de lignes, rouge si une ligne est bloquante
+const BELL_ICO='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15z"/><path d="M10 21h4"/></svg>';
+function bellHTML(){
+  const ls=todoLines(G),n=ls.length,blk=ls.some(l=>l.sev==='block'),open=!!UI.bell;
+  const lab=n?L(`Notifications : ${n} à faire${blk?' (bloquant)':''}`,`Notifications: ${n} to do${blk?' (blocking)':''}`):L('Notifications : rien à faire','Notifications: nothing to do');
+  return `<div class="bellw"><button class="btn bellbtn" id="bellbtn" data-a="bell" aria-haspopup="true" aria-expanded="${open}" aria-controls="bellmenu" aria-label="${esc(lab)}">${BELL_ICO}${n?`<span class="bcnt${blk?' block':''}" aria-hidden="true">${n>9?'9+':n}</span>`:''}</button>
+  <div class="bellmenu" id="bellmenu" role="region" aria-label="${L('À faire avant le match','To do before the match')}"${open?'':' hidden'}>${open?bellMenuInner():''}</div></div>`;
+}
+const bellMenuInner=()=>`<h3>${L('À faire avant le match','To do before the match')}</h3>${todoListHTML()}`;
+function headerHTML(){
   const u=U(),total=G.schedule.length,over=G.day>=total;
   const day=over?L('Saison terminée','Season over'):L(`Journée <b>${G.day+1}</b>/${total}`,`Matchday <b>${G.day+1}</b>/${total}`);
   const sd=`<b>S${G.season}</b> · ${over?L('fin','end'):`J${G.day+1}/${total}`}`;
-  const pages=SECT[UI.sect];
+  const pages=pagesOf(UI.sect);
   return `<header class="top ${PREFS.nav==='bar'?'navbar':'navtabs'}"><div class="wrap topin">${brandHd}
-  <div class="meta"><span>${badge(u)}</span><span class="mfull">${L('Saison','Season')} <b>${G.season}</b></span><span class="mfull">${day}</span><span class="mshort">${sd}</span><span><b>${fmt(G.cash)}</b><span class="mfull"> gils</span><span class="mshort"> g</span></span></div>${nextBtn()}</div>
-  <div class="wrap sects">${Object.keys(SECT).map(s=>sectBtn(s,by,'sect'+(s==='options'?' opt':'')+(s==='jouer'?' play':''),false)).join('')}</div>
+  <div class="meta"><span>${badge(u)}</span><span class="mfull">${L('Saison','Season')} <b>${G.season}</b></span><span class="mfull">${day}</span><span class="mshort">${sd}</span><span><b>${fmt(G.cash)}</b><span class="mfull"> gils</span><span class="mshort"> g</span></span></div>${bellHTML()}</div>
+  <div class="wrap sects">${Object.keys(SECT).map(s=>sectBtn(s,'sect'+(s==='options'?' opt':'')+(s==='jouer'?' play':''),false)).join('')}</div>
   ${pages.length>1?`<nav class="wrap tabs" aria-label="${L('Pages','Pages')}">${pages.map(([k,l])=>`<button class="tab" data-a="tab" data-t="${k}" ${UI.tab===k?'aria-current="page"':''}>${P(l)}</button>`).join('')}</nav>`:''}</header>`;
 }
 // barre du bas (≤ 700 px, réglage PREFS.nav = 'bar') : rendue seulement dans ce mode, masquée par le CSS au-delà de 700 px
 // UI-38 : ordre de la barre mobile, Jouer au centre (classe play : ambre, CSS) ; l'ordre des sections du bureau (SECT) ne change pas
 const BAR_ORDER=['accueil','club','jouer','effectif','options'];
-function barHTML(by){return `<nav class="bnav" aria-label="${L('Sections','Sections')}">${BAR_ORDER.map(s=>sectBtn(s,by,'bn'+(s==='jouer'?' play':''),true)).join('')}</nav>`;}
+function barHTML(){return `<nav class="bnav" aria-label="${L('Sections','Sections')}">${BAR_ORDER.map(s=>sectBtn(s,'bn'+(s==='jouer'?' play':''),true)).join('')}</nav>`;}
 
 // ---------- v0.6.3 : écran titre, Options sans partie, parcours, fenêtres, import / export ----------
 // UI.scr : 'title' | 'opts' | 'flow' | 'game'. G peut être null sur title et opts. Rien n'est lu ni écrit dans la sauvegarde avant « Commencer la saison ».
@@ -2425,7 +2592,7 @@ const PORD={GK:0,DF:1,MF:2,FW:3};
 const previewList=t=>t.players.slice().sort((a,b)=>PORD[a.pos]-PORD[b.pos]||ovr(b)-ovr(a));
 function resetUI(){
   stopTimer();
-  UI.sect='accueil';UI.tab='home';UI.last=lastDef();UI.csel=null;UI.ptab='ov';UI.live=null;UI.confirm=null;UI.sel=null;UI.msel=null;UI.resDay=null;UI.prev=null;UI.dlg=null;UI.fl={s:{},m:{}};UI.cedit=false;if(UI.fs)closeFS(true);
+  UI.sect='accueil';UI.tab='home';UI.last=lastDef();UI.csel=null;UI.ptab='ov';UI.live=null;UI.confirm=null;UI.sel=null;UI.msel=null;UI.resDay=null;UI.prev=null;UI.dlg=null;UI.fl={s:{},m:{}};UI.cedit=false;UI.mode='season';UI.tr={opp:null,how:'live'};UI.bell=false;LOGBOUND=false;if(UI.fs)closeFS(true);
 }
 function startNew(){
   stopTimer();G=createLeague();            // premier (et seul) tirage aléatoire de la partie, au clic
@@ -2547,7 +2714,7 @@ function xmsgHTML(){
   return `<div class="optnote${m.bad?' bad':''}" role="${m.bad?'alert':'status'}"><span>${T(m.id)}</span>${pend?`<span class="row"><button class="btn small danger" data-a="impok">${T('x.warn.go')}</button><button class="btn small" data-a="impno">${T('x.warn.no')}</button></span>`:''}</div>`;
 }
 // UI-27 : état d'interface en mémoire seulement (rien dans PREFS ni dans G) : message, import en attente, texte de repli de la copie, zone de collage.
-function xreset(){UI.xmsg=null;UI.xpend=null;UI.xtxt=null;UI.xpaste=false;UI.xptxt='';}
+function xreset(){UI.xmsg=null;UI.xpend=null;UI.xtxt=null;UI.xpaste=false;UI.xptxt='';UI.ltxt=null;UI.lconf=false;}
 function exportNow(){
   const r=G&&G.started?exportSave(G):null;
   if(!r){toast(T('x.noexp'),true);return;}
@@ -2593,6 +2760,117 @@ function applyImport(g){
   render();window.scrollTo(0,0);toast(st.st==='ok'?T('x.ok.imp'):T('x.err.store'),st.st!=='ok');
 }
 
+// ---------- TEC-10 : journal de test (local, jamais envoyé) ----------
+// Le moteur construit les entrées (logMatch, logDay, logSeason, logTrim : lecture seule, aucun rnd()) ; l'UI les range ici. Stockage : clé LKEY, hors de G (aucun champ ajouté à G) ; préférence : PREFS.log.
+// Aucune requête réseau : le journal ne sort de l'appareil que par le fichier téléchargé ou le texte copié par la personne. Exclus : noms (joueurs, clubs, entraîneur), textes libres, sauvegarde entière, agent utilisateur.
+// Toute erreur interne du journal est avalée : le jeu n'est jamais bloqué, ses tirages et ses résultats ne dépendent pas du journal.
+const LKEY='blitz-manager-log';
+const logEmpty=()=>({logv:LOG_V,parts:[]});
+const logScreen=()=>{const w=window.innerWidth||1280;return w<=700?'mobile':w<=1099?'tablette':'pc';};   // classe d'écran : mêmes seuils que la navigation (700 px) et les colonnes (1 100 px)
+function logLoad(){
+  if(LOGC)return LOGC;
+  let o=null;try{o=JSON.parse(localStorage.getItem(LKEY)||'null');}catch(e){}
+  LOGC=o&&typeof o==='object'&&Array.isArray(o.parts)?{logv:LOG_V,parts:o.parts.filter(p=>p&&typeof p==='object').map(p=>({...p,e:Array.isArray(p.e)?p.e.filter(x=>x&&typeof x==='object'):[]}))}:logEmpty();
+  return LOGC;
+}
+// Écriture : tampon circulaire à LOG_MAX (logTrim) ; échec d'écriture : on rogne une fois (moitié du poids), puis on désactive en silence pour la session.
+function logSave(){
+  if(LOGDEAD||!LOGC)return;
+  try{
+    if(JSON.stringify(LOGC).length>LOG_MAX)LOGC=logTrim(LOGC,LOG_MAX);
+    localStorage.setItem(LKEY,JSON.stringify(LOGC));
+  }catch(e){
+    try{LOGC=logTrim(LOGC,Math.floor(JSON.stringify(LOGC).length/2));localStorage.setItem(LKEY,JSON.stringify(LOGC));}catch(e2){LOGDEAD=true;}
+  }
+}
+const logCount=o=>o.parts.reduce((a,p)=>a+p.e.length,0);
+function logPartNew(){
+  const u=U(),p={v:VERSION,gv:G.v,club:u.short,lv:u.level,scr:logScreen(),e:[]};   // en-tête de partie : version, code du club, niveau, classe d'écran
+  logLoad().parts.push(p);LOGBOUND=true;logSave();
+  return LOGC.parts[LOGC.parts.length-1];
+}
+// Section courante = la dernière. Une nouvelle section s'ouvre si la partie en cours n'est pas celle de la dernière section (autre club, autre version, ou progression en arrière : nouvelle partie, import).
+function logCur(){
+  if(!G||G.userId==null||!G.started)return null;
+  const o=logLoad(),p=o.parts[o.parts.length-1];
+  if(LOGBOUND&&p)return p;
+  if(p&&p.v===VERSION&&p.club===U().short){
+    let le=null;for(let i=p.e.length-1;i>=0;i--){const x=p.e[i];if(x&&x.s!=null&&(x.k==='m'||x.k==='d'||x.k==='f')){le=x;break;}}
+    if(!(le&&(le.s>G.season||(le.s===G.season&&(le.d||0)>G.day+1)))){LOGBOUND=true;return p;}
+  }
+  return logPartNew();
+}
+function logAdd(en){
+  if(!en||!PREFS.log||LOGDEAD)return;
+  try{const p=logCur();if(!p)return;p.e.push(en);logSave();}catch(e){}
+}
+const logM=M=>{if(!PREFS.log||LOGDEAD)return;try{logAdd(logMatch(M,G));}catch(e){}};   // après finalizeMatch ; saison : avant G.day++ ; entraînement : G non lu
+const logD=()=>{if(!PREFS.log||LOGDEAD)return;try{logAdd(logDay(G));}catch(e){}};   // après G.day++
+const logS=()=>{if(!PREFS.log||LOGDEAD)return;try{logAdd(logSeason(G));}catch(e){}};   // avant newSeason
+function logStart(){LOGBOUND=false;if(!PREFS.log||LOGDEAD)return;try{logPartNew();}catch(e){}}   // début de partie : toujours une nouvelle section
+function logBind(){LOGBOUND=false;if(!PREFS.log||LOGDEAD)return;try{logCur();}catch(e){}}   // reprise (Continuer) : rattache la sauvegarde à sa section ou en ouvre une
+// Erreurs : message tronqué à 160 caractères (adresses retirées), LOG_ERR_MAX par partie ; w : 'e' (error) | 'u' (unhandledrejection). Sans partie en cours : rien.
+function logErr(w,msg){
+  if(!PREFS.log||LOGDEAD)return;
+  try{
+    const p=logCur();if(!p)return;
+    if(p.e.filter(x=>x&&x.k==='e').length>=LOG_ERR_MAX)return;
+    const m=String(msg==null?'':msg).replace(/(?:https?|file|blob|data):\S*/gi,'·').replace(/\s+/g,' ').trim().slice(0,160);
+    const en={k:'e',w,m};if(G.season!=null){en.s=G.season;en.d=G.day;}
+    p.e.push(en);logSave();
+  }catch(e){}
+}
+if(window.addEventListener){
+  window.addEventListener('error',ev=>logErr('e',ev&&(ev.message||(ev.error&&ev.error.message))));
+  window.addEventListener('unhandledrejection',ev=>logErr('u',ev&&ev.reason&&(ev.reason.message||ev.reason)));
+}
+// Export : JSON compact, un seul fichier ; en-tête : logv, version, G.v, date d'export, langue, classe d'écran.
+function logExportData(){
+  const o=logLoad(),lp=o.parts[o.parts.length-1];
+  const text=JSON.stringify({logv:LOG_V,v:VERSION,gv:(G&&G.v)||(lp&&lp.gv)||null,exportedAt:new Date().toISOString(),lang:PREFS.lang,scr:logScreen(),parts:o.parts});
+  const d=new Date(),p2=n=>String(n).padStart(2,'0');
+  return{text,name:`blitz-manager-log-${VERSION}-${d.getFullYear()}${p2(d.getMonth()+1)}${p2(d.getDate())}.json`};
+}
+function logExport(){
+  if(!logCount(logLoad())){toast(T('l.none'),true);return;}
+  const r=logExportData();
+  try{
+    const url=URL.createObjectURL(new Blob([r.text],{type:'application/json'})),a=document.createElement('a');
+    a.href=url;a.download=r.name;a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);toast(T('l.ok.exp'));
+  }catch(e){toast(T('l.err.exp'),true);}
+}
+function logCopy(){
+  if(!logCount(logLoad())){toast(T('l.none'),true);return;}
+  const r=logExportData();
+  const fb=()=>{UI.ltxt=r.text;UI.lconf=false;render();const t=document.getElementById('lcopy');if(t){t.focus();t.select();}};
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(r.text).then(()=>toast(T('l.ok.copy')),fb);return;}
+  }catch(e){}
+  fb();
+}
+function logClear(){
+  LOGC=logEmpty();LOGBOUND=false;LOGDEAD=false;
+  try{localStorage.removeItem(LKEY);}catch(e){}
+  UI.lconf=false;UI.ltxt=null;render();toast(T('l.cleared'));
+}
+function logStat(){
+  const o=logLoad(),n=logCount(o),len=o.parts.length?JSON.stringify(o).length:0,cap=Math.round(LOG_MAX/1024);
+  const kb=len<10240?(len/1024).toFixed(1).replace('.',LANG==='en'?'.':','):String(Math.round(len/1024));
+  return LANG==='en'?`${n} ${n===1?'entry':'entries'} · ${kb} KB / ${cap} KB`:`${n} ${n>1?'entrées':'entrée'} · ${kb} Ko / ${cap} Ko`;
+}
+function logBoxHTML(){
+  if(UI.ltxt==null)return '';
+  return `<div class="xbox stack tight"><label class="f">${T('l.copy.lbl')}<textarea id="lcopy" class="xta" readonly rows="5" spellcheck="false">${esc(UI.ltxt)}</textarea></label><div class="row"><button class="btn small primary" data-a="lsel">${T('x.sel')}</button><button class="btn small" data-a="lclose">${T('x.close')}</button></div></div>`;
+}
+// Options › Paramètres, sous Exporter / Importer (aussi depuis l'écran titre, sans partie en cours).
+function logRowsHTML(seg){
+  const has=logCount(logLoad())>0,conf=UI.lconf;
+  return `<div class="optrow"><div><b>${T('l.pref')}</b><span class="hint">${T('l.pref.h')}</span></div>${seg([['on',L('Oui','Yes')],['off',L('Non','No')]],PREFS.log?'on':'off','logpref')}</div>
+  <div class="optrow"><div><b>${T('l.title')}</b><span class="hint" id="logstat">${logStat()}</span></div><div class="stack tight xbtns"><div class="row"><button class="btn" data-a="logexp"${has?'':' disabled'}>${T('l.exp')}</button><button class="btn" data-a="logcopy"${has?'':' disabled'}>${T('l.copy')}</button></div><div class="row">${conf?`<button class="btn danger" data-a="logclearok">${T('l.clear.go')}</button><button class="btn" data-a="logclearno">${T('l.clear.no')}</button>`:`<button class="btn" data-a="logclear"${has?'':' disabled'}>${T('l.clear')}</button>`}</div></div></div>
+  ${logBoxHTML()}`;
+}
+
 // ---------- Choix du club ----------
 function pickHTML(){
   const ranked=G.teams.map(t=>({t,p:teamPower(t)})).sort((a,b)=>b.p-a.p);
@@ -2628,10 +2906,14 @@ const TODO_ICO={inj:'⚠',tired:'↓',cash:'⊖',pts:'+',spec:'★'};
 const goLink=(t,label)=>`<button class="linkbtn pgl" data-a="goto" data-t="${t}">${label||pageName(t)} →</button>`;
 const blockHd=(title,t,label)=>`<div class="row between bhd"><h3>${title}</h3>${t?goLink(t,label):''}</div>`;
 // « À faire avant le match » : mêmes lignes que les pastilles (todoLines), 5 au plus ; rien n'est stocké
-function todoBlock(){
+// UI-71 : liste « À faire » commune au bloc de l'Accueil et à la cloche (une seule source : todoLines)
+function todoListHTML(){
   const ls=todoLines(G).slice(0,5);
   const rows=ls.map(l=>`<li class="td ${l.sev}"><span class="tdi" role="img" aria-label="${l.sev==='block'?L('Bloquant','Blocking'):L('À surveiller','Heads-up')}">${TODO_ICO[l.id]||'•'}</span><span class="tdt">${esc(todoText(l))}</span><button class="btn small" data-a="goto" data-t="${l.go}">${TODO_LBL[l.go]?P(TODO_LBL[l.go]):pageName(l.go)} →</button></li>`).join('');
-  return `<section class="panel"><h3>${L('À faire avant le match','To do before the match')}</h3>${ls.length?`<ul class="todo">${rows}</ul>`:`<p class="alldone"><span aria-hidden="true">✓</span> ${L('Tout est prêt','All set')}</p>`}</section>`;
+  return ls.length?`<ul class="todo">${rows}</ul>`:`<p class="alldone"><span aria-hidden="true">✓</span> ${L('Tout est prêt','All set')}</p>`;
+}
+function todoBlock(){
+  return `<section class="panel hb1"><h3>${L('À faire avant le match','To do before the match')}</h3>${todoListHTML()}</section>`;
 }
 // fiche adversaire (dans le bloc Prochain match) : rang et points, joueur clé, meilleur buteur (si g > 0), mention du style ; force par ligne et forme sont au-dessus
 function oppCard(opp){
@@ -2648,13 +2930,11 @@ function homeHTML(){
   const u=U();
   if(G.day>=G.schedule.length)return seasonEndHTML();
   const [h,a]=todayFx(),home=h===u.id,opp=G.teams[home?a:h];
-  const lu=lineVals(u),lo=lineVals(opp,true);
-  const pu=Math.round(teamPower(u)),po=Math.round(teamPower(opp));
-  const next=`<section class="panel stack"><h3>${L('Prochain match','Next match')} · ${L('Journée','Matchday')} ${G.day+1}</h3>
+  const next=`<section class="panel stack hb2"><h3>${L('Prochain match','Next match')} · ${L('Journée','Matchday')} ${G.day+1}</h3>
   <div class="vs"><div class="side">${badge(u,true)}<span class="nm">${esc(u.name)}</span>${formChips(u.id)}</div>
   <div class="mid">${home?L('DOMICILE','HOME'):L('EXTÉRIEUR','AWAY')}<br>VS</div>
   <div class="side">${badge(opp,true)}<span class="nm">${esc(opp.name)}</span>${formChips(opp.id)}</div></div>
-  <div class="stack tight">${cmpRow(L('Force globale','Overall power'),pu,po,1)}${cmpRow(L('Attaque','Attack'),lu.fwd,lo.fwd,1)}${cmpRow(L('Milieu','Midfield'),lu.mid,lo.mid,1)}${cmpRow(L('Défense','Defence'),lu.def,lo.def,1)}${cmpRow(L('Gardien','Keeper'),lu.gk,lo.gk,1)}</div>
+  ${cmpFused(u,opp)}
   ${oppCard(opp)}
   <div class="row acts"><button class="btn primary" data-a="goto" data-t="match">${L('Aller sur le terrain','Go to the pitch')}</button><button class="btn" data-a="sim">${L('Simuler directement','Simulate now')}</button></div></section>`;
   // UI-50 : 5 clubs, 2 au-dessus et 2 au-dessous du club du joueur ; premier : le club puis les 4 suivants ; dernier : le club puis les 4 précédents (le rang affiché reste le vrai rang)
@@ -2662,7 +2942,7 @@ function homeHTML(){
   const mini=st5.slice(i0,i0+5).map((r,k)=>{const t=G.teams[r.id],i=i0+k;return `<tr class="${t.id===u.id?'me':''}"><td class="num">${i+1}</td><td>${badge(t)}</td><td class="num hx">${r.p}</td><td class="num hx">${r.gf-r.ga>0?'+':''}${r.gf-r.ga}</td><td class="num">${r.pts}</td></tr>`;}).join('');
   const nw=G.news.length?G.news.slice(0,5).map(n=>`<div><span>J${n.d}</span><p>${n.a?jAlert()+' ':''}${esc(n.s)}</p></div>`).join(''):`<p class="hint">${L('Aucune nouvelle pour le moment.','No news yet.')}</p>`;
   const last=G.finLog[0],C=G.coach,nw1=netIf(true,home),nw0=netIf(false,home),cl=coachLvl(C);
-  const fin=`<section class="panel">${blockHd(L('Finances','Finances'),'finance')}<div class="stack tight"><div class="frow"><span class="muted">${L('Budget','Budget')}</span><b class="mono">${fmt(G.cash)} gils</b></div>
+  const fin=`<section class="panel hb6">${blockHd(L('Finances','Finances'),'finance')}<div class="stack tight"><div class="frow"><span class="muted">${L('Budget','Budget')}</span><b class="mono">${fmt(G.cash)} gils</b></div>
   <div class="frow"><span class="muted">${L('Salaires et staff / journée','Wages and staff / matchday')}</span><b class="mono">−${fmt(sum(u.players.map(p=>p.wage))+800)}</b></div>
   ${last?`<div class="frow"><span class="muted">${L('Dernier match','Last match')}</span><b class="mono ${last.net>=0?'pos-v':'neg-v'}">${signed(last.net)}</b></div>`:''}
   <div class="nxfin"><b class="nxh">${L('Prochain match, résultat net prévu','Next match, projected net result')}<span class="mono muted"> · ${home?L('domicile','home'):L('extérieur','away')}</span></b>
@@ -2670,11 +2950,15 @@ function homeHTML(){
   <div class="frow"><span class="muted">${L('Défaite','Loss')}</span><b class="mono ${nw0.net>=0?'pos-v':'neg-v'}">${signed(nw0.net)}</b></div>
   <p class="hint">${L(`Seule différence : la prime de victoire (+${fmt(nw1.bonus)}).`,`Only difference: the win bonus (+${fmt(nw1.bonus)}).`)}</p></div></div></section>`;
   const spec=C.spec&&SPECS[C.spec]?P(SPECS[C.spec].n):cl.lvl>=SPEC_MIN?L('à choisir','to pick'):L(`dès le niveau ${SPEC_MIN}`,`from level ${SPEC_MIN}`);
-  const cc=`<section class="panel">${blockHd(L('Entraîneur','Coach'),'coach')}<div class="stack tight">${coachBar()}<div class="frow"><span class="muted">${L('Spécialité','Specialty')}</span><b>${spec}</b></div></div></section>`;
-  // UI-52 (option C) : bande 1 « Action » (À faire, Prochain match), bande 2 « Suivi » en deux colonnes indépendantes (Classement, Finances | Entraîneur, Journal) ; l'ordre du DOM est l'ordre de lecture
-  const tbl=`<section class="panel">${blockHd(L('Classement','League table'),'table')}<div class="tbl"><table><thead><tr><th class="num">#</th><th>Club</th><th class="num hx">${L('J','P')}</th><th class="num hx">+/−</th><th class="num">Pts</th></tr></thead><tbody>${mini}</tbody></table></div></section>`;
-  const jrn=`<section class="panel">${blockHd(L('Journal du club','Club journal'),'journal')}<div class="news">${nw}</div></section>`;
-  return `<div class="hm"><div class="hb1">${todoBlock()}${next}</div><div class="hb2"><div class="hcol">${tbl}${fin}</div><div class="hcol">${cc}${jrn}</div></div>${helpRow('game')}</div>`;
+  // UI-74 : bilan général de l'entraîneur (lecture seule de G.coach et G.honors ; matchs de saison seulement, l'entraînement n'est pas enregistré) ; « — » tant qu'aucun match n'est joué
+  const pc0=winPct(C),dm=pc0===null?'—':null,ttl=G.honors.filter(h=>h.rank===1).length;
+  const cr=(l,v)=>`<div class="frow"><span class="muted">${l}</span><b class="mono">${v}</b></div>`;
+  const cc=`<section class="panel hb5">${blockHd(L('Entraîneur','Coach'),'coach')}<div class="stack tight">${coachBar()}<div><div class="frow"><span class="muted">${L('Spécialité','Specialty')}</span><b>${spec}</b></div>
+  ${cr(L('Bilan','Record'),`${C.w} ${L('V','W')} · ${C.l} ${L('D','L')}`)}${cr(L('Taux de victoire','Win rate'),dm||pc0+'%')}${cr(L('Série · record','Streak · best'),`${C.streak} · ${C.best}`)}${cr(L('BP · BC / m','GF · GA / m'),dm||`${(C.gf/C.m).toFixed(1)} · ${(C.ga/C.m).toFixed(1)}`)}${cr(L('Saisons · titres','Seasons · titles'),`${C.seasons} · ${ttl}`)}</div></div></section>`;
+  const tbl=`<section class="panel hb3">${blockHd(L('Classement','League table'),'table')}<div class="tbl"><table><thead><tr><th class="num">#</th><th>Club</th><th class="num hx">${L('J','P')}</th><th class="num hx">+/−</th><th class="num">Pts</th></tr></thead><tbody>${mini}</tbody></table></div></section>`;
+  const jrn=`<section class="panel hb4">${blockHd(L('Journal du club','Club journal'),'journal')}<div class="news">${nw}</div></section>`;
+  // UI-72 : à ≥ 1 200 px, deux colonnes (A : À faire, Prochain match | B : Classement et Entraîneur côte à côte, Journal, Finances) ; en dessous, une colonne dans l'ordre hb1…hb6 (À faire, Prochain match, Classement, Journal, Entraîneur, Finances ; display:contents + order, voir « UI-72 » dans style.css)
+  return `<div class="hm"><div class="hcA">${todoBlock()}${next}</div><div class="hcB"><div class="hpr">${tbl}${cc}</div>${jrn}${fin}</div>${helpRow('game')}</div>`;
 }
 function seasonEndHTML(){
   const st=sortedTable(G),u=U(),rank=st.findIndex(r=>r.id===u.id)+1,champ=G.teams[st[0].id];
@@ -2758,7 +3042,7 @@ function coachPortraitHTML(){
 }
 function endCoachEdit(){UI.cedit=false;const n=document.getElementById('cname');if(n)n.innerHTML=coachNameHTML();}
 function coachHTML(){
-  const C=G.coach,u=U(),pct=C.m?Math.round(C.w/C.m*100):0;
+  const C=G.coach,u=U(),pct=winPct(C)??0;
   const comps=Object.entries(C.comps).map(([k,v])=>{const [f,s,pr]=k.split('|');return{f,s,pr:+pr,...v};}).sort((a,b)=>b.p-a.p||b.w-a.w);
   const best=comps.filter(c=>c.p>=3).sort((a,b)=>b.w/b.p-a.w/a.p||(b.gf-b.ga)-(a.gf-a.ga))[0];
   const crow=comps.map(c=>{const r=Math.round(c.w/c.p*100);return `<tr class="${best===c?'me':''}"><td class="mono"><b>${c.f}</b></td><td>${nN(c.s)}</td><td class="x">${pN(c.pr)}</td><td class="num">${c.p}</td><td><div class="wbar">${barH(r)}<span class="mono">${r}%</span></div></td><td class="num x">${(c.gf/c.p).toFixed(1)}</td><td class="num x">${(c.ga/c.p).toFixed(1)}</td></tr>`;}).join('');
@@ -2861,6 +3145,7 @@ function settingsHTML(){
   <div class="optrow"><div><b>${T('s.welcome')}</b><span class="hint">${T('s.welcome.h')}</span></div>${seg([['on',L('Oui','Yes')],['off',L('Non','No')]],PREFS.hideWelcome?'off':'on','wpref')}</div>
   <div class="optrow"><div><b>${T('x.title')}</b><span class="hint">${T('x.hint')}${live?'':' '+T('x.noexp')}</span></div><div class="stack tight xbtns"><div class="row"><button class="btn" data-a="exp"${live?'':' disabled'}>${T('x.exp')}</button><button class="btn" data-a="copysave"${live?'':' disabled'}>${T('x.copy')}</button></div><div class="row"><button class="btn" data-a="imp">${T('x.imp')}</button><button class="btn" data-a="pastesave" aria-expanded="${UI.xpaste}">${T('x.paste')}</button></div><input type="file" id="impfile" data-c="impfile" accept=".json,application/json" hidden></div></div>
   ${xmsgHTML()}${xboxHTML()}
+  ${logRowsHTML(seg)}
   ${live?`<div class="optrow"><div><b>${T('s.title')}</b><span class="hint">${conf?T('s.title.live'):T('s.title.h')}</span></div><button class="btn${conf?' danger':''}" data-a="totitle">${conf?T('s.title.sure'):T('s.title.go')}</button></div>`:''}</section></div>`;
 }
 // ---------- Terrain : composition, style, entraînement ----------
@@ -2878,8 +3163,10 @@ function rulesHTML(){
   if(t==='game'){
     body=`<div class="grid2">${sec('Saison','Season',li([L('8 clubs en matchs aller-retour : 14 journées.','8 clubs, home and away: 14 matchdays.'),L('Victoire 3 points ; victoire en prolongation 2 ; défaite en prolongation 1 ; défaite 0.','Win 3 points; overtime win 2; overtime loss 1; loss 0.'),L(`Prime de fin de saison de ${fmt(PRIZES[0])} gils (champion) à ${fmt(PRIZES[PRIZES.length-1])} (dernier).`,`End-of-season prize from ${fmt(PRIZES[0])} gil (champions) to ${fmt(PRIZES[PRIZES.length-1])} (last).`),L('À chaque nouvelle saison, les joueurs vieillissent d’un an ; à 35 ans ils prennent leur retraite et un jeune les remplace. Dès 30 ans, les stats déclinent légèrement.','Every new season players age a year; at 35 they retire and a youngster replaces them. From 30, stats decline slightly.')]))}
     ${sec('Match','Match',li([L('Six joueurs par équipe : un gardien et cinq joueurs de champ selon la formation.','Six players a side: one keeper and five outfield players depending on the formation.'),L('Deux périodes de cinq minutes (36 phases). En cas d’égalité : mort subite, puis départage.','Two five-minute halves (36 phases). If level: sudden death, then a tiebreak.'),L('Chaque phase : possession, portée du ballon (AT contre PH), jusqu’à deux passes (PS contre IN), tir (TI contre IN) puis arrêt (AR).','Each phase: possession, carrying the ball (AT vs PH), up to two passes (PS vs IN), a shot (TI vs IN), then a save (AR).'),L('Trois remplacements par match, à la mi-temps ou en direct.','Three substitutions per match, at half-time or live.'),L('Trois consignes, données en pause à tout moment du match, mi-temps comprise : Souffler, Verrouiller, Pousser. Une réserve de 3 blocs de 6 phases par match à répartir entre elles (1 à 3 blocs par consigne, dans la limite de la fin du match). Souffler est instantané ; Verrouiller et Pousser durent leurs blocs, une seule à la fois : en changer fait perdre les phases restantes. Impossible en prolongation. Souffler rend des HP aux six titulaires ; Verrouiller renforce la défense et affaiblit le milieu et l’attaque ; Pousser renforce l’attaque et affaiblit la défense et le milieu ; les joueurs de la ligne visée perdent des HP. L’adversaire en donne aussi.'+(HALF_POWER>0?'':' Leurs effets sont provisoirement désactivés, le temps du rééquilibrage.'),'Three instructions, given while paused at any point in the match, half-time included: Catch breath, Lock down, Push forward. A reserve of 3 blocks of 6 phases per match to spend on them (1 to 3 blocks per instruction, within what is left of the match). Catch breath is instant; Lock down and Push forward last for their blocks, one at a time: switching loses the remaining phases. Not possible in overtime. Catch breath gives the six starters HP back; Lock down boosts defence and weakens midfield and attack; Push forward boosts attack and weakens defence and midfield; the players of the targeted line lose HP. The opponent gives instructions too.'+(HALF_POWER>0?'':' Their effects are temporarily switched off until the game is rebalanced.')),L('En direct, chaque phase du fil se déplie pour montrer ses duels : stats comparées, probabilité du tacle, facteurs (style, pressing, poste, trait, HP). Vert : favorable à ton équipe ; rouge : défavorable ; ✓ ou ✗ : l’action de celui qui la tente réussit ou non.','Live, every feed phase unfolds to show its duels: compared stats, tackle probability, factors (style, pressing, position, trait, HP). Green: good for your team; red: bad for it; ✓ or ✗: the action succeeds or fails for the player attempting it.'),L('Infos de match : possession cumulée et sur les 6 dernières phases ; la jauge de HP de tes joueurs passe de OK à fatigué (HP à 25 % du maximum ou moins) puis épuisé (moins de 10 HP) ; un bandeau et le fil signalent chaque joueur qui passe épuisé.','Match info: total possession and possession over the last 6 phases; your players’ HP gauge goes from OK to tired (HP at 25% of max or less) then spent (under 10 HP); a banner and the feed flag every player who becomes spent.'),L('La Sphère est ronde : le club qui reçoit joue vers la droite, le visiteur vers la gauche. Une consigne de ligne colore la ligne visée (bande hachurée et symbole) tant qu’elle dure ; Souffler entoure brièvement les six titulaires d’un halo. Seul le dessin change : aucune distance ne compte dans les duels.','The Sphere is round: the home club attacks to the right, the visitor to the left. A line instruction marks the targeted line (hatched band and symbol) while it lasts; Catch breath briefly puts a halo around the six starters. Only the picture changes: no distance counts in the duels.'),L('Dans un duel de passe, la phrase nomme le passeur, le receveur et le défenseur qui gêne : passe sans gêne, passe affaiblie, interception ou passe qui s’éteint.','In a pass duel, the sentence names the passer, the receiver and the defender who hampers it: clean pass, weakened pass, interception or a pass that fades out.'),L('Avant le coup d’envoi, « Tactique rapide » règle le style, le pressing et la formation ; le détail est dans Effectif › Tactique. Changer de formation refait le Six de départ en automatique.','Before kick-off, “Quick tactics” sets style, pressing and formation; details are in Squad › Tactics. Changing formation resets the starting six to automatic.')]))}</div>
+    ${sec('Match d’entraînement','Training match',li([L('Jouer › Entraînement : un match contre l’un des sept autres clubs, présélection = le plus proche en force. Les deux équipes partent à HP maximum ; le bonus d’entraîneur s’applique.','Play › Training: a match against any of the seven other clubs, preselected = the closest in strength. Both teams start at full HP; the coach bonus applies.'),L('Bac à sable : aucun effet sur la saison (classement, stats, XP, HP, blessures, finances, journal) ni sur ta composition. Les réglages faits pendant le match sont jetés.','Sandbox: no effect on the season (table, stats, XP, HP, injuries, finances, journal) or on your lineup. Changes made during the match are discarded.'),L('Quitter, changer d’onglet ou de section ferme le match sans confirmation.','Leaving, or switching tab or section, closes the match without asking.')]))}
+    ${sec('Journal de test','Test log',li([L('Un journal de test s’enregistre sur cet appareil, actif par défaut (Options › Paramètres) : il aide à signaler un problème ou à régler l’équilibrage. Rien n’est envoyé : tu l’exportes ou le copies toi-même. Il ne change rien au jeu.','A test log is recorded on this device, on by default (Options › Settings): it helps report a problem or tune the balance. Nothing is sent: you export or copy it yourself. It changes nothing in the game.'),L('Pour ton club : version, code du club, niveau, puis par match le score, la formation, le style, le pressing, les consignes, les remplacements, les tirs, la possession, les HP de fin et les blessures ; par journée le budget, le public, le niveau moyen, les points de talent non dépensés et le rang ; le bilan de chaque saison ; les matchs d’entraînement (adversaire, score) ; les erreurs du jeu (160 caractères, 20 par partie).','For your club: version, club code, level, then per match the score, formation, style, pressing, instructions, substitutions, shots, possession, end HP and injuries; per matchday the budget, crowd, average level, unspent talent points and rank; each season’s summary; training matches (opponent, score); game errors (160 characters, 20 per game).'),L('Ni noms de joueurs, de clubs ou d’entraîneur, ni textes libres, ni sauvegarde, ni informations sur ton navigateur : les clubs y figurent par leur code.','No player, club or coach names, no free text, no save file, no browser information: clubs appear by their code only.'),L('Taille limitée à 128 Ko : au-delà, les matchs les plus anciens partent d’abord et les bilans de saison restent. Le journal survit à « Nouvelle partie » et au changement de version (une section par partie). « Effacer » le vide, après confirmation. Si le téléchargement est bloqué, utilise Copier.','Size capped at 128 KB: beyond that the oldest matches go first and the season summaries stay. The log survives “New Game” and version changes (one section per game). “Clear” empties it, after confirmation. If downloads are blocked, use Copy.')]))}
     ${sec('Fatigue et blessures','Fatigue and injuries',li([L('Porter le ballon, passer et tirer coûtent des HP ; un joueur qui ne participe pas à l’action en récupère un peu. Sous 10 HP, PS et TI sont divisés par 2.','Carrying, passing and shooting cost HP; a player not involved in the action recovers a little. Below 10 HP, PS and TI are halved.'),L('Après chaque journée, tout le monde récupère une partie de ses HP.','After every matchday everyone recovers part of their HP.'),L('Un joueur très fatigué risque davantage de se blesser (1 à 3 journées d’absence).','A very tired player is more likely to get injured (1 to 3 matchdays out).')]))}
-    ${sec('Navigation et alertes','Navigation and alerts',li([L('Cinq sections : Tableau de bord, Club, Effectif, Jouer, Options. Sur mobile, la barre du bas les garde sous le pouce, avec Jouer au centre en ambre ; le réglage Options › Paramètres › Navigation mobile la place en haut.','Five sections: Dashboard, Club, Squad, Play, Options. On mobile the bottom bar keeps them under your thumb, with Play in the middle in amber; Options › Settings › Mobile navigation moves it to the top.'),L('Club : Entraîneur, Finances, Fiche du club, Personnalisation, Journal. Effectif : Joueurs, Tactique, Entraînement, Marché. Jouer : Match, Calendrier, Classement.','Club: Coach, Finances, Club sheet, Customisation, Journal. Squad: Players, Tactics, Training, Market. Play: Match, Fixtures, Table.'),L('Le bouton ▶ en haut mène au prochain match, reprend le match en cours (ou son bilan) ou lance la saison suivante.','The ▶ button at the top goes to the next match, resumes the match in progress (or its report) or starts the next season.'),L('Une pastille chiffrée sur une section signale ce qui reste à faire : titulaire blessé ou sous 50 % de HP, budget négatif, points de talent à répartir, spécialité d’entraîneur à choisir, bilan de match à valider (Jouer). Rouge : un titulaire blessé ; ambre : le reste. Le chiffre et l’infobulle donnent le détail.','A numbered badge on a section flags what is left to do: an injured starter or one under 50% HP, a negative budget, talent points to spend, a coach specialty to pick, a match report to confirm (Play). Red: an injured starter; amber: the rest. The number and the tooltip give the detail.'),L('Tableau de bord : « À faire avant le match » liste ces mêmes alertes, chacune avec son lien ; la fiche de l’adversaire donne son rang, sa forme, sa force par ligne et ses joueurs marquants.','Dashboard: “To do before the match” lists the same alerts, each with its link; the opponent card gives its rank, form, strength by line and standout players.'),L('Club › Journal : les 100 derniers événements, groupés par saison et journée ; les puces filtrent par catégorie (⚠ alertes, match, effectif, marché, club, finances).','Club › Journal: the last 100 events, grouped by season and matchday; the chips filter by category (⚠ alerts, match, squad, market, club, finances).')]))}
+    ${sec('Navigation et alertes','Navigation and alerts',li([L('Cinq sections : Tableau de bord, Club, Effectif, Jouer, Options. Sur mobile, la barre du bas les garde sous le pouce, avec Jouer au centre en ambre ; le réglage Options › Paramètres › Navigation mobile la place en haut.','Five sections: Dashboard, Club, Squad, Play, Options. On mobile the bottom bar keeps them under your thumb, with Play in the middle in amber; Options › Settings › Mobile navigation moves it to the top.'),L('Club : Entraîneur, Finances, Fiche du club, Personnalisation, Journal. Effectif : Joueurs, Tactique, Entraînement, Marché. Jouer : Match, Calendrier, Classement.','Club: Coach, Finances, Club sheet, Customisation, Journal. Squad: Players, Tactics, Training, Market. Play: Match, Fixtures, Table.'),L('L’onglet ▶ Jouer est le seul point d’entrée pour jouer : il devient « Prochain match » hors de la section, « Reprendre le match » pendant un direct, « Bilan du match » une fois le match fini et « Fin de saison » quand les 14 journées sont jouées (en jaune plein : une action est attendue).','The ▶ Play tab is the single way in to play: it reads “Next match” from other sections, “Resume the match” during a live match, “Match report” once it is over and “Season over” after the 14 matchdays (solid yellow: an action is expected).'),L('La cloche en haut à droite liste ce qui reste à faire : titulaire blessé ou sous 50 % de HP, budget négatif, points de talent à répartir, spécialité d’entraîneur à choisir. Rouge : un titulaire blessé ; ambre : le reste. Le chiffre donne le nombre de lignes.','The bell at the top right lists what is left to do: an injured starter or one under 50% HP, a negative budget, talent points to spend, a coach specialty to pick. Red: an injured starter; amber: the rest. The number is the count of lines.'),L('Tableau de bord : « À faire avant le match » liste ces mêmes alertes, chacune avec son lien ; la fiche de l’adversaire donne son rang, sa forme, sa force par ligne et ses joueurs marquants.','Dashboard: “To do before the match” lists the same alerts, each with its link; the opponent card gives its rank, form, strength by line and standout players.'),L('Club › Journal : les 100 derniers événements, groupés par saison et journée ; les puces filtrent par catégorie (⚠ alertes, match, effectif, marché, club, finances).','Club › Journal: the last 100 events, grouped by season and matchday; the chips filter by category (⚠ alerts, match, squad, market, club, finances).')]))}
     ${sec('Sauvegarde','Save',li([L('La partie se sauvegarde toute seule dans ce navigateur.','The game saves itself in this browser.'),L('Options › Paramètres : Exporter télécharge un fichier, Copier la sauvegarde copie son texte. Importer lit un fichier, Coller une sauvegarde importe un texte copié. Si le téléchargement est bloqué, utilise Copier et Coller.','Options › Settings: Export downloads a file, Copy save copies its text. Import reads a file, Paste a save imports copied text. If downloads are blocked, use Copy and Paste.')]))}`;
   }else if(t==='stats'){
     const ex=demoPlayer();
@@ -2980,6 +3267,7 @@ function specPanel(){
   const info=!ok?L(`Se débloque au niveau d’entraîneur ${SPEC_MIN}.`,`Unlocks at coach level ${SPEC_MIN}.`):cur?`<b>${P(SPECS[cur].n)}</b> · ${L('palier','tier')} ${k}/5 — ${P(SPECS[cur].d)}`:L('Choisis une spécialité (gratuit la première fois).','Pick a specialty (free the first time).');
   return `<section class="panel stack tight"><div class="row between"><h3>${L('Spécialité d’entraîneur','Coach specialty')}</h3>${cur&&ok?`<span class="mono muted" style="font-size:12px">${L('Changer','Change')} : ${fmt(SPEC_COST)} ${L('gils','gil')}</span>`:''}</div><div class="seg">${chips}</div>${cfm}<p class="hint">${info}</p></section>`;
 }
+const winPct=C=>C.m?Math.round(C.w/C.m*100):null;   // taux de victoire général (%), null avant le premier match (UI-74 ; partagé avec la page Entraîneur)
 function coachBar(){
   const c=coachLvl(G.coach),next=Object.entries(FORM_UNLOCK).filter(([f,l])=>l>c.lvl).sort((a,b)=>a[1]-b[1])[0];
   return `<div class="stack tight"><div class="row between"><b>${L('Niveau d’entraîneur','Coach level')} ${c.lvl}</b><span class="mono muted">${c.rem}/${c.need} XP</span></div>${barH(c.rem/c.need*100,'var(--ball)')}</div>`;
@@ -2987,14 +3275,23 @@ function coachBar(){
 // TAC-09 : forces de zone et lecture fort / faible. Lecture seule de lineVals ; seuil d'écart ZONE_TH (constante d'interface, hors G) comparé au pourcentage arrondi affiché.
 // Recalibré en v0.6.9 : 5 % sortait 59,6 % des zones (167/280, 10 ligues neuves, club n°3 contre ses 7 adversaires) ; 9 % en sort 30,7 % (cible : un tiers).
 const ZONE_TH=9,ZONES=[['gk',['Gardien','Keeper']],['def',['Défense','Defence']],['mid',['Milieu','Midfield']],['fwd',['Attaque','Attack']]];
+// zst : écart en % (valeurs non arrondies) et indice 0 faible / 1 égal / 2 fort ; zsum : ligne de synthèse (la plus forte et la plus faible zone) ; partagés par zonesHTML (Tactique) et cmpFused
+const zst=(a,b)=>{const pc=b?Math.round((a-b)/b*100):0;return {pc,s:Math.abs(pc)<ZONE_TH?0:pc>0?1:-1};};
+const zsum=(z,W)=>{const hi=z.filter(r=>r.s>0).sort((x,y)=>y.pc-x.pc)[0],lo=z.filter(r=>r.s<0).sort((x,y)=>x.pc-y.pc)[0];return !hi&&!lo?L('Équilibré','Balanced'):[hi&&`<b>${W[2]}</b> : ${hi.n}`,lo&&`<b>${W[0]}</b> : ${lo.n}`].filter(Boolean).join(' · ');};
 function zonesHTML(u,opp){
   const me=lineVals(u),op=opp?lineVals(opp,true):null,W=[L('Faible','Weak'),L('Égal','Even'),L('Fort','Strong')],sg=n=>n>0?'+':n<0?'−':'';
-  const z=ZONES.map(([k,n])=>{const a=me[k],b=op&&op[k],pc=b?Math.round((a-b)/b*100):0;return {k,n:P(n),a,b,pc,s:Math.abs(pc)<ZONE_TH?0:pc>0?1:-1};});
+  const z=ZONES.map(([k,n])=>{const a=me[k],b=op&&op[k];return {k,n:P(n),a,b,...zst(a,b)};});
   const rows=z.map(r=>{const i=r.s+1,al=`${r.n} : ${Math.round(r.a)}${op?`, ${sg(r.pc)}${Math.abs(r.pc)} % ${L('face à l’adversaire','against the opponent')} (${W[i]})`:''}`;
     return `<div class="zr z${i}" role="group" aria-label="${al}"><span class="zl">${r.n}</span><b class="mono">${Math.round(r.a)}</b>${barH(r.a,'var(--water)').replace('</i>',`</i>${op?`<u style="left:${clamp(r.b,0,100)}%"></u>`:''}`)}<span class="zs">${op?`<span aria-hidden="true">${['▼','=','▲'][i]}</span> ${W[i]} ${sg(r.pc)}${Math.abs(r.pc)} %`:''}</span></div>`;}).join('');
-  const hi=z.filter(r=>r.s>0).sort((x,y)=>y.pc-x.pc)[0],lo=z.filter(r=>r.s<0).sort((x,y)=>x.pc-y.pc)[0];
-  const rd=!op?'':!hi&&!lo?L('Équilibré','Balanced'):[hi&&`<b>${W[2]}</b> : ${hi.n}`,lo&&`<b>${W[0]}</b> : ${lo.n}`].filter(Boolean).join(' · ');
+  const rd=op?zsum(z,W):'';
   return `<div class="zb">${rows}</div>${rd?`<p class="zt">${rd}</p>`:''}`;
+}
+// UI-73 : comparatif unique club / adversaire (Tableau de bord › Prochain match, Jouer › Match, Entraînement) : Force globale, Attaque, Milieu, Défense, Gardien ;
+// valeurs et ▲ ▼ = de chaque côté, écart et libellé (seuil ZONE_TH) par ligne, synthèse des zones ; l'adversaire est évalué en composition auto (estimation) ; lecture seule, rien n'est écrit dans G
+function cmpFused(u,opp){
+  const lu=lineVals(u),lo=lineVals(opp,true),W=[L('Faible','Weak'),L('Égal','Even'),L('Fort','Strong')],sg=n=>n>0?'+':n<0?'−':'';
+  const z=[['all',L('Force globale','Overall power'),teamPower(u),teamPower(opp)],...[...ZONES].reverse().map(([k,n])=>[k,P(n),lu[k],lo[k]])].map(([k,n,a,b])=>({k,n,a,b,...zst(a,b)}));
+  return `<div class="fcm"><div class="stack tight">${z.map(r=>cmpRow(r.n,r.a,r.b,1,`${W[r.s+1]} ${sg(r.pc)}${Math.abs(r.pc)} %`,r.s+1)).join('')}</div><div class="fcf"><p class="zt">${zsum(z.slice(1),W)}</p><span class="hint">${L('estimation','estimate')}</span></div></div>`;
 }
 // UI-35 : tous les textes possibles occupent la même cellule (la plus haute fixe la hauteur) ; seul le texte actif est visible : changer de style ou de pressing ne déplace rien
 const hintStack=(map,cur)=>`<div class="hstk">${Object.keys(map).map(k=>{const on=String(k)===String(cur);return `<p class="hint${on?' on':''}"${on?'':' aria-hidden="true"'}>${P(map[k])}</p>`;}).join('')}</div>`;
@@ -3308,14 +3605,14 @@ function matchHTML(){
   const u=U(),[h,a]=todayFx(),home=h===u.id,opp=G.teams[home?a:h];
   ensureLineup(u);
   const lu=u.lineup.map(id=>u.players.find(p=>p.id===id)),sl=slotsOf(u.formation),ss=slotSides(sl);
-  // UI-42 : chaque ligne du six ouvre le même sélecteur que Tactique (data-c="slot") ; les 4 barres de zone (TAC-09) se recalculent à chaque changement
+  // UI-42 : chaque ligne du six ouvre le même sélecteur que Tactique (data-c="slot") ; UI-73 : le comparatif (cmpFused) sous la carte des deux équipes se recalcule à chaque changement
   const rows=lu.map((p,i)=>`<div class="lu-row pre-r">${slotTag(sl[i],ss[i])}<span class="nm">${sixSel(u,sl[i],ss[i],i)}</span>${fitBadge(p,sl[i],ss[i],true)}${barH(hpPct(p)*100)}<span class="mono">${Math.round(hpPct(p)*100)}%</span><span></span></div>`).join('');
-  return `<div class="stack"><div class="grid2 pre"><section class="panel stack"><h3>${L('Journée','Matchday')} ${G.day+1} · ${home?L('à domicile','at home'):L(`à l'extérieur`,'away')}</h3>
+  return `<div class="stack"><div class="grid2 pre"><div class="stack"><section class="panel stack"><h3>${L('Journée','Matchday')} ${G.day+1} · ${home?L('à domicile','at home'):L(`à l'extérieur`,'away')}</h3>
   <div class="vs"><div class="side">${badge(u,true)}<span class="nm">${esc(u.name)}</span></div><div class="mid">VS</div><div class="side">${badge(opp,true)}<span class="nm">${esc(opp.name)}</span></div></div>
   <p class="muted">${L('Formation','Formation')} <b class="mono" style="color:var(--ink)">${u.formation}</b> · ${nN(u.style)} · Pressing ${pN(u.press).toLowerCase()}</p>
   <div class="row acts"><button class="btn primary" data-a="play">${L(`Coup d'envoi en direct`,'Live kick-off')}</button><button class="btn" data-a="sim">${L('Simuler','Simulate')}</button><button class="btn" data-a="tab" data-t="lineup">${L('Tactique','Tactics')}</button></div></section>
-  <section class="panel"><h3>${L('Six de départ','Starting six')}</h3><div style="margin-top:8px">${rows}</div>
-  <div class="zbp"><span class="hint zleg"><u aria-hidden="true"></u>${L('adversaire (estimation)','opponent (estimate)')}</span>${zonesHTML(u,opp)}</div></section>${quickTacHTML()}</div></div>`;
+  <section class="panel stack"><h3>${L('Comparatif','Comparison')}</h3>${cmpFused(u,opp)}</section></div>
+  <section class="panel"><h3>${L('Six de départ','Starting six')}</h3><div style="margin-top:8px">${rows}</div></section>${quickTacHTML()}</div></div>`;
 }
 // UI-12a : Calendrier = les 14 journées du club + résultats d'une journée de la ligue (déplacés depuis Match et Classement)
 function calendarHTML(){
@@ -3452,7 +3749,8 @@ function resolveHalf(Lv,auto){
 function liveHTML(Lv){
   const M=Lv.M,H=M.h.team,A=M.a.team,u=Lv.userSide;
   // UI-36 : ordre de lecture par importance (score et Sphère, consigne, équipe et remplacements, fil, style et pressing, infos, statistiques) ; à partir de 700 px les zones de la grille (.lvmain…) fixent la place, l'ordre du DOM fixe seulement la lecture et le Tab
-  return `<div class="grid2 lv">
+  // UI-67 : trois colonnes indépendantes à ≥ 1 100 px (.lvk1 : équipe, style | .lvk2 : score et Sphère, Consigne | .lvk3 : fil, infos, statistiques) ; en dessous, display:contents et les zones de grille de la v0.6.10
+  return `<div class="grid2 lv"><div class="lvk2">
   <section class="panel stack lvmain"><div class="scoreboard"><div class="tm">${badge(H,true)}<span class="tn">${esc(H.name)}</span></div>
   <div><div class="score" id="score">0 – 0</div><div class="clock" id="clock"></div><div class="clock bloc" id="bloc"></div></div>
   <div class="tm r"><span class="tn">${esc(A.name)}</span>${badge(A,true)}</div></div>
@@ -3463,14 +3761,14 @@ function liveHTML(Lv){
   <div class="seg">${[1,2,4].map(s=>`<button class="chip" data-a="speed" data-v="${s}" aria-pressed="${Lv.speed===s}">×${s}</button>`).join('')}</div>
   <button class="btn" data-a="skip">${L('Aller à la fin','Skip to the end')}</button>
   ${fsBtn('match')}</div></section>
-  <section class="panel lvhalf" id="halfsec" hidden><div class="row between hqh"><h3>${L('Consigne','Instruction')}</h3><button class="icbtn hq" id="hqbtn" data-a="hq" aria-expanded="false" aria-controls="hqtxt" aria-label="${L('Rappel des consignes','What the instructions do')}">?</button></div><div class="hqt" id="hqtxt" hidden></div><div class="stack tight" id="halfpanel" style="margin-top:10px"></div></section>
-  <section class="panel lvteam"><div class="row between lvth"><h3>${L('Ton équipe','Your team')} · ${esc(M[u].team.short)}</h3><button class="btn qcons" id="qcons" data-a="fsconsigne" aria-expanded="false" aria-controls="halfsec">${L('Consigne','Instruction')}</button></div>
+  <section class="panel lvhalf" id="halfsec" hidden><div class="row between hqh"><h3>${L('Consigne','Instruction')}</h3><button class="icbtn hq" id="hqbtn" data-a="hq" aria-expanded="false" aria-controls="hqtxt" aria-label="${L('Rappel des consignes','What the instructions do')}">?</button></div><div class="hqt" id="hqtxt" hidden></div><div class="stack tight" id="halfpanel" style="margin-top:10px"></div></section></div>
+  <div class="lvk1"><section class="panel lvteam"><div class="row between lvth"><h3>${L('Ton équipe','Your team')} · ${esc(M[u].team.short)}</h3><button class="btn qcons" id="qcons" data-a="fsconsigne" aria-expanded="false" aria-controls="halfsec">${L('Consigne','Instruction')}</button></div>
   <div id="lineup" style="margin-top:8px"></div><p class="hint" id="subinfo"></p><p class="hint hpleg" id="hpleg"></p><div id="subpanel"></div></section>
-  <section class="panel lvfeed"><h3>${L('Fil du match','Match feed')}</h3><div class="feed" id="feed" style="margin-top:8px"></div></section>
   <section class="panel stack lvstyle"><h3>${L('Style et pressing','Style & pressing')}</h3><div class="seg">${Object.keys(NAMES).map(k=>`<button class="chip" data-a="lstyle" data-v="${k}" aria-pressed="${M[u].style===k}">${nN(k)}</button>`).join('')}</div>
-  <div class="seg">${Object.keys(PRESS_NAMES).map(k=>`<button class="chip" data-a="lpress" data-v="${k}" aria-pressed="${String(M[u].press)===k}">Pressing ${pN(k).toLowerCase()}</button>`).join('')}</div></section>
+  <div class="seg">${Object.keys(PRESS_NAMES).map(k=>`<button class="chip" data-a="lpress" data-v="${k}" aria-pressed="${String(M[u].press)===k}">Pressing ${pN(k).toLowerCase()}</button>`).join('')}</div></section></div>
+  <div class="lvk3"><section class="panel lvfeed"><h3>${L('Fil du match','Match feed')}</h3><div class="feed" id="feed" style="margin-top:8px"></div></section>
   <section class="panel lvinfo"><h3>${L('Infos de match','Match info')}</h3><div class="stack tight" id="minfo" style="margin-top:12px"></div></section>
-  <section class="panel lvstats"><h3>${L('Statistiques du match','Match stats')}</h3><div class="stack tight" id="mstats" style="margin-top:12px"></div></section></div>`;
+  <section class="panel lvstats"><h3>${L('Statistiques du match','Match stats')}</h3><div class="stack tight" id="mstats" style="margin-top:12px"></div></section></div></div>`;
 }
 const dotKey=M=>M.h.lu.map(p=>p.id).join()+'|'+M.a.lu.map(p=>p.id).join()+'|'+soufOn(M,'h')+soufOn(M,'a');
 function updatePitch(){
@@ -3695,7 +3993,7 @@ function fsUnmount(){const F=UI.fs;if(!F)return;F.mv.forEach(({ph,el})=>{if(ph.i
 function fsDrop(){const F=UI.fs;if(!F)return;F.mv.forEach(({el})=>el.remove());F.mv=[];}
 function openFS(k){
   if(UI.fs||!FSQ.matches||!G||UI.scr!=='game')return;
-  if(k==='match'?!(UI.tab==='match'&&UI.live&&!UI.live.done):UI.tab!=='lineup')return;
+  if(k==='match'?!(mpage()&&UI.live&&!UI.live.done):UI.tab!=='lineup')return;
   const root=document.createElement('div');
   root.id='fs';root.className='fs';root.tabIndex=-1;root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-labelledby','fs-t');
   root.innerHTML=fsHTML(k);document.body.appendChild(root);
@@ -3773,6 +4071,7 @@ function tick(){
 function finishLive(){
   const Lv=UI.live;stopTimer();if(UI.fs)closeFS(true);
   Lv.res=finalizeMatch(Lv.M);Lv.done=true;Lv.subSlot=null;
+  if(Lv.train){logM(Lv.M);render();return;}   // NAR-06 : ni awardTeam, ni makeReport, ni res.inj, ni save : tout reste sur les copies
   const opp=Lv.userSide==='h'?Lv.M.a.team:Lv.M.h.team;
   awardTeam(G,opp,Lv.res.winner!==Lv.userSide,true);
   makeReport(Lv);render();
@@ -3811,6 +4110,7 @@ function makeReport(Lv){
 }
 function completeDay(Lv){
   const u=U(),day=G.day,out=[];
+  logM(Lv.M);   // TEC-10 : match du club, après finalizeMatch (direct ou simulation rapide) et avant G.day++ ; lecture seule
   G.schedule[day].forEach(([h,a])=>{
     const mine=h===u.id||a===u.id;
     const res=mine?Lv.res:simFixture(G,h,a).res;
@@ -3830,6 +4130,7 @@ function completeDay(Lv){
   afterDay(G);
   {const f0=G.finLog[0],f1=G.finLog[1];if(f0&&f0.bal<0&&!(f1&&f1.bal<0))news(L('Budget négatif : les recrutements sont bloqués.','Negative budget: signings are blocked.'),'finances',1);}
   G.day++;
+  logD();   // TEC-10 : état du jour, après G.day++
   if(marketDue(G))G.market=genMarket(G);
   ensureLineup(u);
   checkBadges(G,{});
@@ -3844,6 +4145,7 @@ function endSeasonUI(){
   G.coach.seasons++;
   const nb=checkBadges(G,{});
   stampNews();
+  logS();   // TEC-10 : bilan de la saison, avant newSeason
   const retired=newSeason(G);
   news(L(`Saison ${G.season} lancée. Prime de fin de saison : ${fmt(PRIZES[rank-1])} gils (${rankTxt(rank)}).`,`Season ${G.season} started. End-of-season prize: ${fmt(PRIZES[rank-1])} gil (${rankTxt(rank)}).`),'club');
   if(retired.length)news(L(`Retraite : ${retired.join(', ')}. Des jeunes espoirs les remplacent.`,`Retired: ${retired.join(', ')}. Young prospects take their place.`),'club');
@@ -3851,16 +4153,92 @@ function endSeasonUI(){
   UI.tab='home';UI.live=null;save();render();
 }
 
+// ---------- NAR-05 / NAR-06 : sélecteur de mode et match d'entraînement (bac à sable) ----------
+// Tout se joue sur des COPIES (newTraining) : jamais prepAI sur G.teams, makeReport, awardTeam, recordMatch, applyResult, afterDay, save, ni res.inj appliqué à G.
+// État d'interface hors G, jamais sauvegardé : UI.mode ('season' | 'training'), UI.tr {opp : id du club adverse, how : 'live' | 'sim'} ; le match est UI.live avec Lv.train = true.
+// Quitter (autre page, autre section, onglet Jouer) ferme le match sans confirmation (leaveTraining, appelé par render).
+function modeRowHTML(){
+  if(UI.sect!=='jouer'||UI.live)return '';   // masqué pendant un match en direct (saison ou entraînement) et à son bilan
+  return `<div class="modes" role="tablist" aria-label="${L('Mode de jeu','Game mode')}">${MODES.map(m=>`<button class="mseg" role="tab" data-a="mode" data-v="${m.id}" aria-selected="${UI.mode===m.id}" aria-controls="pg" tabindex="${UI.mode===m.id?0:-1}">${P(m.n)}</button>`).join('')}</div>`;
+}
+function setMode(v){
+  if(UI.scr!=='game'||!MODES.some(m=>m.id===v)||v===UI.mode||UI.live||UI.sect!=='jouer')return;
+  if(v==='training'){UI.mode='training';UI.tab='tmatch';UI.tr={opp:closestOpp(G),how:'live'};}
+  else{UI.mode='season';UI.tab=UI.last.jouer&&UI.last.jouer!=='tmatch'?UI.last.jouer:'match';}
+  UI.confirm=null;render();
+  const b=app.querySelector('.mseg[aria-selected="true"]');if(b&&b.focus)b.focus({preventScroll:true});
+}
+function leaveTraining(){
+  if(UI.live&&UI.live.train){stopTimer();if(UI.fs)closeFS(true);UI.live=null;}
+  UI.mode='season';
+}
+function trainStage(st){   // 'pick' : retour au choix de l'adversaire (le match d'entraînement en cours est jeté)
+  if(st!=='pick')return;
+  stopTimer();if(UI.fs)closeFS(true);UI.live=null;render();window.scrollTo(0,0);
+}
+const hurtStarters=t=>(t.lineup||[]).map(id=>t.players.find(p=>p.id===id)).filter(p=>p&&p.inj>0);   // blocage « titulaire blessé » : lu sur G.teams[userId], jamais sur la copie
+function startTraining(how){
+  if(UI.scr!=='game'||UI.mode!=='training')return;
+  const u=U();
+  if(hurtStarters(u).length){toast(L('Un titulaire est blessé : change la composition.','A starter is injured: change the lineup.'),true);return;}
+  const M=newTraining(G,UI.tr.opp);if(!M)return;
+  stopTimer();if(UI.fs)closeFS(true);
+  UI.tr.how=how==='sim'?'sim':'live';
+  if(UI.tr.how==='sim'){const res=simAuto(M);UI.live={M,paused:true,speed:1,subSlot:null,done:true,res,rep:null,userSide:'h',open:new Set(),train:true};logM(M);}
+  else UI.live={M,paused:true,speed:1,subSlot:null,done:false,res:null,rep:null,userSide:'h',dotKey:'',open:new Set(),alerts:[],low:new Set(),halfPick:null,halfDone:false,hb:1,souf:{h:null,a:null},start:new Set(M.h.lu.map(p=>p.id)),train:true};
+  UI.tab='tmatch';render();window.scrollTo(0,0);
+}
+function tmatchHTML(){
+  const Lv=UI.live&&UI.live.train?UI.live:null;
+  const ban=`<div class="trban" role="note"><span class="trt"><span aria-hidden="true">⚑</span> ${L('Entraînement · sans effet sur la saison','Training · no effect on the season')}</span>${Lv&&!Lv.done?`<button class="btn small" data-a="trquit">${L('Quitter','Leave')}</button>`:''}</div>`;
+  return `<div class="stack">${ban}${Lv?(Lv.done?trainSummaryHTML(Lv):liveHTML(Lv)):trainPickHTML()}</div>`;
+}
+function trainPickHTML(){
+  const u=U(),opp=UI.tr.opp!=null?G.teams[UI.tr.opp]:null,hurt=hurtStarters(u),ok=!!opp&&!hurt.length;
+  const list=G.teams.filter(t=>t.id!==u.id).map(t=>`<button class="trop" aria-pressed="${t.id===UI.tr.opp}" data-a="trpick" data-id="${t.id}">${badge(t)}<span class="nm">${esc(t.name)}</span><span class="mono muted">${Math.round(teamPower(t))}</span></button>`).join('');
+  let right='';
+  if(opp){
+    right=`<div class="vs"><div class="side">${badge(u,true)}<span class="nm">${esc(u.name)}</span></div><div class="mid">VS</div><div class="side">${badge(opp,true)}<span class="nm">${esc(opp.name)}</span></div></div>${cmpFused(u,opp)}`;
+  }
+  const warn=hurt.length?`<div class="alert warn">${L(`${esc(nm(hurt[0]))} est ${fe(hurt[0],'blessé','blessée')} et titulaire.`,`${esc(nm(hurt[0]))} is injured and starting.`)} <button class="btn small" data-a="goto" data-t="lineup">${L('Tactique','Tactics')} →</button></div>`:'';
+  return `<div class="grid2 trpick"><section class="panel stack"><h3 id="trh">${L('Adversaire','Opponent')}</h3><div class="trlist" role="group" aria-labelledby="trh">${list}</div></section>
+  <section class="panel stack"><h3>${L('Match d’entraînement','Training match')}</h3>${right}${warn}
+  <div class="row acts"><button class="btn primary" data-a="trstart" data-v="live"${ok?'':' disabled'}>${L(`Coup d'envoi en direct`,'Live kick-off')}</button><button class="btn" data-a="trstart" data-v="sim"${ok?'':' disabled'}>${L('Simuler','Simulate')}</button></div></section></div>`;
+}
+// bilan allégé : score, statistiques comparées, homme du match, trois boutons ; rien n'est écrit dans G
+function trainSummaryHTML(Lv){
+  const M=Lv.M,res=Lv.res,H=M.h.team,A=M.a.team,won=res.winner==='h',ts=res.ts;
+  const how=res.so?L('après départage','after a tiebreak'):res.ot?L('en mort subite','in sudden death'):'';
+  return `<section class="panel stack"><h3>${L('Coup de sifflet final','Final whistle')}</h3>
+  <div class="scoreboard"><div class="tm">${badge(H,true)}<span class="tn">${esc(H.name)}</span></div><div class="score">${res.hs} – ${res.as}</div><div class="tm r"><span class="tn">${esc(A.name)}</span>${badge(A,true)}</div></div>
+  <h2 style="text-align:center">${won?L('Victoire','Victory'):L('Défaite','Defeat')} ${how}</h2>
+  ${res.mvp?`<p class="muted" style="text-align:center">${L('Homme du match','Man of the match')} : <b style="color:var(--ink)">${esc(res.mvp.name)}</b> (${res.mvp.rating.toFixed(1)})</p>`:''}
+  <div class="stack tight">${MSTAT().map(([l,k])=>cmpRow(l,ts.h[k],ts.a[k])).join('')}</div>
+  <div class="row acts"><button class="btn primary" data-a="trredo">${L('Rejouer','Play again')}</button><button class="btn" data-a="trchg">${L('Changer d’adversaire','Change opponent')}</button><button class="btn" data-a="trback">${L('Retour','Back')}</button></div></section>`;
+}
+// UI-71 : menu de la cloche (ouverture et fermeture sur place, sans redessiner la page ; contenu rempli à l'ouverture)
+function setBell(on){
+  UI.bell=!!on;
+  const b=document.getElementById('bellbtn'),m=document.getElementById('bellmenu');
+  if(b)b.setAttribute('aria-expanded',String(UI.bell));
+  if(m){m.hidden=!UI.bell;m.innerHTML=UI.bell?bellMenuInner():'';}
+}
+const toggleBell=()=>setBell(!UI.bell);
+document.addEventListener('click',e=>{if(UI.bell&&!(e.target.closest&&e.target.closest('.bellw')))setBell(false);});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&UI.bell){setBell(false);const b=document.getElementById('bellbtn');if(b&&b.focus)b.focus();}});
+
 // ---------- Événements ----------
 function toPanel(){if(window.innerWidth<=1040){const e=document.getElementById('ppanel')||document.querySelector('.ppanel');if(e&&e.scrollIntoView)e.scrollIntoView({block:'start'});}}
 function act(a,d){
   const u=G&&G.userId!=null?U():null;
   const pauseLive=()=>{if(UI.live&&!UI.live.done){UI.live.paused=true;stopTimer();}};
+  if(UI.bell&&a!=='bell')setBell(false);   // UI-71 : toute autre action ferme la cloche
   if(UI.dlg&&UI.dlg.k==='psheet'&&(a==='tab'||a==='goto'||a==='sect'||a==='oppcard'||a==='gorules'))closeSheet(false,true);   // changement de page ou de section : feuille fermée
   switch(a){
-    case 'tab':{xreset();const t=tabId(d.t);if(t!=='match')pauseLive();UI.tab=t;UI.last[sectOf(t)]=t;UI.confirm=null;render();window.scrollTo(0,0);break;}
+    case 'tab':{xreset();const t=tabId(d.t);if(t!=='match'&&t!=='tmatch')pauseLive();UI.tab=t;UI.last[sectOf(t)]=t;UI.confirm=null;render();window.scrollTo(0,0);break;}
     case 'goto':{const t=tabId(d.t);UI.tab=t;UI.last[sectOf(t)]=t;render();window.scrollTo(0,0);break;}
-    case 'sect':{if(!SECT[d.s])break;xreset();const t=UI.last[d.s]||SECT[d.s][0][0];if(t!=='match')pauseLive();UI.tab=t;UI.confirm=null;render();break;}
+    case 'sect':{if(!SECT[d.s])break;xreset();const t=d.s==='jouer'&&playState().go?'match':(UI.last[d.s]||SECT[d.s][0][0]);   // UI-70 : l'onglet Jouer d'état (Prochain match, Reprendre, Bilan, Fin de saison) ouvre la page Match ; sur Jouer même, il garde la page courante
+      if(t!=='match'&&t!=='tmatch')pauseLive();UI.tab=t;UI.confirm=null;render();break;}
     case 'lang':PREFS.lang=d.v;savePrefs();applyPrefs();render();break;
     case 'theme':PREFS.theme=d.v;savePrefs();applyPrefs();render();break;
     case 'nav':if(d.v==='bar'||d.v==='tabs'){PREFS.nav=d.v;savePrefs();render();}break;
@@ -3870,7 +4248,7 @@ function act(a,d){
     case 'backpick':G.userId=null;UI.step=2;render();window.scrollTo(0,0);break;
     case 'reroll':G=createLeague();UI.prev=null;render();break;
     case 'regen':fillSquad(G,u);render();break;
-    case 'startseason':G.coach.name=cleanCoachName(UI.draft.coach);G.started=true;G.news=[];news(L(`Bienvenue chez ${u.name}. La saison démarre !`,`Welcome to ${u.name}. The season begins!`),'club');checkBadges(G,{});UI.scr='game';UI.step=1;UI.tab='home';save();render();window.scrollTo(0,0);if(PREFS.hideWelcome!==true){UI.dlg={k:'welcome'};renderDlg();}break;
+    case 'startseason':G.coach.name=cleanCoachName(UI.draft.coach);G.started=true;logStart();G.news=[];news(L(`Bienvenue chez ${u.name}. La saison démarre !`,`Welcome to ${u.name}. The season begins!`),'club');checkBadges(G,{});UI.scr='game';UI.step=1;UI.tab='home';save();render();window.scrollTo(0,0);if(PREFS.hideWelcome!==true){UI.dlg={k:'welcome'};renderDlg();}break;
     case 'prev':UI.prev=+d.id;render();{const e=document.getElementById('prevp');if(e&&e.scrollIntoView)e.scrollIntoView({behavior:'smooth',block:'start'});}break;
     case 'ccol':setCrest(u,d.k,'c',d.v);save();render();break;
     case 'cshape':setCrest(u,d.k,'s',+d.v);save();render();break;
@@ -3882,7 +4260,7 @@ function act(a,d){
     case 'tload':{
       if(!UI.saved||UI.saved.st!=='ok')break;
       if(!loadSave()){const pk=peekSave();UI.saved=pk.st==='ok'?{st:'foreign'}:pk;render();break;}
-      resetUI();UI.scr='game';render();window.scrollTo(0,0);break;}
+      resetUI();logBind();UI.scr='game';render();window.scrollTo(0,0);break;}
     case 'topt':case 'tlegal':UI.scr='opts';UI.tab=a==='tlegal'?'about':'settings';xreset();render();window.scrollTo(0,0);break;
     case 'tnews':{
       const list=newsList(),n=list.length,r=app.querySelector('.tnews');if(!n)break;
@@ -3904,11 +4282,20 @@ function act(a,d){
     case 'wclose':case 'wrules':{
       UI.dlg=null;renderDlg();
       if(a==='wrules'){act('gorules',{v:'game'});break;}
-      const b=app.querySelector('.nextbtn')||app.querySelector('h2,h1');if(b){if(!/^(BUTTON|A)$/.test(b.tagName))b.setAttribute('tabindex','-1');b.focus();}
+      const b=app.querySelector('.sect.play')||app.querySelector('h2,h1');if(b){if(!/^(BUTTON|A)$/.test(b.tagName))b.setAttribute('tabindex','-1');b.focus();}
       break;}
     case 'wpref':PREFS.hideWelcome=d.v==='off';savePrefs();render();break;
     case 'exp':exportNow();break;
     case 'copysave':copyNow();break;
+    // ---- TEC-10 : journal de test ----
+    case 'logpref':PREFS.log=d.v==='on';if(PREFS.log)LOGDEAD=false;savePrefs();UI.lconf=false;render();break;
+    case 'logexp':logExport();break;
+    case 'logcopy':logCopy();break;
+    case 'logclear':UI.lconf=true;UI.ltxt=null;render();{const b=app.querySelector('[data-a=logclearok]');if(b&&b.focus)b.focus({preventScroll:true});}break;
+    case 'logclearno':UI.lconf=false;render();{const b=app.querySelector('[data-a=logclear]');if(b&&b.focus)b.focus({preventScroll:true});}break;
+    case 'logclearok':logClear();break;
+    case 'lsel':{const t=document.getElementById('lcopy');if(t){t.focus();t.select();try{if(document.execCommand('copy'))toast(T('l.ok.copy'));}catch(e){}}break;}
+    case 'lclose':UI.ltxt=null;render();break;
     case 'pastesave':{xreset();UI.xpaste=true;render();const t=document.getElementById('xpaste');if(t)t.focus();break;}
     case 'xsel':{const t=document.getElementById('xcopy');if(t){t.focus();t.select();try{if(document.execCommand('copy'))toast(T('x.ok.copy'));}catch(e){}}break;}
     case 'xclose':xreset();render();break;
@@ -3991,6 +4378,14 @@ function act(a,d){
       const ref=plRef(i);presetClear(G,i);UI.confirm=null;save();render();toast(L(`${ref} vidé.`,`${ref} cleared.`));break;}
     case 'resday':{const cur=UI.resDay==null?Math.max(0,G.results.length-1):UI.resDay;UI.resDay=clamp(cur+(+d.d),0,G.schedule.length-1);render();break;}
     case 'play':startLive();break;
+    case 'mode':setMode(d.v);break;
+    case 'trpick':if(UI.mode==='training'&&!UI.live&&G.teams[+d.id]&&+d.id!==G.userId){UI.tr.opp=+d.id;render();const b=app.querySelector(`[data-a=trpick][data-id="${+d.id}"]`);if(b)b.focus();}break;
+    case 'trstart':startTraining(d.v==='sim'?'sim':'live');break;
+    case 'trquit':trainStage('pick');break;
+    case 'trredo':startTraining(UI.tr.how);break;
+    case 'trchg':trainStage('pick');break;
+    case 'trback':act('tab',{t:UI.last.jouer||'match'});break;
+    case 'bell':toggleBell();break;
     case 'sim':quickSim();break;
     case 'pause':{
       const Lv=UI.live,M=Lv.M;
@@ -4015,8 +4410,8 @@ function act(a,d){
       if(M.status==='half'){aiSubs(opp);aiSubs(me);resolveHalf(Lv,true);M.status='play';}
       while(!M.over){liveAI(Lv,'h');liveAI(Lv,'a');phase(M);if(M.status==='half'){aiSubs(opp);aiSubs(me);resolveHalf(Lv,true);M.status='play';}if(M.n===27&&!M.ot){aiSubs(opp);aiSubs(me);}}
       finishLive();break;}
-    case 'lstyle':{const Lv=UI.live;Lv.M[Lv.userSide].style=d.v;U().style=d.v;document.querySelectorAll('[data-a="lstyle"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===d.v)));break;}
-    case 'lpress':{const Lv=UI.live;Lv.M[Lv.userSide].press=+d.v;U().press=+d.v;document.querySelectorAll('[data-a="lpress"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===d.v)));break;}
+    case 'lstyle':{const Lv=UI.live;Lv.M[Lv.userSide].style=d.v;if(!Lv.train)U().style=d.v;document.querySelectorAll('[data-a="lstyle"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===d.v)));break;}
+    case 'lpress':{const Lv=UI.live;Lv.M[Lv.userSide].press=+d.v;if(!Lv.train)U().press=+d.v;document.querySelectorAll('[data-a="lpress"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===d.v)));break;}
     case 'subopen':{const Lv=UI.live;Lv.paused=true;stopTimer();Lv.subSlot=+d.i;updateLive();break;}
     case 'subclose':UI.live.subSlot=null;updateLive();break;
     case 'dosub':{
@@ -4041,6 +4436,7 @@ app.addEventListener('click',e=>{
 app.addEventListener('keydown',e=>{
   if((e.key==='Enter'||e.key===' ')&&e.target.matches('tr[data-a]')){e.preventDefault();act(e.target.dataset.a,e.target.dataset);}
   if((e.key==='Enter'||e.key===' ')&&narrow()&&e.target.matches('.pr[data-a]')){e.preventDefault();act(e.target.dataset.a,e.target.dataset);}   // UI-53 : la ligne ouvre la feuille aussi au clavier
+  if((e.key==='ArrowLeft'||e.key==='ArrowRight')&&e.target.matches&&e.target.matches('.mseg')){e.preventDefault();const n=MODES.length,i=MODES.findIndex(m=>m.id===UI.mode);setMode(MODES[(i+(e.key==='ArrowRight'?1:n-1))%n].id);}   // NAR-05 : rôle tablist, flèches
   if(e.key==='Enter'&&e.target.id==='coach-draft'){e.preventDefault();act('coachok',{});}
   if(e.key==='Enter'&&e.target.id==='plan-name'){e.preventDefault();const m=/^plan:ren:(\d)$/.exec(String(UI.confirm));if(m)act('plrenok',{i:m[1]});}
   if(e.target.id==='coach-name'&&UI.cedit){
