@@ -1,5 +1,4 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Blitz Manager</title>
 <style>
 /* Polices embarquées (TEC-08) : Unbounded, Hanken Grotesk, IBM Plex Mono, sous-ensemble latin, SIL Open Font License 1.1 (textes : src/fonts/OFL-*.txt) */
@@ -834,6 +833,171 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
 .bsb{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom,0px)}
 .toast{z-index:70}   /* les notifications passent au-dessus de la feuille (z-index 60) */
 @media (prefers-reduced-motion: reduce){.bsheet{animation:none!important;transition:none!important}}
+
+/* ===== v0.6.10 · pack UI-A ===== */
+/* UI-35 / UI-45 : créneau d'état de 48 px, toujours présent dans le direct (but > mi-temps > alertes ; sans message : consigne active) */
+.slot48{display:grid;height:48px}
+.slot48>*{grid-area:1/1;min-width:0}
+#banner{display:flex;gap:8px;align-items:center;position:relative;z-index:1;background:var(--surface);border-radius:8px}
+#banner:empty{display:none}
+#banner>.banner,#banner>.goalfx{flex:1;min-width:0;height:48px;overflow:hidden}
+#banner>.banner{display:flex;align-items:center;padding:4px 12px;font-size:13px;line-height:1.25}
+.bnt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+#banner>.goalfx{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:8px;align-items:center;padding:2px 12px}
+#banner>.goalfx .gb{grid-row:auto}
+#banner>.goalfx .gl{font-size:15px}
+#banner>.goalfx .gt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bmore{flex:none;font:700 12px var(--font-mono);color:var(--muted);padding-right:4px}
+#halfbadge{align-self:center}
+#halfbadge .hbadge{gap:4px 8px;max-height:48px;overflow:hidden}
+#halfbadge .hchip{padding:1px 8px}
+/* UI-35 : textes de style et de pressing superposés dans une même cellule (hauteur = le plus long), texte de zone réservé */
+.hstk{display:grid}
+.hstk>p{grid-area:1/1;visibility:hidden}
+.hstk>p.on{visibility:visible}
+.zt{min-height:18px}
+/* UI-34a : disposition PC. Sous 700 px : ordre et hauteurs de la v0.6.9 (aucune règle ci-dessous) */
+@media (min-width:700px){
+  .lv{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"main main" "team feed" "style info" "half stats";align-items:start;grid-auto-rows:auto}
+  .lvmain{grid-area:main}.lvteam{grid-area:team}.lvfeed{grid-area:feed}.lvstyle{grid-area:style}.lvinfo{grid-area:info}.lvhalf{grid-area:half}.lvstats{grid-area:stats}
+  .lvfeed .feed{height:330px;max-height:330px}   /* hauteur fixe : le fil qui se remplit ne pousse plus Infos et Statistiques */
+  .tacg{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"sph sph" "ctl six" "ctl ben";grid-template-rows:auto auto 1fr;align-items:start}
+  .tacg .tacctl{align-self:stretch}
+  .pre>.quick{grid-column:1/-1}
+}
+@media (min-width:1100px){
+  .lv{grid-template-columns:minmax(260px,300px) minmax(0,1fr) minmax(280px,340px);grid-template-areas:"team main feed" "style main info" ". main stats" ". half .";grid-template-rows:auto auto 1fr auto}
+  .lv .sphere{max-width:520px}
+  .tacg{grid-template-columns:minmax(260px,320px) minmax(0,1fr) minmax(300px,380px);grid-template-areas:"ctl sph six" "ctl sph ben";grid-template-rows:auto 1fr}
+  .tacg .tacctl{align-self:start}
+  .pre{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .pre>.quick{grid-column:auto}
+}
+/* UI-52 : Accueil, bande 1 « Action » et bande 2 « Suivi » en deux colonnes indépendantes */
+.hm{display:grid;gap:16px}
+.hb1{display:grid;gap:16px;align-items:start}
+.hb2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.hcol{display:grid;gap:16px;align-content:start;min-width:0}
+.hb1>*,.hb2>*{min-width:0}
+@media (min-width:1100px){.hb1{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media (max-width:480px){
+  .hb2,.hcol{gap:10px}
+  .hcol>.panel{padding:10px}
+  .hcol .hx{display:none}
+  .hcol .tbl th,.hcol .tbl td{padding-inline:5px}
+  .hcol .tbl th{letter-spacing:.03em}
+  .hcol .news div{grid-template-columns:30px minmax(0,1fr);gap:6px}
+  .hcol .news div:nth-child(n+4){display:none}
+  .hcol .news p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+}
+/* colonne gauche étroite (3 colonnes, 1 100 à 1 279 px) : la ligne d'un titulaire passe sur deux rangées pour garder le nom lisible */
+@media (min-width:1100px){
+  .lvteam .lu-row.live{grid-template-columns:30px auto minmax(40px,1fr) auto auto 30px;row-gap:2px}
+  .lvteam .lu-row.live>:nth-child(1){grid-column:1;grid-row:1}
+  .lvteam .lu-row.live>:nth-child(2){grid-column:2/6;grid-row:1}
+  .lvteam .lu-row.live>:nth-child(7){grid-column:6;grid-row:1/3}
+  .lvteam .lu-row.live>:nth-child(3){grid-column:2;grid-row:2}
+  .lvteam .lu-row.live>:nth-child(4){grid-column:3;grid-row:2}
+  .lvteam .lu-row.live>:nth-child(5){grid-column:4;grid-row:2}
+  .lvteam .lu-row.live>:nth-child(6){grid-column:5;grid-row:2}
+}
+/* colonne centrale étroite : le tableau de score s'empile comme sur mobile (largeur du panneau, pas de la fenêtre) */
+@media (min-width:700px){.lvmain{container-type:inline-size}}
+@container (max-width:560px){
+  .scoreboard{grid-template-columns:1fr 1fr;row-gap:8px}.scoreboard>:nth-child(2){grid-column:1/-1;grid-row:1}
+  .scoreboard .tm,.scoreboard .tm.r{flex-direction:column;justify-content:flex-start;text-align:center;gap:6px}.scoreboard .tm.r{flex-direction:column-reverse}
+}
+
+/* ===== v0.6.10 · pack UI-B ===== */
+/* TAC-08 : Plans d'équipe. Trois pastilles de 48 px et un « ⋯ » de 44 × 44 px sur une rangée (colonne gauche de Tactique, panneau « Tactique rapide » avant le coup d'envoi).
+   Nom : au plus 2 lignes (12 caractères entiers, jamais coupés) ; sous 250 px de large (colonne gauche à 1 100 px) les pastilles passent en rangées pleine largeur. Aucune couleur nouvelle. */
+.plans{display:grid;gap:8px;min-width:0;container-type:inline-size}
+.plrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 44px;gap:4px;align-items:center}
+.pla{display:grid;align-content:center;justify-items:start;height:48px;min-width:0;padding:2px 5px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:600 12px/1.15 var(--font-body);text-align:left;cursor:pointer;overflow:hidden}
+.pla:hover:not([disabled]){border-color:var(--water)}
+.pla[aria-pressed="true"]{border-color:var(--water);box-shadow:0 0 0 1px var(--water) inset}
+.pla.emp{border-style:dashed}
+.pla[disabled]{opacity:.55;cursor:not-allowed}
+.pln{max-width:100%;font:700 12px/1.15 var(--font-body);overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.pls{max-width:100%;font:500 12px/1.15 var(--font-body);color:var(--muted);white-space:nowrap;overflow:hidden}
+.pls.on{color:var(--ink);font-weight:700}
+.pls i{font-style:normal}
+.plw{color:var(--warn-t);font-weight:700}
+.plm{width:44px;height:44px;padding:0;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);font:700 18px/1 var(--font-body);cursor:pointer}
+.plm:hover:not([disabled]),.plm[aria-expanded="true"]{border-color:var(--water)}
+.plm[disabled]{opacity:.45;cursor:not-allowed}
+.plmenu{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--water);border-radius:8px;background:var(--surface2)}
+.plr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 10px}
+.plrn{min-width:0;font-size:13px;overflow-wrap:anywhere}
+.plmenu .btn,.plans .cfm .btn{min-height:44px}
+.plrename label.f{flex:1 1 180px;min-width:0}
+.plrename label.f span{font-size:12px}
+@container (max-width:249px){
+  .plrow{grid-template-columns:minmax(0,1fr) 44px;grid-template-rows:repeat(3,48px)}
+  .plrow .pla{grid-column:1}
+  .plrow .plm{grid-column:2;grid-row:1}
+}
+/* UI-42 : six de départ éditable et barres de zone sur l'avant-match ; repère d'effet sous chaque bouton de formation, de style et de pressing */
+.lu-row .nm select{width:100%}
+.pre-r select{padding:6px 8px;font-size:13px}
+.zbp{display:grid;gap:2px;margin-top:10px}
+.zbp .zleg{justify-self:end}
+.optc{display:inline-flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+.rep{font:600 12px/1.2 var(--font-body);color:var(--muted);white-space:nowrap;min-height:15px}
+.rep i{font-style:normal}
+/* UI-47 : barre de HP du bilan = HP de fin (plein) + segment hachuré de la récupération attendue (même grammaire que le segment d'XP) */
+.bar.hpr{display:flex;overflow:hidden}
+.bar.hpr>i{flex:none;border-radius:0}
+.bar.hpr>.h0{border-radius:4px 0 0 4px}
+.bar.hpr>.h1{background:repeating-linear-gradient(135deg,var(--c) 0 4px,color-mix(in srgb,var(--c) 45%,var(--surface)) 4px 8px)}
+
+/* ===== v0.6.10 · pack UI-C ===== */
+/* UI-46 : ligne « Bloc n/3 » sous le chrono (hauteur réservée : rien ne bouge quand elle se vide) */
+.clock.bloc{min-height:16px;margin-top:0}
+/* UI-43 : « ? » du panneau Consigne (cible tactile 44 px) et rappel court */
+.hqh{align-items:center}
+.icbtn.hq{border-color:var(--line);font-size:16px}
+.icbtn.hq[aria-expanded="true"]{border-color:var(--water);background:var(--water-soft)}
+.hqt{display:grid;gap:6px;margin-top:6px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);font-size:13px;color:var(--muted)}
+.hqt[hidden]{display:none}
+.hqt ul{display:grid;gap:4px;margin:0;padding:0;list-style:none}
+.hqt p{margin:0}
+.hqt b{color:var(--ink)}
+/* UI-34b : Sphère en plein écran. Calque fixe au-dessus de la page (z-index 65, sous les notifications) ; la Sphère est un carré min(hauteur − 72 px, largeur − 320 px) ; commandes à droite (≥ 1 100 px) ou sous la Sphère (700 à 1 099 px). Mêmes variables que le reste, aucune couleur nouvelle. */
+.fsbtn{display:none;min-width:44px;min-height:44px;padding:0 12px;font-size:18px;line-height:1}
+@media (min-width:700px){.fsbtn{display:inline-flex;align-items:center;justify-content:center}}
+.tacsph .row .fsbtn{margin-left:4px}
+.fs{position:fixed;inset:0;z-index:65;display:grid;grid-template-columns:minmax(0,1fr) 320px;background:var(--bg);color:var(--ink)}
+.fs:focus-visible{outline:none}
+.fsm{display:grid;place-items:center;min-width:0;min-height:0;padding:0;overflow:hidden}
+.fsm .sphere{width:min(calc(100dvh - 72px),calc(100vw - 320px));max-width:none;margin:0}
+.fsc{display:grid;gap:12px;align-content:start;min-width:0;padding:16px;overflow-y:auto;overflow-x:hidden;border-left:1px solid var(--line);background:var(--surface)}
+.fsh{display:flex;justify-content:flex-end}
+.fsh .btn,.fsc>.btn{min-height:44px}
+.fs .fsbtn{display:none}
+.fsc h3{margin:0}
+.fsc .panel{padding:10px}
+.fs .scoreboard{grid-template-columns:1fr 1fr;row-gap:8px}
+.fs .scoreboard>:nth-child(2){grid-column:1/-1;grid-row:1}
+.fs .scoreboard .tm,.fs .scoreboard .tm.r{flex-direction:column;justify-content:flex-start;text-align:center;gap:6px}
+.fs .scoreboard .tm.r{flex-direction:column-reverse}
+.fsfeed{display:grid;gap:0;min-height:96px;font-size:13px}
+.fszb{display:grid;gap:4px}
+@media (max-width:1099px){
+  .fs{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
+  .fsm .sphere{width:min(calc(100vw - 32px),calc(54dvh - 8px))}
+  .fsc{border-left:0;border-top:1px solid var(--line);max-height:46dvh}
+}
+@media (prefers-reduced-motion:reduce){.fs,.fs *{transition:none!important;animation:none!important}}
+/* UI-36 : bouton rapide « Consigne » dans l'en-tête de « Ton équipe » (met le match en pause, comme « Pause », et ouvre le panneau) : dès 700 px seulement ; sous 700 px le panneau s'ouvre sous les commandes dès la pause */
+.qcons{display:none;min-height:44px}
+.lvth{align-items:center}
+@media (min-width:700px){.qcons{display:inline-flex;align-items:center}}
+.qcons[aria-expanded="true"],#fs-cb[aria-expanded="true"]{border-color:var(--water);background:var(--water-soft)}
+/* ⤢ : cible de 44 px sans agrandir sa rangée (la marge négative retombe dans le remplissage du panneau ou dans le coin vide de la Sphère) */
+.tacsph .row .row{margin-bottom:0}
+.tacsph .fsbtn{margin-block:-12px}
+.lvmain .row .fsbtn{margin-block:-2px}
 </style>
 
 
@@ -882,7 +1046,8 @@ const raceName=p=>RACES[p.race||'humain'].n[LANG==='en'?1:0];
 // Poste = ligne (GK, DF, MF, FW) + voie (G/C/D) imposée par la formation (slotSides). p.side est la spécialité de voie du joueur.
 // Un seul tableau pour eff (composition, affichage) et stv (match) : spécialité +5 %, autre voie de la même ligne +2,5 %,
 // ligne secondaire 0 %, hors ligne −12 % ; gardien dans son but +3 %. Jamais de malus de voie en secondaire ni hors ligne.
-const FIT_SPEC=.05,FIT_LINE=.025,FIT_SEC=0,FIT_OFF=-.12,FIT_GK=.03;
+// TEC-09 (v0.6.10) : let (et non const) pour les constantes scalaires de la liste blanche de l'atelier (FIT_*, NAT_PREF, TRAIT_MALUS_P, HALF_K/OFF/REST/COST, GK_K) ; valeurs et comportement inchangés.
+let FIT_SPEC=.05,FIT_LINE=.025,FIT_SEC=0,FIT_OFF=-.12,FIT_GK=.03;
 // fitTier(p, slot, lane) → {id:'spe'|'line'|'sec'|'off', eff, stv} (eff et stv = multiplicateurs, ex. 1,05).
 // Gardien dans le but : id 'spe' (+3 %). Joueur de champ au but, ou gardien sur un poste de champ : 'off'. lane absente : la spécialité du joueur.
 function fitTier(p,slot,lane){
@@ -928,7 +1093,8 @@ const TRAITS={
   maladroit:{n:['Maladroit','Clumsy'],s:'ti',v:-2},
   essouffle:{n:['Essoufflé','Winded'],s:'hp',v:-2}
 };
-const TRAIT_BONUS=['rapide','endurant','costaud','combatif','passeur','tireur','vigie','sur'],TRAIT_MALUS=['lent','fragile','maladroit','essouffle'],TRAIT_MALUS_P=.4;
+const TRAIT_BONUS=['rapide','endurant','costaud','combatif','passeur','tireur','vigie','sur'],TRAIT_MALUS=['lent','fragile','maladroit','essouffle'];
+let TRAIT_MALUS_P=.4;
 function genTraits(pos){
   const b=pick(TRAIT_BONUS.filter(k=>!TRAITS[k].gk||pos==='GK')),out=[b];
   if(rnd()<TRAIT_MALUS_P)out.push(pick(TRAIT_MALUS.filter(k=>TRAITS[k].s!==TRAITS[b].s)));
@@ -969,10 +1135,11 @@ const SPECS={
 const SPEC_KEYS=['GK','DF','MF','FW','cond','star'];
 const specTier=C=>coachLvl(C).lvl>=SPEC_MIN?Math.min(5,coachLvl(C).lvl-1):0;
 const specOn=(C,k)=>C&&C.spec===k?specTier(C):0;
-function bonusOf(p){
+// f (v0.6.10, optionnel) : formation dont on évalue la maîtrise ; absente = la formation actuelle du club (comportement de toujours). Sert à lineValsFor (aperçu d'une autre formation).
+function bonusOf(p,f){
   if(typeof G==='undefined'||!G||!G.coach||!G.teams)return 1;
   const t=G.teams[G.userId];if(!t||!t.players.includes(p))return 1;
-  let k=1+MASTER_K*masteryOf(G.coach,t.formation);
+  let k=1+MASTER_K*masteryOf(G.coach,f||t.formation);
   if(['GK','DF','MF','FW'].includes(G.coach.spec)&&p.pos===G.coach.spec)k*=1+SPEC_K*specOn(G.coach,G.coach.spec);
   return k;
 }
@@ -1028,7 +1195,7 @@ const ovr=p=>Math.round(ovrAt(p,p.pos));
 // postes secondaires (lignes, qualités A/B conservées en sauvegarde mais sans effet depuis v0.5) : 0 % ; voir fitTier
 const SECOPT={GK:[],DF:[['MF',.55]],MF:[['DF',.4],['FW',.4]],FW:[['MF',.55]]};
 function genSec(pos){const s={};(SECOPT[pos]||[]).forEach(([k,pr])=>{if(rnd()<pr)s[k]=rnd()<.4?'A':'B';});return s;}
-const eff=(p,slot,sd)=>ovrAt(p,slot)*bonusOf(p)*fitTier(p,slot,sd).eff*(.75+.25*hpPct(p));
+const eff=(p,slot,sd,f)=>ovrAt(p,slot)*bonusOf(p,f)*fitTier(p,slot,sd).eff*(.75+.25*hpPct(p));
 function capOf(p,s){const mp=Math.max(...Object.values(PROFILE[p.pos]));return clamp(p.pot-(mp-PROFILE[p.pos][s])+4+raceMod(p,s)+(RACE_CAP[p.race]||0),20,96);}
 function valueOf(p){const o=ovr(p);const m=p.age<=23?1.25:p.age<=28?1:p.age<=31?.75:.5;const pb=1+Math.max(0,p.pot-maxStat(p))/120;return Math.round(7e-5*Math.pow(o,4.5)*m*pb/100)*100;}
 const wageOf=p=>Math.max(150,Math.round(valueOf(p)*.055/10)*10);
@@ -1101,7 +1268,7 @@ const indivFee=t=>t.players.filter(p=>p.train&&!p.inj).length*TRAIN_FEE;
 
 // Préférence de ligne naturelle (v0.5-dev2) : en composition auto seulement, un candidat de la ligne du poste voit son score de sélection
 // multiplié par (1+NAT_PREF). Ne modifie ni fitTier ni eff/stv en match. 0 = ancien comportement (maximise eff seul).
-const NAT_PREF=.08;
+let NAT_PREF=.08;
 const selScore=(p,line,lane)=>eff(p,line,lane)*(p.pos===line?1+NAT_PREF:1);
 // Composition auto : ligne par ligne (GK, FW, MF, DF), en essayant toutes les affectations des meilleurs candidats aux voies de la ligne.
 function bestLineup(team,formation){
@@ -1129,6 +1296,66 @@ function lineupValid(t){
   return t.lineup.every(id=>{const p=t.players.find(q=>q.id===id);return p&&!p.inj;});
 }
 const ensureLineup=t=>{if(!lineupValid(t))setAutoLineup(t);};
+// ---- v0.6.10 (TAC-08) : plans d'équipe. 3 emplacements (formation, style, pressing, six de départ). Fonctions pures de G : ni DOM, ni M (le moteur ne sait pas si un match est en cours : l'UI bloque pendant un match), aucun rnd(). ----
+// G.presets = [P|null ×PRESET_N], P = {n, formation, style, press, lineup:[id ×6]} (valeurs de Team copiées telles quelles) ; n '' = nom par défaut « Plan 1/2/3 » (affiché par l'UI, esc() à l'affichage). Champ absent = trois null.
+// Réparation à l'application (presetRepair, sans rnd) : le plan n'est jamais réécrit par une vente, une blessure ou une application.
+const PRESET_N=3,PRESET_NAME=12;
+const presetSlot=i=>Number.isInteger(i)&&i>=0&&i<PRESET_N?i:-1;
+const presetAt=(G,i)=>{const P=G&&Array.isArray(G.presets)&&presetSlot(i)>=0?G.presets[i]:null;return P&&typeof P==='object'?P:null;};
+const presetTeam=G=>G&&G.userId!=null&&G.teams?G.teams[G.userId]:null;
+// nom : espaces de bord retirés, espaces multiples réduits, PRESET_NAME caractères au plus (par caractère, pas par unité UTF-16) ; vide = nom par défaut
+const presetName=n=>Array.from(String(n==null?'':n).replace(/\s+/g,' ').trim()).slice(0,PRESET_NAME).join('');
+function presetsInit(G){if(!Array.isArray(G.presets)||G.presets.length!==PRESET_N){const o=Array.isArray(G.presets)?G.presets:[];G.presets=Array.from({length:PRESET_N},(_,k)=>o[k]||null);}}
+// presetSave(G, i) → true si i ∈ 0..PRESET_N−1 et le six de l'équipe du joueur est complet (6 identifiants distincts, tous au club) ; copie formation, style, pressing, six ; le nom existant est conservé
+function presetSave(G,i){
+  const t=presetTeam(G);if(!t||presetSlot(i)<0)return false;
+  const sl=slotsOf(t.formation);
+  if(!Array.isArray(t.lineup)||t.lineup.length!==sl.length||new Set(t.lineup).size!==sl.length||!t.lineup.every(id=>t.players.some(p=>p.id===id)))return false;
+  presetsInit(G);const old=G.presets[i];
+  G.presets[i]={n:old&&typeof old.n==='string'?old.n:'',formation:t.formation,style:t.style,press:t.press,lineup:t.lineup.slice()};
+  return true;
+}
+const presetBest=(pool,slot,lane,f)=>{let b=null,bv=0;pool.forEach(q=>{const v=eff(q,slot,lane,f);if(!b||v>bv||(v===bv&&q.id<b.id)){b=q;bv=v;}});return b;};
+// Réparation : chaque case dont le joueur n'est plus au club (why 'gone', out null) ou est blessé (why 'inj', out = son id) reçoit, parmi les joueurs sains hors du six, celui de meilleure eff à ce poste (à égalité l'id le plus petit) ;
+// cases traitées dans l'ordre du six (gardien d'abord). Sans joueur sain : un blessé du six reste en place (aucune entrée dans repl) ; une case « gone » sans joueur sain reçoit le meilleur blessé hors du six du plan.
+// → {lineup:[id ×6], repl:[{slot (indice 0..5 du six), out, in, why}]} ou null (effectif trop court)
+function presetRepair(t,P){
+  const sl=slotsOf(P.formation),ln=lanesOf(t,P.formation),cur=Array.isArray(P.lineup)?P.lineup:[],byId=id=>t.players.find(p=>p.id===id);
+  const res=Array(sl.length).fill(null),used=new Set(),need=[],repl=[];
+  sl.forEach((_,k)=>{const p=byId(cur[k]);if(p&&!p.inj&&!used.has(p.id)){res[k]=p;used.add(p.id);}else need.push(k);});
+  need.forEach(k=>{
+    const o=byId(cur[k]),why=o&&o.inj?'inj':'gone';
+    let b=presetBest(t.players.filter(q=>!q.inj&&!used.has(q.id)),sl[k],ln[k],P.formation);
+    if(!b){if(o&&o.inj&&!used.has(o.id)){res[k]=o;used.add(o.id);return;}const mine=new Set(cur.slice(k+1));b=presetBest(t.players.filter(q=>!used.has(q.id)&&!mine.has(q.id)),sl[k],ln[k],P.formation);}
+    if(!b)return;
+    res[k]=b;used.add(b.id);repl.push({slot:k,out:o?o.id:null,in:b.id,why});
+  });
+  return res.every(Boolean)?{lineup:res.map(p=>p.id),repl}:null;
+}
+// presetPreview(G, i) → {ok, why?:'empty'|'locked', repl, lineup} (lecture seule) ; 'locked' : formation du plan pas encore débloquée (niveau d'entraîneur)
+function presetPreview(G,i){
+  const P=presetAt(G,i),t=presetTeam(G),no=why=>({ok:false,why,repl:[],lineup:[]});
+  if(!P||!t||!FORMATIONS[P.formation])return no('empty');
+  if(!unlocked(G,P.formation))return no('locked');
+  const r=presetRepair(t,P);
+  return r?{ok:true,repl:r.repl,lineup:r.lineup}:no('empty');
+}
+// presetApply(G, i) → {ok, why?, repl} : écrit formation, style, pressing et six (réparé) dans l'équipe du joueur ; le plan lui-même n'est pas modifié
+function presetApply(G,i){
+  const v=presetPreview(G,i);if(!v.ok)return{ok:false,why:v.why,repl:[]};
+  const t=presetTeam(G),P=presetAt(G,i);
+  t.formation=P.formation;t.style=STYLE[P.style]?P.style:'equilibre';t.press=[-1,0,1].includes(P.press)?P.press:0;t.lineup=v.lineup.slice();
+  return{ok:true,repl:v.repl};
+}
+// presetRename(G, i, name) → true si le plan existe (un emplacement vide n'a pas de nom) ; presetClear(G, i) → true si i valide
+function presetRename(G,i,name){const P=presetAt(G,i);if(!P)return false;P.n=presetName(name);return true;}
+function presetClear(G,i){if(!G||presetSlot(i)<0)return false;presetsInit(G);G.presets[i]=null;return true;}
+// presetOf(G) → indice du plan actif (formation, style, pressing et six identiques à l'équipe du joueur, six dans le même ordre) ou −1
+function presetOf(G){
+  const t=presetTeam(G);if(!t||!Array.isArray(G.presets)||!Array.isArray(t.lineup))return -1;
+  for(let i=0;i<PRESET_N;i++){const P=G.presets[i];if(P&&P.formation===t.formation&&P.style===t.style&&P.press===t.press&&Array.isArray(P.lineup)&&P.lineup.length===t.lineup.length&&P.lineup.every((id,k)=>id===t.lineup[k]))return i;}
+  return -1;
+}
 function teamPower(t){const f=t.formation,sl=slotsOf(f),ss=lanesOf(t,f);return avg(bestLineup(t,f).map((p,i)=>eff(p,sl[i],ss[i])));}
 function fillSquad(G,t){
   const comp=['GK','GK','DF','DF','DF','MF','MF','MF','MF','FW','FW','FW'];
@@ -1141,14 +1368,14 @@ function fillSquad(G,t){
   t.formation='2-2-1';setAutoLineup(t);
 }
 function createLeague(){
-  const G={v:5,coach:newCoach(),stadium:newStadium(),honors:[],season:1,day:0,nid:1,userId:null,started:false,teams:[],schedule:[],results:[],table:[],market:[],cash:0,fans:800,news:[],training:'ti',finLog:[]};
+  const G={v:6,coach:newCoach(),stadium:newStadium(),honors:[],season:1,day:0,nid:1,userId:null,started:false,teams:[],schedule:[],results:[],table:[],market:[],cash:0,fans:800,news:[],training:'ti',finLog:[],presets:[null,null,null]};
   CLUBS.forEach((c,i)=>{
     const t={id:i,name:c.name,short:c.short,color:c.color,emblem:c.emblem,level:c.level,players:[],formation:'2-2-1',style:'equilibre',press:0,lineup:[]};
     fillSquad(G,t);G.teams.push(t);
   });
   G.schedule=makeSchedule(CLUBS.length);
   G.table=G.teams.map(t=>({id:t.id,p:0,w:0,otw:0,otl:0,l:0,gf:0,ga:0,pts:0}));
-  G.market=genMarket(G,8);
+  G.market=genMarket(G);
   return G;
 }
 const newCoach=()=>({name:'',xp:0,m:0,w:0,l:0,ow:0,ol:0,gf:0,ga:0,cs:0,streak:0,best:0,comps:{},badges:{},seasons:0,spec:null});
@@ -1169,12 +1396,14 @@ function migrateSave(g){
   if(g.v===2){g.v=3;g.coach=g.coach||newCoach();g.honors=g.honors||[];}
   if(g.v===3){g.v=4;g.stadium=g.stadium||newStadium();g.coach.xp=g.coach.xp||(g.coach.w*40+g.coach.l*15);}
   if(g.v===4){g.v=5;g.teams.forEach(t=>{delete t.lanes;delete t.lanesF;});}
-  if(g.v!==5)return null;
+  if(g.v===5){g.v=6;g.presets=[null,null,null];}   // TAC-08 (v0.6.10, D45) : trois plans vides, partie en cours conservée
+  if(g.v!==6)return null;
+  if(!Array.isArray(g.presets)||g.presets.length!==PRESET_N)presetsInit(g);
   g.teams.forEach(t=>t.players.forEach(fixPlayer));g.market.forEach(fixPlayer);
   return g;
 }
 // TEC-01 : export / import de sauvegarde (fichier JSON). Pur : ni localStorage, ni DOM, ni lecture de la variable G, aucun rnd().
-// Pas de migration à l'import avant la v1.0 : seule la version 5 est acceptée (comme migrateSave).
+// Pas de migration à l'import avant la v1.0 : seule la version 6 est acceptée (un fichier v5 est refusé « version » ; migrateSave, elle, migre la sauvegarde locale 5 → 6).
 function exportSave(G,now){
   if(!G||G.userId==null||!G.started)return null;
   const d=now instanceof Date&&!isNaN(now)?now:new Date();
@@ -1193,13 +1422,17 @@ function importSave(text){
   let o;
   try{o=JSON.parse(text.replace(/^﻿/,''));}catch(e){return bad('json');}
   if(!isObj(o)||o.app!=='blitz-manager'||!Number.isInteger(o.v)||!isObj(o.game)||!Number.isInteger(o.game.v))return bad('format');
-  if(o.v!==5||o.game.v!==5)return bad('version');
+  if(o.v!==6||o.game.v!==6)return bad('version');
   const g=o.game;
   // Joueur complet : fixPlayer ne tire alors aucun rnd() (race, side, sec et traits présents).
   const okP=p=>isObj(p)&&typeof p.pos==='string'&&typeof p.race==='string'&&typeof p.side==='string'&&isObj(p.sec)&&Array.isArray(p.traits)&&p.traits.length>0&&isObj(p.stats);
   if(!Array.isArray(g.teams)||g.teams.length!==CLUBS.length||!g.teams.every(t=>isObj(t)&&Array.isArray(t.players)&&t.players.every(okP)))return bad('invalid');
   if(!Number.isInteger(g.userId)||g.userId<0||g.userId>=g.teams.length||g.started!==true)return bad('invalid');
   if(!Array.isArray(g.market)||!g.market.every(okP)||!isObj(g.coach)||!isObj(g.stadium))return bad('invalid');
+  // TAC-08 : plans d'équipe (absents = trois vides) ; un plan = {n:texte, formation connue, style, press, lineup de la bonne longueur}
+  const okPre=P=>P===null||(isObj(P)&&typeof P.n==='string'&&!!FORMATIONS[P.formation]&&typeof P.style==='string'&&Number.isInteger(P.press)&&Array.isArray(P.lineup)&&P.lineup.length===slotsOf(P.formation).length&&P.lineup.every(Number.isInteger));
+  if(g.presets===undefined)g.presets=[null,null,null];
+  else if(!Array.isArray(g.presets)||g.presets.length!==PRESET_N||!g.presets.every(okPre))return bad('invalid');
   try{g.teams.forEach(t=>t.players.forEach(fixPlayer));g.market.forEach(fixPlayer);}catch(e){return bad('invalid');}
   return {ok:true,G:g};
 }
@@ -1258,9 +1491,17 @@ function makeSchedule(n){
   }
   return [...rounds,...rounds.map(r=>r.map(([h,a])=>[a,h]))];
 }
+// REC-04 (v0.6.10) : MARKET_N joueurs (12 ; 8 jusqu'à la v0.6.9), tirage toutes les MARKET_EVERY journées (déplacé de l'UI : UI-56). Les postes suivent la liste ci-dessous, répétée (12 : 2 G, 5 D, 3 M, 2 A).
+const MARKET_N=12,MARKET_EVERY=3;
+// marketIn(G) → journées à jouer avant le prochain tirage (0 = plus de tirage cette saison) ; marketDue(G) → vrai si un tirage a lieu au numéro de journée actuel (à appeler après G.day++)
+const marketIn=G=>{const k=MARKET_EVERY-G.day%MARKET_EVERY;return G.day+k<G.schedule.length?k:0;};
+const marketDue=G=>G.day%MARKET_EVERY===0&&G.day<G.schedule.length;
+// CON-08 : les noms de famille de TOUTE la ligue (le club du joueur n'est pas encore choisi au premier tirage) et ceux des joueurs déjà tirés sont passés à makePlayer (règle « suivant dans la liste ») :
+// aucune recrue ne partage son nom de famille avec le club, ni deux joueurs du Marché entre eux. pickLast ne tire qu'un rnd() quelle que soit la liste : le flux de tirages est inchangé.
 function genMarket(G,n){
-  const poss=['GK','DF','DF','MF','MF','FW','FW','DF'],out=[];
-  for(let i=0;i<n;i++){const age=ri(18,34);out.push(makePlayer(G,poss[i%poss.length],ri(44,64)+(age<=21?-4:0),age));}
+  if(n==null)n=MARKET_N;
+  const poss=['GK','DF','DF','MF','MF','FW','FW','DF'],out=[],mates=[].concat(...(G.teams||[]).map(t=>t.players));
+  for(let i=0;i<n;i++){const age=ri(18,34),q=makePlayer(G,poss[i%poss.length],ri(44,64)+(age<=21?-4:0),age,mates);out.push(q);mates.push(q);}
   return out;
 }
 function sortedTable(G){return G.table.slice().sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf||a.id-b.id);}
@@ -1288,9 +1529,18 @@ function newMatch(home,away){
 function lines(s){
   const by={GK:[],DF:[],MF:[],FW:[]};
   const ss=s.sides||slotSides(s.slots);
-  s.lu.forEach((p,i)=>by[s.slots[i]].push(eff(p,s.slots[i],ss[i])));
+  s.lu.forEach((p,i)=>by[s.slots[i]].push(eff(p,s.slots[i],ss[i],s.mf)));   // s.mf : formation de maîtrise (lineValsFor seulement ; absente en match)
   const cnt=c=>.75+.25*c/2,st=STYLE[s.style],pr=1+.04*s.press;
   return{gk:by.GK[0],def:avg(by.DF)*cnt(by.DF.length)*st.def,mid:avg(by.MF)*cnt(by.MF.length)*(by.MF.length>=3?1.10:1)*pr*(s.style==='contre'?.97:1),fwd:avg(by.FW)*cnt(by.FW.length)*st.att};
+}
+// ---- v0.6.10 (UI-42) : forces de zone d'un choix tactique sans le poser sur l'équipe (aperçu). Pure, aucun rnd(). ----
+// lineValsFor(t, {formation, style, press, lineup}, auto) → {gk, def, mid, fwd} (même forme que lines() ; ce n'est PAS {G,D,M,A}). Un champ absent de o prend la valeur de t ; lineup absente, invalide pour la formation
+// ou auto vrai (estimation d'un adversaire) : composition auto de la formation (bestLineup). La maîtrise est celle de la formation évaluée (bonusOf(p, f)) : lineVals de l'UI, qui passe par bonusOf(p), lirait celle de la formation actuelle du club.
+function lineValsFor(t,o,auto){
+  o=o||{};
+  const f=FORMATIONS[o.formation]?o.formation:t.formation,c={...t,formation:f,lineup:Array.isArray(o.lineup)?o.lineup:(f===t.formation?t.lineup:[])};
+  const lu=(auto||!lineupValid(c))?bestLineup(c,f):c.lineup.map(id=>c.players.find(p=>p.id===id));
+  return lines({lu,slots:slotsOf(f),sides:lanesOf(c,f),style:o.style||t.style,press:o.press==null?t.press:o.press,mf:f});
 }
 // ---- v0.6-dev4 (MAT-02, 3 consignes) ; v0.6.4 (MAT-04) : consignes en direct, en pause. Vivent dans M[sd] (half, blocs, until), jamais dans G. Sans consigne : aucun effet, aucun rnd(). ----
 // Réserve de HALF_BLOCS blocs de HALF_BLOC phases par camp et par match (M[sd].blocs). Activation à la phase n avec b blocs : until = min(n + HALF_BLOC×b, 36), blocs −= b.
@@ -1300,7 +1550,8 @@ function lines(s){
 // HALF_POWER (0 à 1, livré à 0) : multiplie HALF_K, HALF_OFF, HALF_REST et HALF_COST partout où ils agissent (halfMul, applyHalf, Souffler). À 0 : « effet désactivé » (décision du créateur, rééquilibrage global QUA-05) ;
 // la mécanique (blocs, until, réserve, IA) reste complète et M[sd].half ne dépend pas de HALF_POWER. Surcharge de test : variable d'environnement BM_HALF_POWER (Node uniquement ; le navigateur reste à 0).
 // Constantes de départ = v0.6 : HALF_K 0,04 · HALF_OFF 0,01 · HALF_REST 0,10 · HALF_COST 0,03.
-const HALF_K=.04,HALF_OFF=.01,HALF_REST=.10,HALF_COST=.03,HALF_BLOC=6,HALF_BLOCS=3;
+let HALF_K=.04,HALF_OFF=.01,HALF_REST=.10,HALF_COST=.03;
+const HALF_BLOC=6,HALF_BLOCS=3;   // structurels (blocs de 6 phases × 3 = 18 = mi-temps, 36 en dur dans le moteur) : hors liste blanche TEC-09
 let HALF_POWER=(()=>{const v=typeof process!=='undefined'&&process.env&&process.env.BM_HALF_POWER!=null&&process.env.BM_HALF_POWER!==''?+process.env.BM_HALF_POWER:0;return v>=0&&v<=1?v:0;})();
 const HALF_OPTS=[
   {id:'souffler',n:['Souffler','Catch breath'],line:null},
@@ -1377,7 +1628,7 @@ function matchInfo(M,sd){
   return{poss:{h,a:n?100-h:0},poss6:{h:h6,a:w.length?100-h6:0},players:M[sd].lu.map((p,i)=>({i,hp:p.hp,maxHP:maxHP(p),state:p.hp<HP_LOW?'low':p.hp<=HP_WARN*maxHP(p)?'warn':'ok'}))};
 }
 const clk=n=>{const s=Math.round(n*600/36);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
-const GK_K=1.02;
+let GK_K=1.02;
 function phase(M){
   if(M.over)return null;
   const Hs=M.h,As=M.a,Lh=lines(Hs),La=lines(As);
@@ -1480,7 +1731,10 @@ function phase(M){
   return ev;
 }
 function endMatch(M){M.over=true;M.status='over';M.winner=M.hs>M.as?'h':'a';}
-function doSub(side,i,b){const out=side.lu[i];side.lu[i]=b;side.bench[side.bench.indexOf(b)]=out;b.m.played=true;side.subs++;return out;}
+// MAT-10 (D44, v0.6.10) : avant le coup d'envoi (M.n = 0, match en cours) un remplacement est libre : il ne compte pas parmi les 3 remplacements du match, et le joueur remplacé n'a pas joué (m.played faux : ni apparition, ni XP de match, ni note).
+// subFree(M) → true tant que le coup d'envoi n'a pas eu lieu ; doSub(side, i, b, M) : sans M (ancien appel), comportement d'avant (remplacement compté). Aucun rnd().
+const subFree=M=>!!M&&M.n===0&&!M.over;
+function doSub(side,i,b,M){const out=side.lu[i],free=subFree(M);side.lu[i]=b;side.bench[side.bench.indexOf(b)]=out;b.m.played=true;if(free)out.m.played=false;else side.subs++;return out;}
 function aiSubs(side){
   while(side.subs<3){
     let best=null;
@@ -1550,14 +1804,21 @@ function simFixture(G,h,a){
   [[H,'h'],[A,'a']].forEach(([t,sd])=>{if(t.id!==G.userId)awardTeam(G,t,res.winner===sd,true);});
   return{M,res};
 }
+// Récupération de HP de fin de journée (règle unique, lue par afterDay et recovProj) : RECOV de maxHP ; club du joueur seulement : +0,2 en Repos (collectif ou individuel), +0,02 par palier de Préparateur physique.
 const RECOV=.5;
+const recovRate=(G,t,p)=>RECOV+((t.id===G.userId&&(p.train||G.training)==='repos')?.2:0)+(t.id===G.userId?.02*specOn(G.coach,'cond'):0);
+const recovHP=(G,t,p)=>Math.min(maxHP(p),p.hp+Math.round(maxHP(p)*recovRate(G,t,p)));
+// v0.6.10 (UI-47) : recovProj(G, p) → {hp, max, hp1, full} : HP actuels, maxHP, HP projetés après la prochaine afterDay (entraînement en cours compris), full = hp1 ≥ max. Pure, lecture seule, aucun rnd() ; un joueur hors des clubs (Marché) = taux de base.
+function recovProj(G,p){
+  const t=G.teams.find(x=>x.players.some(q=>q===p||q.id===p.id))||{id:-1},max=maxHP(p),hp1=recovHP(G,t,p);
+  return{hp:p.hp,max,hp1,full:hp1>=max};
+}
 function afterDay(G){
   G.teams.forEach(t=>{
     t.players.forEach(p=>{
-      const rec=RECOV+((t.id===G.userId&&(p.train||G.training)==='repos')?.2:0)+(t.id===G.userId?.02*specOn(G.coach,'cond'):0);
       if(p.inj>0&&!p.newInj)p.inj--;
       p.newInj=false;
-      p.hp=Math.min(maxHP(p),p.hp+Math.round(maxHP(p)*rec));
+      p.hp=recovHP(G,t,p);
     });
   });
 }
@@ -1585,7 +1846,7 @@ function newSeason(G){
   G.season++;G.day=0;G.results=[];
   G.schedule=makeSchedule(G.teams.length);
   G.table=G.teams.map(t=>({id:t.id,p:0,w:0,otw:0,otl:0,l:0,gf:0,ga:0,pts:0}));
-  G.market=genMarket(G,8);
+  G.market=genMarket(G);
   return retired;
 }
 // ==ENGINE END==
@@ -1593,20 +1854,20 @@ function newSeason(G){
 // ==UI START==
 const app=document.getElementById('app');
 let G=null;
-const UI={prev:null,sect:'accueil',tab:'home',last:lastDef(),ptab:'ov',rtab:'game',csel:null,ctab:'ov',sort:'pos',sdir:1,msort:'ovr',mdir:-1,sel:null,msel:null,confirm:null,cedit:false,live:null,timer:null,resDay:null,toastT:null,scr:'title',step:1,draft:{coach:''},saved:null,dlg:null,fl:{s:{},m:{}},newsI:0,jf:'all',jn:30,warn:false,demo:null,xmsg:null,xpend:null,xtxt:null,xpaste:false,xptxt:''};
+const UI={prev:null,sect:'accueil',tab:'home',last:lastDef(),ptab:'ov',rtab:'game',csel:null,ctab:'ov',sort:'pos',sdir:1,msort:'ovr',mdir:-1,sel:null,msel:null,confirm:null,cedit:false,live:null,timer:null,resDay:null,toastT:null,scr:'title',step:1,draft:{coach:''},saved:null,dlg:null,fs:null,fl:{s:{},m:{}},newsI:0,jf:'all',jn:30,warn:false,demo:null,xmsg:null,xpend:null,xtxt:null,xpaste:false,xptxt:''};
 const KEY='blitz-manager-v2',PKEY='blitz-manager-prefs';
 const PREFS={lang:'fr',theme:'auto',nav:'bar',hideWelcome:false};
 function applyPrefs(){LANG=PREFS.lang;const r=document.documentElement;r.lang=LANG;if(PREFS.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',PREFS.theme);}
 function loadPrefs(){try{const s=JSON.parse(localStorage.getItem(PKEY)||'null');if(s){if(s.lang==='en'||s.lang==='fr')PREFS.lang=s.lang;if(['auto','light','dark'].includes(s.theme))PREFS.theme=s.theme;if(s.nav==='bar'||s.nav==='tabs')PREFS.nav=s.nav;if(s.hideWelcome===true)PREFS.hideWelcome=true;}}catch(e){}applyPrefs();}
 function savePrefs(){try{localStorage.setItem(PKEY,JSON.stringify(PREFS));}catch(e){}}
 // ---------- v0.6.3 (UI-19 / UI-20a / UI-21 / TEC-01 UI) : constantes et textes ----------
-const VERSION='v0.6.9';                     // source unique : écran titre, À propos, test d'actualité
+const VERSION='v0.6.10';                     // source unique : écran titre, À propos, test d'actualité
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 // Actualités du titre : {t:[fr,en], b:[fr,en] | () => texte, v?:version}. Une entrée sans titre ou sans corps n'est jamais affichée.
 const TITLE_NEWS=[
   {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-  {v:VERSION,t:['Nouveautés','What’s new'],b:['v0.6.9 « Tactique et listes » : Tactique sur une page avec forces par zone, formations à débloquer et maîtrise, tri et filtres des listes, fiche joueur en feuille sur mobile, confirmation avant de changer de spécialité, barre mobile avec Jouer au centre.','v0.6.9 “Tactics and lists”: one-page Tactics with strengths by zone, unlockable formations and mastery, sorting and filters on lists, player card as a sheet on mobile, confirmation before changing a specialty, mobile bar with Play in the centre.']}
+  {v:VERSION,t:['Nouveautés','What’s new'],b:['v0.6.10 « Match et navigation » : trois plans d’équipe à enregistrer, disposition en colonnes sur PC, Sphère en plein écran, Accueil plus compact, Marché de 12 joueurs et remplacements libres avant le coup d’envoi.','v0.6.10 “Match and navigation”: three team plans to save, column layout on desktop, full-screen Sphere, a more compact Home, a 12-player Market and free substitutions before kick-off.']}
 ];
 // Textes (ids de la fiche UI-19-20a-21 §3, plus x.* pour Exporter / Importer). Les valeurs {x} sont remplacées par T() ; l'appelant échappe ce qui vient du jeu.
 const TX={
@@ -1904,7 +2165,20 @@ function masteryBar(f){
   return `<div class="mst" role="group" aria-label="${al}"><span class="mono">${L('Maîtrise','Mastery')} <span class="ms" aria-hidden="true">${'★'.repeat(m)+'☆'.repeat(MASTER_MAX-m)}</span></span>${barH(mx?100:r/MASTER_STEP*100,'var(--ball)')}<span class="mono muted" aria-hidden="true">${mx?'max':`${r}/${MASTER_STEP}`}</span></div>`;
 }
 // TAC-10 : puces de formation (Effectif › Tactique et Tactique rapide) ; verrouillée = grisée (pointillés, texte atténué) + niveau requis écrit ; `disabled` natif, infobulle et aria-label (jamais la couleur seule)
-const formBtns=u=>Object.keys(FORMATIONS).map(f=>{const ok=unlocked(G,f),req=L(`Niveau d’entraîneur ${FORM_UNLOCK[f]} requis`,`Coach level ${FORM_UNLOCK[f]} required`);return `<button class="chip" data-a="formation" data-v="${f}" aria-pressed="${u.formation===f}"${ok?'':` disabled title="${req}" aria-label="${f} : ${req}"`}>${f}${masteryTag(f)}${ok?'':` · ${L('niv.','lv.')} ${FORM_UNLOCK[f]}`}</button>`;}).join('');
+const formBtns=(u,rep)=>Object.keys(FORMATIONS).map(f=>{const ok=unlocked(G,f),req=L(`Niveau d’entraîneur ${FORM_UNLOCK[f]} requis`,`Coach level ${FORM_UNLOCK[f]} required`);const b=`<button class="chip" data-a="formation" data-v="${f}" aria-pressed="${u.formation===f}"${ok?'':` disabled title="${req}" aria-label="${f} : ${req}"`}>${f}${masteryTag(f)}${ok?'':` · ${L('niv.','lv.')} ${FORM_UNLOCK[f]}`}</button>`;return rep?withRep(b,ok?rep({formation:f}):''):b;}).join('');
+// UI-42 (v0.6.10) : repère d'effet sous un bouton de choix tactique, « ▲ Att ▼ Déf » = plus grand gain et plus grande perte de zone (en %) du choix proposé face au choix actuel.
+// Lecture seule de lineValsFor (moteur) : l'UI ne recalcule aucune force ; les chiffres sont dans l'aria-label (jamais la couleur seule : ▲ ▼ et le nom de la zone).
+const ZSH={gk:['Gar','Kpr'],def:['Déf','Def'],mid:['Mil','Mid'],fwd:['Att','Att']};
+function effRep(u,o){
+  const cur=lineValsFor(u,{}),nv=lineValsFor(u,o),sg=n=>n>0?'+':'−';
+  const d=ZONES.map(([k,n])=>({k,n:P(n),pc:cur[k]?Math.round((nv[k]-cur[k])/cur[k]*100):0}));
+  const up=d.filter(x=>x.pc>0).sort((a,b)=>b.pc-a.pc)[0],dn=d.filter(x=>x.pc<0).sort((a,b)=>a.pc-b.pc)[0];
+  if(!up&&!dn)return `<small class="rep" role="img" aria-label="${L('Aucun écart de zone','No zone difference')}">=</small>`;
+  const t=[up&&`<span class="pos-v"><i aria-hidden="true">▲</i> ${P(ZSH[up.k])}</span>`,dn&&`<span class="neg-v"><i aria-hidden="true">▼</i> ${P(ZSH[dn.k])}</span>`].filter(Boolean).join(' ');
+  const al=[up&&`${up.n} ${sg(1)}${up.pc} %`,dn&&`${dn.n} ${sg(-1)}${Math.abs(dn.pc)} %`].filter(Boolean).join(', ');
+  return `<small class="rep" role="img" aria-label="${esc(al)}">${t}</small>`;
+}
+const withRep=(btn,rep)=>`<span class="optc">${btn}${rep||'<small class="rep" aria-hidden="true">&nbsp;</small>'}</span>`;
 const formLine=(f,c)=>`<div class="frow"><span class="mono">${f}</span><span class="mono muted">${c.p} ${mw(c.p)}</span><b class="mono">${Math.round(c.w/c.p*100)} %</b></div>`;
 function histHTML(p,ctx){
   const out=[];
@@ -1973,6 +2247,7 @@ function playerPanel(p,ctx,sh){
 }
 // ---------- Rendu général ----------
 function render(){
+  if(UI.fs&&(UI.scr!=='game'||!G||(UI.fs.k==='match'?(UI.tab!=='match'||!UI.live||UI.live.done):UI.tab!=='lineup')))closeFS(true);   // UI-34b : la page change, le calque se ferme
   if(UI.scr==='title'||(UI.scr!=='opts'&&!G)){UI.scr='title';app.innerHTML=titleHTML();return;}
   if(UI.scr==='opts'){app.innerHTML=optsTitleHTML();return;}
   if(UI.scr==='flow'){
@@ -1983,9 +2258,22 @@ function render(){
   UI.tab=tabId(UI.tab);UI.sect=sectOf(UI.tab);if(UI.tab!=='coach')UI.cedit=false;
   const pages={home:homeHTML,coach:coachHTML,finance:financeHTML,club:()=>clubHTML(false),cust:custPageHTML,journal:journalHTML,squad:squadHTML,train:trainHTML,market:marketHTML,match:matchHTML,lineup:lineupHTML,calendar:calendarHTML,table:tableHTML,settings:settingsHTML,rules:rulesHTML,about:aboutHTML};
   const HELP={lineup:'tactics',train:'train',coach:'train',finance:'stade',club:'stade',cust:'stade'};
-  const by=todoBySect(G);
+  const by=todoBySect(G),fk=UI.fs?fsFocusKey():null;
+  if(UI.fs)fsDrop();   // UI-34b : la page se redessine, ses panneaux déplacés sont jetés puis remplacés par les neufs
   app.innerHTML=headerHTML(by)+`<main class="wrap main${UI.tab==='match'?' pm':''}">${pages[UI.tab]()}${HELP[UI.tab]?helpRow(HELP[UI.tab]):''}</main>`+(PREFS.nav==='bar'?barHTML(by):'');
+  if(UI.fs){fsMount();fsRefocus(fk);}
   if(UI.tab==='match'&&UI.live&&!UI.live.done)updateLive();
+}
+// UI-34b : le calque garde le focus clavier sur la même commande après un redessin de la page (Tactique)
+function fsFocusKey(){
+  const a=document.activeElement,r=document.getElementById('fs');
+  if(!a||!r||!r.contains(a)||!a.dataset||!a.dataset.a)return null;
+  return `[data-a="${a.dataset.a}"]`+['v','i','k'].filter(x=>a.dataset[x]!==undefined).map(x=>`[data-${x}="${a.dataset[x]}"]`).join('');
+}
+function fsRefocus(k){
+  const r=document.getElementById('fs');if(!r)return;
+  const a=document.activeElement;if(a&&r.contains(a)&&a!==r)return;
+  const t=(k&&r.querySelector(k+':not([disabled])'))||r.querySelector('#fsx');if(t&&t.focus)t.focus({preventScroll:true});
 }
 // ---------- UI-12a : « À faire » (pastilles), en-tête, barre mobile ----------
 // todoLines(G) : lignes « À faire avant le match », par priorité, calculées depuis G seul (aucune clé ajoutée à G, rien n'est stocké).
@@ -2061,7 +2349,7 @@ function peekSave(){
   let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
   if(!s)return {st:'none'};
   let g;try{g=JSON.parse(s);}catch(e){return {st:'bad'};}
-  if(!g||typeof g!=='object'||g.userId==null||!(g.v>=2&&g.v<=5))return {st:'foreign'};
+  if(!g||typeof g!=='object'||g.userId==null||!(g.v>=2&&g.v<=6))return {st:'foreign'};
   try{
     const t=g.teams[g.userId],num=(x,d)=>Number.isFinite(+x)?+x:d;
     return {st:'ok',club:String(t.name).slice(0,40),season:num(g.season,1),day:num(g.day,0),n:g.schedule.length};
@@ -2137,7 +2425,7 @@ const PORD={GK:0,DF:1,MF:2,FW:3};
 const previewList=t=>t.players.slice().sort((a,b)=>PORD[a.pos]-PORD[b.pos]||ovr(b)-ovr(a));
 function resetUI(){
   stopTimer();
-  UI.sect='accueil';UI.tab='home';UI.last=lastDef();UI.csel=null;UI.ptab='ov';UI.live=null;UI.confirm=null;UI.sel=null;UI.msel=null;UI.resDay=null;UI.prev=null;UI.dlg=null;UI.fl={s:{},m:{}};UI.cedit=false;
+  UI.sect='accueil';UI.tab='home';UI.last=lastDef();UI.csel=null;UI.ptab='ov';UI.live=null;UI.confirm=null;UI.sel=null;UI.msel=null;UI.resDay=null;UI.prev=null;UI.dlg=null;UI.fl={s:{},m:{}};UI.cedit=false;if(UI.fs)closeFS(true);
 }
 function startNew(){
   stopTimer();G=createLeague();            // premier (et seul) tirage aléatoire de la partie, au clic
@@ -2163,7 +2451,7 @@ function renderDlg(focusSel){
   let root=document.getElementById('dlg');
   if(!UI.dlg){
     if(root)root.remove();
-    app.removeAttribute('inert');document.documentElement.removeAttribute('data-dlg');return;
+    if(!UI.fs){app.removeAttribute('inert');document.documentElement.removeAttribute('data-dlg');}return;
   }
   if(!root){
     root=document.createElement('div');root.id='dlg';document.body.appendChild(root);
@@ -2371,7 +2659,7 @@ function homeHTML(){
   <div class="row acts"><button class="btn primary" data-a="goto" data-t="match">${L('Aller sur le terrain','Go to the pitch')}</button><button class="btn" data-a="sim">${L('Simuler directement','Simulate now')}</button></div></section>`;
   // UI-50 : 5 clubs, 2 au-dessus et 2 au-dessous du club du joueur ; premier : le club puis les 4 suivants ; dernier : le club puis les 4 précédents (le rang affiché reste le vrai rang)
   const st5=sortedTable(G),me5=st5.findIndex(r=>r.id===u.id),i0=clamp(me5-2,0,Math.max(0,st5.length-5));
-  const mini=st5.slice(i0,i0+5).map((r,k)=>{const t=G.teams[r.id],i=i0+k;return `<tr class="${t.id===u.id?'me':''}"><td class="num">${i+1}</td><td>${badge(t)}</td><td class="num">${r.p}</td><td class="num">${r.gf-r.ga>0?'+':''}${r.gf-r.ga}</td><td class="num">${r.pts}</td></tr>`;}).join('');
+  const mini=st5.slice(i0,i0+5).map((r,k)=>{const t=G.teams[r.id],i=i0+k;return `<tr class="${t.id===u.id?'me':''}"><td class="num">${i+1}</td><td>${badge(t)}</td><td class="num hx">${r.p}</td><td class="num hx">${r.gf-r.ga>0?'+':''}${r.gf-r.ga}</td><td class="num">${r.pts}</td></tr>`;}).join('');
   const nw=G.news.length?G.news.slice(0,5).map(n=>`<div><span>J${n.d}</span><p>${n.a?jAlert()+' ':''}${esc(n.s)}</p></div>`).join(''):`<p class="hint">${L('Aucune nouvelle pour le moment.','No news yet.')}</p>`;
   const last=G.finLog[0],C=G.coach,nw1=netIf(true,home),nw0=netIf(false,home),cl=coachLvl(C);
   const fin=`<section class="panel">${blockHd(L('Finances','Finances'),'finance')}<div class="stack tight"><div class="frow"><span class="muted">${L('Budget','Budget')}</span><b class="mono">${fmt(G.cash)} gils</b></div>
@@ -2383,9 +2671,10 @@ function homeHTML(){
   <p class="hint">${L(`Seule différence : la prime de victoire (+${fmt(nw1.bonus)}).`,`Only difference: the win bonus (+${fmt(nw1.bonus)}).`)}</p></div></div></section>`;
   const spec=C.spec&&SPECS[C.spec]?P(SPECS[C.spec].n):cl.lvl>=SPEC_MIN?L('à choisir','to pick'):L(`dès le niveau ${SPEC_MIN}`,`from level ${SPEC_MIN}`);
   const cc=`<section class="panel">${blockHd(L('Entraîneur','Coach'),'coach')}<div class="stack tight">${coachBar()}<div class="frow"><span class="muted">${L('Spécialité','Specialty')}</span><b>${spec}</b></div></div></section>`;
-  return `<div class="grid2"><div class="stack">${todoBlock()}${next}<section class="panel">${blockHd(L('Journal du club','Club journal'),'journal')}<div class="news">${nw}</div></section></div>
-  <div class="stack"><section class="panel">${blockHd(L('Classement','League table'),'table')}<div class="tbl"><table><thead><tr><th class="num">#</th><th>Club</th><th class="num">${L('J','P')}</th><th class="num">+/−</th><th class="num">Pts</th></tr></thead><tbody>${mini}</tbody></table></div></section>
-  ${fin}${cc}${helpRow('game')}</div></div>`;
+  // UI-52 (option C) : bande 1 « Action » (À faire, Prochain match), bande 2 « Suivi » en deux colonnes indépendantes (Classement, Finances | Entraîneur, Journal) ; l'ordre du DOM est l'ordre de lecture
+  const tbl=`<section class="panel">${blockHd(L('Classement','League table'),'table')}<div class="tbl"><table><thead><tr><th class="num">#</th><th>Club</th><th class="num hx">${L('J','P')}</th><th class="num hx">+/−</th><th class="num">Pts</th></tr></thead><tbody>${mini}</tbody></table></div></section>`;
+  const jrn=`<section class="panel">${blockHd(L('Journal du club','Club journal'),'journal')}<div class="news">${nw}</div></section>`;
+  return `<div class="hm"><div class="hb1">${todoBlock()}${next}</div><div class="hb2"><div class="hcol">${tbl}${fin}</div><div class="hcol">${cc}${jrn}</div></div>${helpRow('game')}</div>`;
 }
 function seasonEndHTML(){
   const st=sortedTable(G),u=U(),rank=st.findIndex(r=>r.id===u.id)+1,champ=G.teams[st[0].id];
@@ -2405,10 +2694,8 @@ function squadHTML(){
   <div class="plist" id="plist">${listHead('s')}${list.length?list.map(squadRow).join(''):`<p class="hint">${L('Aucun joueur ne correspond aux filtres.','No player matches the filters.')}</p>`}</div>
   ${helpRow('stats')}</div>${narrow()?'':p?playerPanel(p,'squad'):`<aside class="panel"><p class="hint">${L('Aucun joueur ne correspond aux filtres.','No player matches the filters.')}</p></aside>`}</div>`;
 }
-// UI-56 : jours (journées à jouer) avant le prochain tirage du Marché. Le tirage a lieu dans completeDay quand le nouveau numéro de journée est un multiple de MARKET_EVERY et qu'il reste des journées ;
-// rien n'est lu dans le moteur (G.day et G.schedule seulement). 0 = plus de tirage cette saison (le suivant a lieu au lancement de la saison).
-const MARKET_EVERY=3;
-const marketDraw=()=>{const k=MARKET_EVERY-G.day%MARKET_EVERY;return G.day+k<G.schedule.length?k:0;};
+// UI-56 : jours (journées à jouer) avant le prochain tirage du Marché. Depuis la v0.6.10 (REC-04) la règle est dans le moteur (MARKET_EVERY, marketIn, marketDue) ; 0 = plus de tirage cette saison (le suivant a lieu au lancement de la saison).
+const marketDraw=()=>marketIn(G);
 function marketHTML(){
   const u=U(),f=fget('m'),list=G.market.slice().sort(sortFn(UI.msort,UI.mdir)).filter(p=>fltPass(p,f)),dd=marketDraw();
   if(!list.find(p=>p.id===UI.msel))UI.msel=list.length?list[0].id:null;
@@ -2590,7 +2877,7 @@ function rulesHTML(){
   const t=UI.rtab;
   if(t==='game'){
     body=`<div class="grid2">${sec('Saison','Season',li([L('8 clubs en matchs aller-retour : 14 journées.','8 clubs, home and away: 14 matchdays.'),L('Victoire 3 points ; victoire en prolongation 2 ; défaite en prolongation 1 ; défaite 0.','Win 3 points; overtime win 2; overtime loss 1; loss 0.'),L(`Prime de fin de saison de ${fmt(PRIZES[0])} gils (champion) à ${fmt(PRIZES[PRIZES.length-1])} (dernier).`,`End-of-season prize from ${fmt(PRIZES[0])} gil (champions) to ${fmt(PRIZES[PRIZES.length-1])} (last).`),L('À chaque nouvelle saison, les joueurs vieillissent d’un an ; à 35 ans ils prennent leur retraite et un jeune les remplace. Dès 30 ans, les stats déclinent légèrement.','Every new season players age a year; at 35 they retire and a youngster replaces them. From 30, stats decline slightly.')]))}
-    ${sec('Match','Match',li([L('Six joueurs par équipe : un gardien et cinq joueurs de champ selon la formation.','Six players a side: one keeper and five outfield players depending on the formation.'),L('Deux périodes de cinq minutes (36 phases). En cas d’égalité : mort subite, puis départage.','Two five-minute halves (36 phases). If level: sudden death, then a tiebreak.'),L('Chaque phase : possession, portée du ballon (AT contre PH), jusqu’à deux passes (PS contre IN), tir (TI contre IN) puis arrêt (AR).','Each phase: possession, carrying the ball (AT vs PH), up to two passes (PS vs IN), a shot (TI vs IN), then a save (AR).'),L('Trois remplacements par match, à la mi-temps ou en direct.','Three substitutions per match, at half-time or live.'),L('Trois consignes, données en pause à tout moment du match, mi-temps comprise : Souffler, Verrouiller, Pousser. Une réserve de 3 blocs de 6 phases par match à répartir entre elles (1 à 3 blocs par consigne, dans la limite de la fin du match). Souffler est instantané ; Verrouiller et Pousser durent leurs blocs, une seule à la fois : en changer fait perdre les phases restantes. Impossible en prolongation. L’adversaire en donne aussi.'+(HALF_POWER>0?'':' Leurs effets sont provisoirement désactivés, le temps du rééquilibrage.'),'Three instructions, given while paused at any point in the match, half-time included: Catch breath, Lock down, Push forward. A reserve of 3 blocks of 6 phases per match to spend on them (1 to 3 blocks per instruction, within what is left of the match). Catch breath is instant; Lock down and Push forward last for their blocks, one at a time: switching loses the remaining phases. Not possible in overtime. The opponent gives instructions too.'+(HALF_POWER>0?'':' Their effects are temporarily switched off until the game is rebalanced.')),L('En direct, chaque phase du fil se déplie pour montrer ses duels : stats comparées, probabilité du tacle, facteurs (style, pressing, poste, trait, HP). Vert : favorable à ton équipe ; rouge : défavorable ; ✓ ou ✗ : l’action de celui qui la tente réussit ou non.','Live, every feed phase unfolds to show its duels: compared stats, tackle probability, factors (style, pressing, position, trait, HP). Green: good for your team; red: bad for it; ✓ or ✗: the action succeeds or fails for the player attempting it.'),L('Infos de match : possession cumulée et sur les 6 dernières phases ; la jauge de HP de tes joueurs passe de OK à fatigué (HP à 25 % du maximum ou moins) puis épuisé (moins de 10 HP) ; un bandeau et le fil signalent chaque joueur qui passe épuisé.','Match info: total possession and possession over the last 6 phases; your players’ HP gauge goes from OK to tired (HP at 25% of max or less) then spent (under 10 HP); a banner and the feed flag every player who becomes spent.'),L('La Sphère est ronde : le club qui reçoit joue vers la droite, le visiteur vers la gauche. Une consigne de ligne colore la ligne visée (bande hachurée et symbole) tant qu’elle dure ; Souffler entoure brièvement les six titulaires d’un halo. Seul le dessin change : aucune distance ne compte dans les duels.','The Sphere is round: the home club attacks to the right, the visitor to the left. A line instruction marks the targeted line (hatched band and symbol) while it lasts; Catch breath briefly puts a halo around the six starters. Only the picture changes: no distance counts in the duels.'),L('Dans un duel de passe, la phrase nomme le passeur, le receveur et le défenseur qui gêne : passe sans gêne, passe affaiblie, interception ou passe qui s’éteint.','In a pass duel, the sentence names the passer, the receiver and the defender who hampers it: clean pass, weakened pass, interception or a pass that fades out.'),L('Avant le coup d’envoi, « Tactique rapide » règle le style, le pressing et la formation ; le détail est dans Effectif › Tactique. Changer de formation refait le Six de départ en automatique.','Before kick-off, “Quick tactics” sets style, pressing and formation; details are in Squad › Tactics. Changing formation resets the starting six to automatic.')]))}</div>
+    ${sec('Match','Match',li([L('Six joueurs par équipe : un gardien et cinq joueurs de champ selon la formation.','Six players a side: one keeper and five outfield players depending on the formation.'),L('Deux périodes de cinq minutes (36 phases). En cas d’égalité : mort subite, puis départage.','Two five-minute halves (36 phases). If level: sudden death, then a tiebreak.'),L('Chaque phase : possession, portée du ballon (AT contre PH), jusqu’à deux passes (PS contre IN), tir (TI contre IN) puis arrêt (AR).','Each phase: possession, carrying the ball (AT vs PH), up to two passes (PS vs IN), a shot (TI vs IN), then a save (AR).'),L('Trois remplacements par match, à la mi-temps ou en direct.','Three substitutions per match, at half-time or live.'),L('Trois consignes, données en pause à tout moment du match, mi-temps comprise : Souffler, Verrouiller, Pousser. Une réserve de 3 blocs de 6 phases par match à répartir entre elles (1 à 3 blocs par consigne, dans la limite de la fin du match). Souffler est instantané ; Verrouiller et Pousser durent leurs blocs, une seule à la fois : en changer fait perdre les phases restantes. Impossible en prolongation. Souffler rend des HP aux six titulaires ; Verrouiller renforce la défense et affaiblit le milieu et l’attaque ; Pousser renforce l’attaque et affaiblit la défense et le milieu ; les joueurs de la ligne visée perdent des HP. L’adversaire en donne aussi.'+(HALF_POWER>0?'':' Leurs effets sont provisoirement désactivés, le temps du rééquilibrage.'),'Three instructions, given while paused at any point in the match, half-time included: Catch breath, Lock down, Push forward. A reserve of 3 blocks of 6 phases per match to spend on them (1 to 3 blocks per instruction, within what is left of the match). Catch breath is instant; Lock down and Push forward last for their blocks, one at a time: switching loses the remaining phases. Not possible in overtime. Catch breath gives the six starters HP back; Lock down boosts defence and weakens midfield and attack; Push forward boosts attack and weakens defence and midfield; the players of the targeted line lose HP. The opponent gives instructions too.'+(HALF_POWER>0?'':' Their effects are temporarily switched off until the game is rebalanced.')),L('En direct, chaque phase du fil se déplie pour montrer ses duels : stats comparées, probabilité du tacle, facteurs (style, pressing, poste, trait, HP). Vert : favorable à ton équipe ; rouge : défavorable ; ✓ ou ✗ : l’action de celui qui la tente réussit ou non.','Live, every feed phase unfolds to show its duels: compared stats, tackle probability, factors (style, pressing, position, trait, HP). Green: good for your team; red: bad for it; ✓ or ✗: the action succeeds or fails for the player attempting it.'),L('Infos de match : possession cumulée et sur les 6 dernières phases ; la jauge de HP de tes joueurs passe de OK à fatigué (HP à 25 % du maximum ou moins) puis épuisé (moins de 10 HP) ; un bandeau et le fil signalent chaque joueur qui passe épuisé.','Match info: total possession and possession over the last 6 phases; your players’ HP gauge goes from OK to tired (HP at 25% of max or less) then spent (under 10 HP); a banner and the feed flag every player who becomes spent.'),L('La Sphère est ronde : le club qui reçoit joue vers la droite, le visiteur vers la gauche. Une consigne de ligne colore la ligne visée (bande hachurée et symbole) tant qu’elle dure ; Souffler entoure brièvement les six titulaires d’un halo. Seul le dessin change : aucune distance ne compte dans les duels.','The Sphere is round: the home club attacks to the right, the visitor to the left. A line instruction marks the targeted line (hatched band and symbol) while it lasts; Catch breath briefly puts a halo around the six starters. Only the picture changes: no distance counts in the duels.'),L('Dans un duel de passe, la phrase nomme le passeur, le receveur et le défenseur qui gêne : passe sans gêne, passe affaiblie, interception ou passe qui s’éteint.','In a pass duel, the sentence names the passer, the receiver and the defender who hampers it: clean pass, weakened pass, interception or a pass that fades out.'),L('Avant le coup d’envoi, « Tactique rapide » règle le style, le pressing et la formation ; le détail est dans Effectif › Tactique. Changer de formation refait le Six de départ en automatique.','Before kick-off, “Quick tactics” sets style, pressing and formation; details are in Squad › Tactics. Changing formation resets the starting six to automatic.')]))}</div>
     ${sec('Fatigue et blessures','Fatigue and injuries',li([L('Porter le ballon, passer et tirer coûtent des HP ; un joueur qui ne participe pas à l’action en récupère un peu. Sous 10 HP, PS et TI sont divisés par 2.','Carrying, passing and shooting cost HP; a player not involved in the action recovers a little. Below 10 HP, PS and TI are halved.'),L('Après chaque journée, tout le monde récupère une partie de ses HP.','After every matchday everyone recovers part of their HP.'),L('Un joueur très fatigué risque davantage de se blesser (1 à 3 journées d’absence).','A very tired player is more likely to get injured (1 to 3 matchdays out).')]))}
     ${sec('Navigation et alertes','Navigation and alerts',li([L('Cinq sections : Tableau de bord, Club, Effectif, Jouer, Options. Sur mobile, la barre du bas les garde sous le pouce, avec Jouer au centre en ambre ; le réglage Options › Paramètres › Navigation mobile la place en haut.','Five sections: Dashboard, Club, Squad, Play, Options. On mobile the bottom bar keeps them under your thumb, with Play in the middle in amber; Options › Settings › Mobile navigation moves it to the top.'),L('Club : Entraîneur, Finances, Fiche du club, Personnalisation, Journal. Effectif : Joueurs, Tactique, Entraînement, Marché. Jouer : Match, Calendrier, Classement.','Club: Coach, Finances, Club sheet, Customisation, Journal. Squad: Players, Tactics, Training, Market. Play: Match, Fixtures, Table.'),L('Le bouton ▶ en haut mène au prochain match, reprend le match en cours (ou son bilan) ou lance la saison suivante.','The ▶ button at the top goes to the next match, resumes the match in progress (or its report) or starts the next season.'),L('Une pastille chiffrée sur une section signale ce qui reste à faire : titulaire blessé ou sous 50 % de HP, budget négatif, points de talent à répartir, spécialité d’entraîneur à choisir, bilan de match à valider (Jouer). Rouge : un titulaire blessé ; ambre : le reste. Le chiffre et l’infobulle donnent le détail.','A numbered badge on a section flags what is left to do: an injured starter or one under 50% HP, a negative budget, talent points to spend, a coach specialty to pick, a match report to confirm (Play). Red: an injured starter; amber: the rest. The number and the tooltip give the detail.'),L('Tableau de bord : « À faire avant le match » liste ces mêmes alertes, chacune avec son lien ; la fiche de l’adversaire donne son rang, sa forme, sa force par ligne et ses joueurs marquants.','Dashboard: “To do before the match” lists the same alerts, each with its link; the opponent card gives its rank, form, strength by line and standout players.'),L('Club › Journal : les 100 derniers événements, groupés par saison et journée ; les puces filtrent par catégorie (⚠ alertes, match, effectif, marché, club, finances).','Club › Journal: the last 100 events, grouped by season and matchday; the chips filter by category (⚠ alerts, match, squad, market, club, finances).')]))}
     ${sec('Sauvegarde','Save',li([L('La partie se sauvegarde toute seule dans ce navigateur.','The game saves itself in this browser.'),L('Options › Paramètres : Exporter télécharge un fichier, Copier la sauvegarde copie son texte. Importer lit un fichier, Coller une sauvegarde importe un texte copié. Si le téléchargement est bloqué, utilise Copier et Coller.','Options › Settings: Export downloads a file, Copy save copies its text. Import reads a file, Paste a save imports copied text. If downloads are blocked, use Copy and Paste.')]))}`;
@@ -2633,7 +2920,8 @@ function rulesHTML(){
     ${sec('Adéquation au poste','Position fit',tb([[L('Palier','Tier')],[L('Situation','Situation')],[L('Effet','Effect'),'num']],fitRows)+li([L('Le même multiplicateur s’applique à la note affichée en composition et aux caractéristiques en match.','The same multiplier applies to the rating shown in the line-up and to stats in a match.'),L('Un joueur de champ au but, ou un gardien sur le terrain, est hors ligne.','An outfield player in goal, or a keeper on the pitch, is out of line.'),L('La composition automatique privilégie la ligne naturelle de chaque poste.','The automatic line-up favours the natural line of each position.')]))}</div>
     <div class="grid2">${sec('Traits','Traits',li([L(`Chaque joueur a un trait bonus ; ${Math.round(TRAIT_MALUS_P*100)} % ont en plus un trait malus. Un trait modifie une caractéristique de ±2, avant les multiplicateurs (adéquation, bonus d’entraîneur). Les traits de HP changent les HP maximum.`,`Every player has a bonus trait; ${Math.round(TRAIT_MALUS_P*100)}% also have a penalty trait. A trait changes one stat by ±2, before the multipliers (fit, coach bonus). HP traits change maximum HP.`)])+tb([[L('Trait','Trait')],[L('Effet','Effect')]],traitRows))}
     ${sec('Compositions','Formations',tb([[L('Formation (déf · mil · att)','Formation (def · mid · att)')],[L('Déblocage','Unlock')]],frows)+`<p>${L('Les compositions se débloquent avec le niveau d’entraîneur (Club › Entraîneur). Maîtrise : chaque tranche de 5 matchs joués dans une composition ajoute une étoile ★ (4 au maximum) et +0,5 % sur toutes les stats de tes joueurs tant que tu l’utilises.','Formations unlock with coach level (Club › Coach). Mastery: every 5 matches played in a formation add a star ★ (4 at most) and +0.5% on all your players’ stats while you use it.')}</p>`)}</div>
-    ${sec('Style et pressing','Style and pressing',tb([[L('Style','Style')],[L('Effet','Effect')]],srows)+tb([['Pressing'],[L('Effet','Effect')]],prows))}`;
+    ${sec('Style et pressing','Style and pressing',tb([[L('Style','Style')],[L('Effet','Effect')]],srows)+tb([['Pressing'],[L('Effet','Effect')]],prows))}
+    <section class="panel prose"><p>${L('<b>Plans d’équipe</b> : 3 emplacements pour enregistrer formation, style, pressing et six de départ. Un joueur blessé ou parti est remplacé à l’application par le meilleur disponible ; le plan n’est pas modifié.','<b>Team plans</b>: 3 slots to save formation, style, pressing and starting six. An injured or departed player is replaced when applying by the best available; the plan itself is not changed.')}</p></section>`;
   }else if(t==='train'){
     body=`<div class="grid2">${sec('XP et niveaux','XP and levels',li([L('Match joué : 30 XP, +30 par but, +18 par passe décisive, +9 par tacle gagné ou interception, +7 par arrêt, +3 par passe réussie, +14 par point de note au-dessus de 6 et +20 pour une victoire, le tout modulé par l’âge (plus pour les jeunes). Remplaçant non utilisé : 8 XP.','Match played: 30 XP, +30 per goal, +18 per assist, +9 per tackle won or interception, +7 per save, +3 per completed pass, +14 per rating point above 6 and +20 for a win, all scaled by age (more for the young). Unused substitute: 8 XP.'),L('Chaque niveau demande 100 + 40 × niveau XP et donne 2 points de talent (3 jusqu’à 23 ans), à répartir dans la limite du plafond du joueur. Niveau maximum : 40.','Each level needs 100 + 40 × level XP and gives 2 talent points (3 up to age 23), to spend within the player’s ceiling. Maximum level: 40.')]))}
     ${sec('Entraînement','Training',li([L('Séance collective après chaque match : XP pour tous les joueurs aptes (plus aux jeunes) et 35 % de chances de +1 dans la stat travaillée. Le repos ne donne pas d’XP mais aide à récupérer.','Team session after every match: XP for all fit players (more for the young) and a 35% chance of +1 in the trained stat. Rest gives no XP but helps recovery.'),L(`Programme individuel : ${MAX_INDIV} joueurs au maximum, ${fmt(TRAIN_FEE)} gils par joueur et par match, AR réservé aux gardiens. En échange : 1,5× l’XP d’entraînement et 55 % de chances de +1. Un joueur blessé ne coûte rien.`,`Individual programme: at most ${MAX_INDIV} players, ${fmt(TRAIN_FEE)} gil per player per match, AR for keepers only. In return: 1.5× training XP and a 55% chance of +1. An injured player costs nothing.`),L('Dans le bilan d’après-match, chaque stat gagnée à l’entraînement apparaît à droite de la barre d’XP du joueur (par exemple « +1 TI »).','In the match report, every stat gained in training shows to the right of the player’s XP bar (for example “+1 TI”).')]))}</div>
@@ -2708,12 +2996,18 @@ function zonesHTML(u,opp){
   const rd=!op?'':!hi&&!lo?L('Équilibré','Balanced'):[hi&&`<b>${W[2]}</b> : ${hi.n}`,lo&&`<b>${W[0]}</b> : ${lo.n}`].filter(Boolean).join(' · ');
   return `<div class="zb">${rows}</div>${rd?`<p class="zt">${rd}</p>`:''}`;
 }
+// UI-35 : tous les textes possibles occupent la même cellule (la plus haute fixe la hauteur) ; seul le texte actif est visible : changer de style ou de pressing ne déplace rien
+const hintStack=(map,cur)=>`<div class="hstk">${Object.keys(map).map(k=>{const on=String(k)===String(cur);return `<p class="hint${on?' on':''}"${on?'':' aria-hidden="true"'}>${P(map[k])}</p>`;}).join('')}</div>`;
+// UI-42 : un seul sélecteur du six de départ pour Effectif › Tactique et pour l'avant-match (même gestionnaire data-c="slot")
+const sixSel=(u,s,lane,i)=>{
+  const opts=u.players.slice().sort((a,b)=>eff(b,s,lane)-eff(a,s,lane)).map(p=>`<option value="${p.id}" ${p.id===u.lineup[i]?'selected':''} ${p.inj?'disabled':''}>${esc(p.name)} · ${posCode(p)} · ${Math.round(eff(p,s,lane))} · ${P(FITS[fitTier(p,s,lane).id])}${p.inj?' · '+L('bl.','inj.'):''}</option>`).join('');
+  return `<select id="slot-${i}" data-c="slot" data-i="${i}" aria-label="${esc(slotTip(s,lane))}">${opts}</select>`;
+};
 function lineupHTML(){
   const u=U(),slots=slotsOf(u.formation),lan=lanesOf(u),fx=todayFx(),opp=fx?G.teams[fx[0]===u.id?fx[1]:fx[0]]:null;
   const sels=slots.map((s,i)=>{
     const cur=u.players.find(p=>p.id===u.lineup[i]);
-    const opts=u.players.slice().sort((a,b)=>eff(b,s,lan[i])-eff(a,s,lan[i])).map(p=>`<option value="${p.id}" ${p.id===u.lineup[i]?'selected':''} ${p.inj?'disabled':''}>${esc(p.name)} · ${posCode(p)} · ${Math.round(eff(p,s,lan[i]))} · ${P(FITS[fitTier(p,s,lan[i]).id])}${p.inj?' · '+L('bl.','inj.'):''}</option>`).join('');
-    return `<div class="lane">${slotTag(s,lan[i])}<select id="slot-${i}" data-c="slot" data-i="${i}" aria-label="${esc(slotTip(s,lan[i]))}">${opts}</select>${cur?fitBadge(cur,s,lan[i]):'<span></span>'}</div>`;
+    return `<div class="lane">${slotTag(s,lan[i])}${sixSel(u,s,lan[i],i)}${cur?fitBadge(cur,s,lan[i]):'<span></span>'}</div>`;
   }).join('');
   const benchP=u.players.filter(p=>!u.lineup.includes(p.id));
   const bench=benchP.map(p=>{
@@ -2724,9 +3018,9 @@ function lineupHTML(){
   // UI-12c : une seule page ; formation, style, pressing, Sphère (positions = formation seule) + forces de zone, six de départ, remplaçants ; chaque clic refait la page (jetons repositionnés, forces recalculées)
   return `<div class="stack"><h2>${L('Composition et tactique','Line-up and tactics')}</h2><div class="tacg">
   <section class="panel stack tight tacctl"><div class="stack tight"><b class="qtl">${L('Formation · défense-milieu-attaque','Formation · defence-midfield-attack')}</b><div class="seg">${formBtns(u)}</div>${masteryBar(u.formation)}</div>
-  <div class="stack tight"><b class="qtl">${L('Style de jeu','Playstyle')}</b>${seg(Object.keys(NAMES).map(k=>[k,nN(k)]),u.style,'style')}<p class="hint">${P(STYLE_DESC[u.style])}</p></div>
-  <div class="stack tight"><b class="qtl">Pressing</b>${seg(['-1','0','1'].map(k=>[k,pN(k)]),u.press,'press')}<p class="hint">${P(PRESS_DESC[u.press])}</p></div></section>
-  <section class="panel tacsph"><div class="row between"><h3>${L('Sphère','Sphere')}</h3>${opp?`<span class="hint zleg"><u aria-hidden="true"></u>${L('adversaire (estimation)','opponent (estimate)')}</span>`:''}</div>${sphereSVG(specOfTeam(u,opp),{...sphereOpts(),zones:'off',id:'tsp'})}${zonesHTML(u,opp)}</section>
+  <div class="stack tight"><b class="qtl">${L('Style de jeu','Playstyle')}</b>${seg(Object.keys(NAMES).map(k=>[k,nN(k)]),u.style,'style')}${hintStack(STYLE_DESC,u.style)}</div>
+  <div class="stack tight"><b class="qtl">Pressing</b>${seg(['-1','0','1'].map(k=>[k,pN(k)]),u.press,'press')}${hintStack(PRESS_DESC,u.press)}</div>${plansHTML()}</section>
+  <section class="panel tacsph"><div class="row between"><h3>${L('Sphère','Sphere')}</h3><span class="row">${opp?`<span class="hint zleg"><u aria-hidden="true"></u>${L('adversaire (estimation)','opponent (estimate)')}</span>`:''}${fsBtn('tac')}</span></div>${sphereSVG(specOfTeam(u,opp),{...sphereOpts(),zones:'off',id:'tsp'})}${zonesHTML(u,opp)}</section>
   <section class="panel tacsix"><div class="row between"><h3>${L('Six de départ','Starting six')}</h3><button class="btn small" data-a="auto">${L('Composition auto','Auto line-up')}</button></div>
   <div class="stack tight" style="margin-top:10px">${sels}</div></section>
   <section class="panel tacben"><h3>${L('Remplaçants','Substitutes')}</h3><div class="stack tight" style="margin-top:8px">${bench}</div></section></div></div>`;
@@ -2947,15 +3241,60 @@ function stadCustHTML(){
   <div class="stack tight"><h3 class="sub">${L('Bandeau de but','Goal banner')}</h3>${seg([[1,L('Activé','On')],[0,L('Désactivé','Off')]],c.fx,'fx')}</div></section>`;
 }
 
+// ---------- Plans d'équipe (v0.6.10, TAC-08) ----------
+// Interface seulement : tout passe par presetSave / Preview / Apply / Rename / Clear / Of du moteur (G.presets, PRESET_N = 3, PRESET_NAME = 12) ; l'UI ne calcule aucun remplacement.
+// État d'interface (hors G) : UI.confirm = 'plan:menu' (menu ⋯ ouvert) | 'plan:save:i' | 'plan:clear:i' | 'plan:ren:i' (confirmations, modèle UI-40 ; Échap annule ; tout changement de page referme).
+const PLSTY={equilibre:['Éq.','Bal.'],offensif:['Off.','Att.'],defensif:['Déf.','Def.'],contre:['Cont.','Ctr.']};
+const plSty=s=>PLSTY[s]?P(PLSTY[s]):'';
+const plDef=i=>'Plan '+(i+1);
+const plPre=i=>(G.presets&&G.presets[i])||null;
+const plNm=i=>{const Pl=plPre(i);return Pl&&Pl.n?Pl.n:plDef(i);};
+const plRef=i=>{const Pl=plPre(i);return Pl&&Pl.n?`Plan « ${Pl.n} »`:plDef(i);};
+const plCf=()=>{const m=/^plan:(save|clear|ren):(\d)$/.exec(String(UI.confirm||''));return m?{k:m[1],i:+m[2]}:null;};
+function plRepl(r){
+  const u=U(),by=id=>u.players.find(p=>p.id===id),o=r.out!=null?by(r.out):null,n=by(r.in);
+  return o?`${o.name} → ${n.name} (${L(fe(o,'blessé','blessée'),'injured')})`:`${L('joueur parti','departed player')} → ${n.name}`;
+}
+function plNote(i,repl){
+  const head=L(`${plRef(i)} appliqué.`,`${plRef(i)} applied.`),n=repl.length;
+  if(!n)return head;
+  const list=repl.slice(0,2).map(plRepl).join(', ')+(n>2?'…':'');
+  return L(`${head} ${n} remplacé${n>1?'s':''} : ${list}.`,`${head} ${n} replaced: ${list}.`);
+}
+function plansHTML(){
+  const lock=!!UI.live,act=presetOf(G),cf=plCf(),menu=UI.confirm==='plan:menu';
+  const cell=i=>{
+    const Pl=plPre(i);
+    if(!Pl)return `<button class="pla emp" data-a="plsave" data-i="${i}"${lock?' disabled':''} aria-label="${esc(L(`${plDef(i)} vide : enregistrer l’équipe actuelle`,`${plDef(i)} empty: save the current team`))}"><b class="pln">${plDef(i)}</b><span class="pls">+ ${L('Enregistrer','Save')}</span></button>`;
+    const pv=presetPreview(G,i),on=act===i,n=pv.ok?pv.repl.length:0,lk=!pv.ok&&pv.why==='locked',bad=!pv.ok&&!lk,nm=plNm(i);
+    const sub=on?`<span class="pls on"><i aria-hidden="true">●</i> ${L('actif','active')}</span>`
+      :lk?`<span class="pls">${L('niv.','lv.')} ${FORM_UNLOCK[Pl.formation]}</span>`
+      :`<span class="pls">${Pl.formation} · ${plSty(Pl.style)}${n?` <b class="plw" aria-hidden="true">⚠${n}</b>`:''}</span>`;
+    const al=L(`${nm} : ${Pl.formation}, ${NAMES[Pl.style]?nN(Pl.style):''}, pressing ${PRESS_NAMES[String(Pl.press)]?pN(Pl.press).toLowerCase():''}`,`${nm}: ${Pl.formation}, ${NAMES[Pl.style]?nN(Pl.style):''}, pressing ${PRESS_NAMES[String(Pl.press)]?pN(Pl.press).toLowerCase():''}`)
+      +(on?L(', actif',', active'):'')+(lk?`, ${L('niveau d’entraîneur','coach level')} ${FORM_UNLOCK[Pl.formation]} ${L('requis','required')}`:'')+(n?`, ${n} ${L(`remplacement${n>1?'s':''} à l’application`,`replacement${n>1?'s':''} on apply`)}`:'');
+    const tip=n?pv.repl.map(plRepl).join(' ; '):'';
+    return `<button class="pla${on?' on':''}${n?' wn':''}" data-a="plapply" data-i="${i}" aria-pressed="${on}" aria-label="${esc(al)}"${tip?` title="${esc(tip)}"`:''}${lock||lk||bad?' disabled':''}><b class="pln">${esc(nm)}</b>${sub}</button>`;
+  };
+  const cfm=(txt,ok,i)=>`<div class="cfm" role="group" aria-live="polite"><span>${txt}</span><span class="row"><button class="btn small primary" data-a="${ok}" data-i="${i}">${L('Confirmer','Confirm')}</button><button class="btn small" data-a="plno">${L('Annuler','Cancel')}</button></span></div>`;
+  let pan='';
+  if(!lock&&cf&&cf.k==='save')pan=cfm(L(`Remplacer ${esc(plRef(cf.i))} par l’équipe actuelle ?`,`Replace ${esc(plRef(cf.i))} with the current team?`),'plsaveok',cf.i);
+  else if(!lock&&cf&&cf.k==='clear')pan=cfm(L(`Vider ${esc(plRef(cf.i))} ?`,`Clear ${esc(plRef(cf.i))}?`),'plclearok',cf.i);
+  else if(!lock&&cf&&cf.k==='ren'){const Pl=plPre(cf.i);pan=`<div class="cfm plrename" role="group"><label class="f"><span>${L('Nom du plan','Plan name')} · ${PRESET_NAME} ${L('caractères au plus','characters at most')}</span><input type="text" id="plan-name" maxlength="${PRESET_NAME}" value="${esc(Pl&&Pl.n||'')}" placeholder="${plDef(cf.i)}" autocomplete="off"></label><span class="row"><button class="btn small primary" data-a="plrenok" data-i="${cf.i}">OK</button><button class="btn small" data-a="plno">${L('Annuler','Cancel')}</button></span></div>`;}
+  else if(!lock&&menu)pan=`<div class="plmenu" role="group" aria-label="${L('Gérer les plans','Manage plans')}">${[0,1,2].map(i=>`<div class="plr"><b class="plrn">${esc(plNm(i))}</b><span class="row"><button class="btn small" data-a="plsave" data-i="${i}">${L('Enregistrer ici','Save here')}</button>${plPre(i)?`<button class="btn small" data-a="plren" data-i="${i}">${L('Renommer','Rename')}</button><button class="btn small" data-a="plclear" data-i="${i}">${L('Vider','Clear')}</button>`:''}</span></div>`).join('')}</div>`;
+  return `<div class="plans" role="group" aria-label="${L('Plans d’équipe','Team plans')}"><div class="plrow">${[0,1,2].map(cell).join('')}<button class="plm" data-a="plmenu" aria-label="${L('Gérer les plans','Manage plans')}" aria-expanded="${menu||!!cf}"${lock?' disabled':''}>⋯</button></div>${lock?`<p class="hint">${L('Indisponible pendant un match.','Unavailable during a match.')}</p>`:''}${pan}</div>`;
+}
+
 // ---------- Terrain : match ----------
 // UI-26 : « Tactique rapide » (avant le coup d'envoi seulement) : style, pressing, formation ; mêmes actions que la page Tactique (data-a style / press / formation).
+// v0.6.10 : Plans d'équipe (TAC-08) en tête ; UI-42 : repère d'effet sous chaque bouton (effRep).
 function quickTacHTML(){
   const u=U();
-  const seg=items=>`<div class="seg">${items.map(([k,l,cur,act,dis,tip])=>`<button class="chip" data-a="${act}" data-v="${k}" aria-pressed="${cur}"${dis?' disabled':''}${tip?` title="${esc(tip)}"`:''}>${l}</button>`).join('')}</div>`;
-  const sty=seg(Object.keys(NAMES).map(k=>[k,nN(k),u.style===k,'style']));
-  const prs=seg(['-1','0','1'].map(k=>[k,pN(k),String(u.press)===k,'press']));
-  const frm=`<div class="seg">${formBtns(u)}</div>`;
+  const seg=(items,mk)=>`<div class="seg">${items.map(([k,l,cur,act])=>withRep(`<button class="chip" data-a="${act}" data-v="${k}" aria-pressed="${cur}">${l}</button>`,effRep(u,mk(k)))).join('')}</div>`;
+  const sty=seg(Object.keys(NAMES).map(k=>[k,nN(k),u.style===k,'style']),k=>({style:k}));
+  const prs=seg(['-1','0','1'].map(k=>[k,pN(k),String(u.press)===k,'press']),k=>({press:+k}));
+  const frm=`<div class="seg">${formBtns(u,o=>effRep(u,o))}</div>`;
   return `<section class="panel stack quick"><h3>${L('Tactique rapide','Quick tactics')}</h3>
+  ${plansHTML()}
   <div class="stack tight"><b class="qtl">${L('Style de jeu','Playstyle')}</b>${sty}</div>
   <div class="stack tight"><b class="qtl">Pressing</b>${prs}</div>
   <div class="stack tight"><b class="qtl">${L('Formation','Formation')}</b>${frm}<p class="hint">${L('Changer de formation refait le Six de départ en automatique.','Changing formation resets the starting six to automatic.')}</p></div>
@@ -2969,12 +3308,14 @@ function matchHTML(){
   const u=U(),[h,a]=todayFx(),home=h===u.id,opp=G.teams[home?a:h];
   ensureLineup(u);
   const lu=u.lineup.map(id=>u.players.find(p=>p.id===id)),sl=slotsOf(u.formation),ss=slotSides(sl);
-  const rows=lu.map((p,i)=>`<div class="lu-row">${slotTag(sl[i],ss[i])}<span class="nm">${esc(p.name)}</span>${fitBadge(p,sl[i],ss[i],true)}${barH(hpPct(p)*100)}<span class="mono">${Math.round(hpPct(p)*100)}%</span><span></span></div>`).join('');
-  return `<div class="stack"><div class="grid2"><section class="panel stack"><h3>${L('Journée','Matchday')} ${G.day+1} · ${home?L('à domicile','at home'):L(`à l'extérieur`,'away')}</h3>
+  // UI-42 : chaque ligne du six ouvre le même sélecteur que Tactique (data-c="slot") ; les 4 barres de zone (TAC-09) se recalculent à chaque changement
+  const rows=lu.map((p,i)=>`<div class="lu-row pre-r">${slotTag(sl[i],ss[i])}<span class="nm">${sixSel(u,sl[i],ss[i],i)}</span>${fitBadge(p,sl[i],ss[i],true)}${barH(hpPct(p)*100)}<span class="mono">${Math.round(hpPct(p)*100)}%</span><span></span></div>`).join('');
+  return `<div class="stack"><div class="grid2 pre"><section class="panel stack"><h3>${L('Journée','Matchday')} ${G.day+1} · ${home?L('à domicile','at home'):L(`à l'extérieur`,'away')}</h3>
   <div class="vs"><div class="side">${badge(u,true)}<span class="nm">${esc(u.name)}</span></div><div class="mid">VS</div><div class="side">${badge(opp,true)}<span class="nm">${esc(opp.name)}</span></div></div>
   <p class="muted">${L('Formation','Formation')} <b class="mono" style="color:var(--ink)">${u.formation}</b> · ${nN(u.style)} · Pressing ${pN(u.press).toLowerCase()}</p>
   <div class="row acts"><button class="btn primary" data-a="play">${L(`Coup d'envoi en direct`,'Live kick-off')}</button><button class="btn" data-a="sim">${L('Simuler','Simulate')}</button><button class="btn" data-a="tab" data-t="lineup">${L('Tactique','Tactics')}</button></div></section>
-  <section class="panel"><h3>${L('Six de départ','Starting six')}</h3><div style="margin-top:8px">${rows}</div></section></div>${quickTacHTML()}</div>`;
+  <section class="panel"><h3>${L('Six de départ','Starting six')}</h3><div style="margin-top:8px">${rows}</div>
+  <div class="zbp"><span class="hint zleg"><u aria-hidden="true"></u>${L('adversaire (estimation)','opponent (estimate)')}</span>${zonesHTML(u,opp)}</div></section>${quickTacHTML()}</div></div>`;
 }
 // UI-12a : Calendrier = les 14 journées du club + résultats d'une journée de la ligue (déplacés depuis Match et Classement)
 function calendarHTML(){
@@ -3029,6 +3370,9 @@ function journalHTML(){
   <section class="panel"><div class="jlist">${body}</div>${rest>0?`<div class="row" style="margin-top:10px"><button class="btn small" data-a="jmore">${L('Afficher plus','Show more')} (${Math.min(JPAGE,rest)}/${rest})</button></div>`:''}</section></div>`;
 }
 
+// UI-46 : bloc en cours sous le chrono (« Bloc 2/3 ») ; vide en fin de match et en mort subite (les consignes n'y existent plus) ; la ligne garde sa hauteur
+const blocNow=M=>M.over||M.ot?0:Math.min(HALF_BLOCS,Math.floor((M.n%18)/HALF_BLOC)+1);
+const blocText=M=>{const b=blocNow(M);return b?L(`Bloc ${b}/${HALF_BLOCS}`,`Block ${b}/${HALF_BLOCS}`):'';};
 function clockText(M){
   if(M.over)return M.so?L('Terminé · départage','Full time · tiebreak'):M.ot?L('Terminé · mort subite','Full time · sudden death'):L('Terminé','Full time');
   const t=clk(M.n);
@@ -3076,6 +3420,17 @@ function halfPanelHTML(Lv){
   const go=so?`<button class="btn primary" data-a="hgo">${L('Activer','Activate')} · ${esc(P(so.n))} · ${blocTxt(b)}${so.line?` (${phaseTxt(Math.min(HALF_BLOC*b,36-M.n))})`:''}</button>`:'';
   return res+HALF_OPTS.map(row).join('')+blk+go;
 }
+// UI-43 : rappel court de chaque consigne (bouton « ? », utilisable au toucher et au clavier ; le texte long est dans Options › Règles du jeu) ; effets désactivés tant que HALF_POWER vaut 0
+function halfRecapHTML(){
+  const li=(id,t)=>`<li><b>${esc(halfName(id))}</b> : ${t}</li>`;
+  return `<ul>${li('souffler',L('instantané, rend des HP aux 6 titulaires.','instant, gives the 6 starters HP back.'))}${li('verrouiller',L('renforce la défense, affaiblit milieu et attaque, au prix de HP en défense.','boosts defence, weakens midfield and attack, at an HP cost in defence.'))}${li('pousser',L('renforce l’attaque, affaiblit défense et milieu, au prix de HP en attaque.','boosts attack, weakens defence and midfield, at an HP cost in attack.'))}</ul><p>${L(`Réserve de ${HALF_BLOCS} blocs de ${HALF_BLOC} phases par match.`,`Reserve of ${HALF_BLOCS} blocks of ${HALF_BLOC} phases per match.`)}${HALF_POWER>0?'':' <b>'+L('Effets désactivés pour l’instant (rééquilibrage).','Effects are switched off for now (rebalancing).')+'</b>'} ${L('Détail : Options › Règles du jeu.','Details: Options › Game rules.')}</p>`;
+}
+function halfRecap(Lv){
+  const t=document.getElementById('hqtxt'),b=document.getElementById('hqbtn');if(!t||!b)return;
+  const on=!!Lv.hq;
+  b.setAttribute('aria-expanded',String(on));t.hidden=!on;
+  if(on&&t.dataset.l!==LANG+HALF_POWER){t.innerHTML=halfRecapHTML();t.dataset.l=LANG+HALF_POWER;}
+}
 // applyHalf côté interface : retient Souffler (instantané) pour le halo et la pastille
 function applyHalfUI(Lv,sd,id,b){
   if(!applyHalf(Lv.M,sd,id,b))return false;
@@ -3096,25 +3451,26 @@ function resolveHalf(Lv,auto){
 }
 function liveHTML(Lv){
   const M=Lv.M,H=M.h.team,A=M.a.team,u=Lv.userSide;
-  return `<div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))"><div class="stack">
-  <section class="panel stack"><div class="scoreboard"><div class="tm">${badge(H,true)}<span class="tn">${esc(H.name)}</span></div>
-  <div><div class="score" id="score">0 – 0</div><div class="clock" id="clock"></div></div>
+  // UI-36 : ordre de lecture par importance (score et Sphère, consigne, équipe et remplacements, fil, style et pressing, infos, statistiques) ; à partir de 700 px les zones de la grille (.lvmain…) fixent la place, l'ordre du DOM fixe seulement la lecture et le Tab
+  return `<div class="grid2 lv">
+  <section class="panel stack lvmain"><div class="scoreboard"><div class="tm">${badge(H,true)}<span class="tn">${esc(H.name)}</span></div>
+  <div><div class="score" id="score">0 – 0</div><div class="clock" id="clock"></div><div class="clock bloc" id="bloc"></div></div>
   <div class="tm r"><span class="tn">${esc(A.name)}</span>${badge(A,true)}</div></div>
   <div class="prog"><i id="prog" style="--w:0%"></i></div>
-  <div id="banner" role="status" aria-live="polite"></div>
-  <div id="halfbadge"></div>
+  <div class="slot48"><div id="banner" role="status" aria-live="polite"></div><div id="halfbadge"></div></div>
   ${sphereSVG(specOfMatch(M),sphereOpts())}
   <div class="row"><button class="btn primary" id="pausebtn" data-a="pause"></button>
   <div class="seg">${[1,2,4].map(s=>`<button class="chip" data-a="speed" data-v="${s}" aria-pressed="${Lv.speed===s}">×${s}</button>`).join('')}</div>
-  <button class="btn" data-a="skip">${L('Aller à la fin','Skip to the end')}</button></div></section>
-  <section class="panel" id="halfsec" hidden><h3>${L('Consigne','Instruction')}</h3><div class="stack tight" id="halfpanel" style="margin-top:10px"></div></section>
-  <section class="panel"><h3>${L('Fil du match','Match feed')}</h3><div class="feed" id="feed" style="margin-top:8px"></div></section></div>
-  <div class="stack"><section class="panel"><h3>${L('Ton équipe','Your team')} · ${esc(M[u].team.short)}</h3>
-  <div id="lineup" style="margin-top:8px"></div><p class="hint" id="subinfo"></p><div id="subpanel"></div></section>
-  <section class="panel"><h3>${L('Infos de match','Match info')}</h3><div class="stack tight" id="minfo" style="margin-top:12px"></div></section>
-  <section class="panel"><h3>${L('Statistiques du match','Match stats')}</h3><div class="stack tight" id="mstats" style="margin-top:12px"></div></section>
-  <section class="panel stack"><h3>${L('Style et pressing','Style & pressing')}</h3><div class="seg">${Object.keys(NAMES).map(k=>`<button class="chip" data-a="lstyle" data-v="${k}" aria-pressed="${M[u].style===k}">${nN(k)}</button>`).join('')}</div>
-  <div class="seg">${Object.keys(PRESS_NAMES).map(k=>`<button class="chip" data-a="lpress" data-v="${k}" aria-pressed="${String(M[u].press)===k}">Pressing ${pN(k).toLowerCase()}</button>`).join('')}</div></section></div></div>`;
+  <button class="btn" data-a="skip">${L('Aller à la fin','Skip to the end')}</button>
+  ${fsBtn('match')}</div></section>
+  <section class="panel lvhalf" id="halfsec" hidden><div class="row between hqh"><h3>${L('Consigne','Instruction')}</h3><button class="icbtn hq" id="hqbtn" data-a="hq" aria-expanded="false" aria-controls="hqtxt" aria-label="${L('Rappel des consignes','What the instructions do')}">?</button></div><div class="hqt" id="hqtxt" hidden></div><div class="stack tight" id="halfpanel" style="margin-top:10px"></div></section>
+  <section class="panel lvteam"><div class="row between lvth"><h3>${L('Ton équipe','Your team')} · ${esc(M[u].team.short)}</h3><button class="btn qcons" id="qcons" data-a="fsconsigne" aria-expanded="false" aria-controls="halfsec">${L('Consigne','Instruction')}</button></div>
+  <div id="lineup" style="margin-top:8px"></div><p class="hint" id="subinfo"></p><p class="hint hpleg" id="hpleg"></p><div id="subpanel"></div></section>
+  <section class="panel lvfeed"><h3>${L('Fil du match','Match feed')}</h3><div class="feed" id="feed" style="margin-top:8px"></div></section>
+  <section class="panel stack lvstyle"><h3>${L('Style et pressing','Style & pressing')}</h3><div class="seg">${Object.keys(NAMES).map(k=>`<button class="chip" data-a="lstyle" data-v="${k}" aria-pressed="${M[u].style===k}">${nN(k)}</button>`).join('')}</div>
+  <div class="seg">${Object.keys(PRESS_NAMES).map(k=>`<button class="chip" data-a="lpress" data-v="${k}" aria-pressed="${String(M[u].press)===k}">Pressing ${pN(k).toLowerCase()}</button>`).join('')}</div></section>
+  <section class="panel lvinfo"><h3>${L('Infos de match','Match info')}</h3><div class="stack tight" id="minfo" style="margin-top:12px"></div></section>
+  <section class="panel lvstats"><h3>${L('Statistiques du match','Match stats')}</h3><div class="stack tight" id="mstats" style="margin-top:12px"></div></section></div>`;
 }
 const dotKey=M=>M.h.lu.map(p=>p.id).join()+'|'+M.a.lu.map(p=>p.id).join()+'|'+soufOn(M,'h')+soufOn(M,'a');
 function updatePitch(){
@@ -3176,9 +3532,9 @@ function duelZone(M,e){
   return `<div class="dz"><button class="dz-btn" data-a="duel" data-i="${i}" aria-expanded="${open}" aria-label="${L('Duels','Duels')} (${ds.length}) : ${open?L('replier','collapse'):L('déplier','expand')}"><span class="dz-ch" aria-hidden="true">▸</span>${L('Duels','Duels')} · ${ds.length} <span class="dz-m">${marks}</span></button>${open?`<div class="dz-body">${ds.map(d=>duelHTML(M,d)).join('')}</div>`:''}</div>`;
 }
 const goalTag=(M,e)=>{const us=UI.live&&UI.live.userSide;if(!us||!e.sd)return `<b class="gtag">${L('BUT !','GOAL!')}</b> `;const mine=e.sd===us;return `<b class="gtag ${mine?'good':'bad'}"><i aria-hidden="true">${mine?'▲':'▼'}</i>${mine?L('BUT !','GOAL!'):L('BUT ADVERSE','OPPONENT GOAL')}</b> `;};
-function evHTML(M,e){
+function evHTML(M,e,nz){
   const t=e.sd?M[e.sd].team:null;
-  return `<div class="ev ${e.type==='goal'?'goal':''} ${e.type==='sys'?'sys':''}" style="${t?`--c:${t.color}`:''}"><time>${e.t}</time><span>${e.type==='goal'?goalTag(M,e):''}${esc(e.type==='goal'?e.txt.replace(/^BUT ! |^GOAL! /,''):e.txt)}</span>${duelZone(M,e)}</div>`;
+  return `<div class="ev ${e.type==='goal'?'goal':''} ${e.type==='sys'?'sys':''}" style="${t?`--c:${t.color}`:''}"><time>${e.t}</time><span>${e.type==='goal'?goalTag(M,e):''}${esc(e.type==='goal'?e.txt.replace(/^BUT ! |^GOAL! /,''):e.txt)}</span>${nz?'':duelZone(M,e)}</div>`;
 }
 // remplit un conteneur de fil en gardant sa position de défilement
 function feedFill(el,M,empty){const st=el.scrollTop||0;el.innerHTML=M.log.slice().reverse().map(e=>evHTML(M,e)).join('')||empty||'';el.scrollTop=st;}
@@ -3213,15 +3569,17 @@ function updateLive(){
   if(!$('score'))return;
   $('score').textContent=`${M.hs} – ${M.as}`;
   $('clock').textContent=clockText(M);
+  $('bloc').textContent=blocText(M);
   $('prog').style.setProperty('--w',Math.min(100,M.n/36*100)+'%');
   feedFill($('feed'),M,`<p class="hint">${L('Le match va commencer.','The match is about to start.')}</p>`);
   const half=M.status==='half';
   const ge=M.ev&&M.ev.goal&&G.stadium.cu.fx&&!M.over?M.ev:null;
   const bn=[];
-  if(ge){const mine=ge.sd===u;bn.push(`<div class="goalfx ${mine?'us':'them'}" role="status"><span class="gb">${badge(M[ge.sd].team)}</span><span class="gl"><i aria-hidden="true">${mine?'▲':'▼'}</i><b>${mine?L('BUT !','GOAL!'):L('BUT ADVERSE','OPPONENT GOAL')}</b></span><span class="gt">${esc(ge.txt.replace(/^BUT ! |^GOAL! /,'').split(/[.!]/)[0])}</span></div>`);}
-  if(half)bn.push(`<div class="banner">${L(`Mi-temps · ${M.hs} – ${M.as}. Ajuste ta tactique ou tes remplacements, puis reprends.`,`Half-time · ${M.hs} – ${M.as}. Adjust your tactics or substitutions, then resume.`)}</div>`);
-  (Lv.alerts||[]).filter(a=>M.n<a.until).forEach(a=>bn.push(`<div class="banner warn"><i aria-hidden="true">⚠</i>${esc(a.txt)}</div>`));
-  $('banner').innerHTML=bn.join('');
+  if(ge){const mine=ge.sd===u;bn.push(`<div class="goalfx ${mine?'us':'them'}"><span class="gb">${badge(M[ge.sd].team)}</span><span class="gl"><i aria-hidden="true">${mine?'▲':'▼'}</i><b>${mine?L('BUT !','GOAL!'):L('BUT ADVERSE','OPPONENT GOAL')}</b></span><span class="gt">${esc(ge.txt.replace(/^BUT ! |^GOAL! /,'').split(/[.!]/)[0])}</span></div>`);}
+  if(half)bn.push(`<div class="banner"><span class="bnt">${L(`Mi-temps · ${M.hs} – ${M.as}. Ajuste ta tactique ou tes remplacements, puis reprends.`,`Half-time · ${M.hs} – ${M.as}. Adjust your tactics or substitutions, then resume.`)}</span></div>`);
+  (Lv.alerts||[]).filter(a=>M.n<a.until).forEach(a=>bn.push(`<div class="banner warn"><i aria-hidden="true">⚠</i><span class="bnt">${esc(a.txt)}</span></div>`));
+  // UI-35 / UI-45 : créneau fixe de 48 px, un seul message à la fois (but > mi-temps > alertes ; le reste est dans le fil) ; sans message, la consigne active (#halfbadge) prend la place
+  $('banner').innerHTML=bn.length?bn[0]+(bn.length>1?`<span class="bmore" aria-hidden="true">+${bn.length-1}</span>`:''):'';
   $('pausebtn').textContent=half?L('Reprendre le match','Resume the match'):Lv.paused?(M.n===0?L(`Coup d'envoi`,'Kick-off'):L('Reprendre','Resume')):'Pause';
   const side=M[u];
   const mi=matchInfo(M,u);
@@ -3231,15 +3589,19 @@ function updateLive(){
   const ts=teamStats(M);
   $('mstats').innerHTML=MSTAT().filter(x=>x[1]!=='poss').map(([l,k])=>cmpRow(l,ts.h[k],ts.a[k])).join('');
   const tt=` · ${esc(M.h.team.short)} – ${esc(M.a.team.short)}`;
-  $('minfo').innerHTML=cmpRow(L('Possession cumulée','Total possession')+tt,mi.poss.h,mi.poss.a)+cmpRow(L('Possession récente (6 phases)','Recent possession (6 phases)')+tt,mi.poss6.h,mi.poss6.a)
-    +`<p class="hint hpleg">${['ok','warn','low'].map(s=>`<span class="hps hps-${s}">${batIcon(s)}<b>${P(HPST[s])}</b></span>`).join(' ')} · ${L(`fatigué ≤ ${Math.round(HP_WARN*100)} % des HP, épuisé < ${HP_LOW} HP`,`tired ≤ ${Math.round(HP_WARN*100)}% of HP, spent < ${HP_LOW} HP`)}</p>`;
+  $('minfo').innerHTML=cmpRow(L('Possession cumulée','Total possession')+tt,mi.poss.h,mi.poss.a)+cmpRow(L('Possession récente (6 phases)','Recent possession (6 phases)')+tt,mi.poss6.h,mi.poss6.a);
+  // UI-44 : légende des batteries de fatigue, sous le texte des remplaçants dans « Ton équipe »
+  $('hpleg').innerHTML=`${['ok','warn','low'].map(s=>`<span class="hps hps-${s}">${batIcon(s)}<b>${P(HPST[s])}</b></span>`).join(' ')} · ${L(`fatigué ≤ ${Math.round(HP_WARN*100)} % des HP, épuisé < ${HP_LOW} HP`,`tired ≤ ${Math.round(HP_WARN*100)}% of HP, spent < ${HP_LOW} HP`)}`;
   const hs=$('halfsec');
   if(hs){
-    hs.hidden=M.over||M.ot||!Lv.paused;
+    hs.hidden=M.over||M.ot||!Lv.paused||(!!UI.fs&&!Lv.fsh);   // calque plein écran : le panneau s'ouvre par le bouton « Consigne »
     if(!hs.hidden){const hp=$('halfpanel'),ae=document.activeElement,fo=ae&&hp.contains&&hp.contains(ae)?ae:null,fk=fo&&fo.dataset?`[data-a="${fo.dataset.a}"]${fo.dataset.v!=null?`[data-v="${fo.dataset.v}"]`:''}`:null;
       hp.innerHTML=halfPanelHTML(Lv);
       if(fk){const nf=hp.querySelector(fk);if(nf)nf.focus();}}   // le panneau est redessiné à chaque choix : le focus clavier reste sur la même commande
   }
+  halfRecap(Lv);
+  ['qcons','fs-cb'].forEach(id=>{const cb=$(id);if(cb){cb.disabled=!!(M.over||M.ot);cb.setAttribute('aria-expanded',String(!!hs&&!hs.hidden));}});
+  if(UI.fs&&UI.fs.k==='match')fsFeed(Lv);
   const chips=halfChips(Lv,u).concat(halfChips(Lv,u==='h'?'a':'h'));
   $('halfbadge').innerHTML=chips.length?`<div class="hbadge"><span class="hl">${L('Consigne','Instruction')}</span>${chips.join('')}</div>`:'';
   updatePitch();
@@ -3261,16 +3623,24 @@ function xpCell(r){
   const gp=`<span class="xpg">${gn.map(g=>`<span class="gpill" title="${esc(P(STATN[g.s]))}" aria-label="${esc(`+${g.d} ${P(STATN[g.s])}`)}">+${g.d} ${SL[g.s]}</span>`).join('')}</span>`;   // emplacement toujours présent : les barres d'XP restent alignées d'une ligne à l'autre
   return `<div class="xpc" role="group" aria-label="${esc(lab+(gtxt?', '+L('entraînement','training')+' '+gtxt:''))}"><div class="xpr"><div class="xpb"><i class="x0" style="width:${w0}%"></i><i class="x1" style="width:${w1}%"></i></div>${gp}</div><div class="xpn"><b class="mono">+${gain} XP</b>${pill}<span class="muted mono">${L('Niv.','Lvl')} ${p.lvl}${max?' max':` · ${after}/${need}`}${pts?` · +${pts} pts`:''}${r.tx?` · ${L('dont','incl.')} +${r.tx} ${L('entr.','trn.')}`:''}</span></div></div>`;
 }
+// UI-47 (v0.6.10) : barre de HP du bilan = HP de fin (plein) + segment hachuré de la récupération attendue (même grammaire que le segment d'XP) ; texte « 96 → 138/160 », « Pleine forme » si full.
+// Toutes les valeurs viennent de recovProj (moteur, règle unique partagée avec afterDay) : l'UI ne recalcule rien.
+function hpRecCell(p){
+  const r=recovProj(G,p),a=clamp(r.hp/r.max*100,0,100),b=clamp((r.hp1-r.hp)/r.max*100,0,100-a);
+  const txt=r.full?L('Pleine forme','Fully rested'):`${r.hp} → ${r.hp1}/${r.max}`;
+  const al=L(`HP en fin de match : ${r.hp} sur ${r.max}. ${r.full?'Pleine forme attendue au prochain match.':`Attendu au prochain match : ${r.hp1} sur ${r.max}.`}`,`HP at full time: ${r.hp} of ${r.max}. ${r.full?'Fully rested for the next match.':`Expected for the next match: ${r.hp1} of ${r.max}.`}`);
+  return `<span class="hpt mono">${txt}</span><div class="bar hpr" role="img" aria-label="${esc(al)}" style="--c:${eCol(a)}"><i class="h0" style="width:${a}%"></i><i class="h1" style="width:${b}%"></i></div>`;
+}
 function summaryHTML(Lv){
   const M=Lv.M,res=Lv.res,rep=Lv.rep,su=Lv.userSide,won=res.winner===su,H=M.h.team,A=M.a.team,fin=rep.fin;
   const how=res.so?L('après départage','after a tiebreak'):res.ot?L('en mort subite','in sudden death'):'';
   const ts=res.ts;
   const rowsAll=rep.rows.filter(r=>r.p.m&&r.p.m.played).sort((a,b)=>b.p.m.rating-a.p.m.rating);
   const rows=rowsAll.map(r=>{
-    const p=r.p,m=p.m,end=Math.round(r.hpEnd/maxHP(p)*100),next=Math.round(Math.min(maxHP(p),r.hpEnd+Math.round(maxHP(p)*(RECOV+(r.prog==='repos'?.2:0))))/maxHP(p)*100);
+    const p=r.p,m=p.m;
     const mvp=res.mvp&&res.mvp.id===p.id?`<span class="tag good">${L('Homme du match','Man of the match')}</span>`:'';
     const c=(l,v,x)=>`<div class="mc${x||''}" data-l="${esc(l)}">${v}</div>`;
-    return `<div class="mr"><span class="m-pos">${posTag(p)}</span><span class="m-nm"><b>${esc(p.name)}</b>${Lv.start&&!Lv.start.has(p.id)?`<span class="tag">${L('Entré','Came on')}</span>`:''}${mvp}</span><span class="m-rt nn">${m.rating.toFixed(1)}</span><div class="m-cells">${c(L('B/Pd','G/A'),`${m.g}/${m.a}`)}${c(L('Arr.','Sv'),m.sv)}${c(L('Tcl/Int','Tkl/Int'),`${m.tw}/${m.ic}`)}${c(L('HP → suiv.','HP → next'),`<span class="hpt mono">${end}% → ${next}%</span>${barH(end)}`,' m-hp')}${c('XP',xpCell(r),' m-xp')}</div></div>`;
+    return `<div class="mr"><span class="m-pos">${posTag(p)}</span><span class="m-nm"><b>${esc(p.name)}</b>${Lv.start&&!Lv.start.has(p.id)?`<span class="tag">${L('Entré','Came on')}</span>`:''}${mvp}</span><span class="m-rt nn">${m.rating.toFixed(1)}</span><div class="m-cells">${c(L('B/Pd','G/A'),`${m.g}/${m.a}`)}${c(L('Arr.','Sv'),m.sv)}${c(L('Tcl/Int','Tkl/Int'),`${m.tw}/${m.ic}`)}${c(L('HP → suiv.','HP → next'),hpRecCell(p),' m-hp')}${c('XP',xpCell(r),' m-xp')}</div></div>`;
   }).join('');
   const idle=rep.rows.filter(r=>!r.p.m||!r.p.m.played);
   const idleRows=idle.map(r=>`<div class="mr"><span class="m-pos">${posTag(r.p)}</span><span class="m-nm"><b>${esc(r.p.name)}</b></span><div class="m-cells">${`<div class="mc m-xp" data-l="XP">${xpCell(r)}</div>`}</div></div>`).join('');
@@ -3290,6 +3660,89 @@ function summaryHTML(Lv){
   <div class="row"><button class="btn primary" data-a="cont">${L('Continuer','Continue')}</button>
   <details style="flex:1;min-width:240px"><summary>${L('Revoir le fil du match','Review the match feed')}</summary><div class="feed" id="sfeed">${M.log.slice().reverse().map(e=>evHTML(M,e)).join('')}</div></details></div></div>`;
 }
+
+// ---------- UI-34b : Sphère en plein écran (calque sur la page, option A) ----------
+// Ouverture : clic sur la Sphère (pointeur précis) ou bouton ⤢ (data-a="fsopen"), dès 700 px (FSQ) ; jamais en dessous ; le match continue.
+// Fermeture : ✕ « Quitter », Échap (d'abord le panneau Consigne ou une confirmation de Plans, puis le calque), clic hors de la Sphère, fin du match (avant le bilan), passage sous 700 px.
+// Les panneaux sont DÉPLACÉS (appendChild), jamais clonés : ids stables (score, clock, bloc, banner, p-{sd}-{i}…) que updateLive trouve par id ; un repère caché .fsph garde leur place sur la page.
+// render() lâche les panneaux déplacés (fsDrop) puis déplace les neufs (fsMount) : Tactique se redessine à chaque clic. État d'interface UI.fs = {k:'match'|'tac', mv}, hors G, jamais sauvegardé.
+const FSQ=(window.matchMedia&&window.matchMedia('(min-width:700px)'))||{matches:false};
+const FSP=(window.matchMedia&&window.matchMedia('(pointer:fine)'))||{matches:true};
+// [sélecteur dans la page, zone du calque] : m = Sphère ; a, b, c, d, e, f = conteneurs #fs-a… de la colonne de commandes
+const FS_MOVE={
+  match:[['.lvmain svg.sphere','m'],['.lvmain .scoreboard','a'],['.lvmain .slot48','a'],['.lvmain>.row','b'],['#halfsec','c']],
+  tac:[['.tacsph svg.sphere','m'],['.tacctl>div.stack:nth-child(1)>.seg','a'],['.tacctl>.plans','b'],['.tacsix [data-a="auto"]','c'],['.tacctl>div.stack:nth-child(2)>.seg','d'],['.tacctl>div.stack:nth-child(3)>.seg','e'],['.tacsph .zb','f'],['.tacsph .zt','f']]
+};
+const fsBtn=k=>`<button class="btn fsbtn" data-a="fsopen" data-k="${k}" aria-label="${L('Sphère en plein écran','Full-screen Sphere')}" title="${L('Plein écran','Full screen')}">⤢</button>`;
+function fsHTML(k){
+  const x=`<div class="fsh"><button class="btn" id="fsx" data-a="fsclose" aria-label="${L('Quitter le plein écran','Leave full screen')}">✕ ${L('Quitter','Leave')}</button></div>`;
+  const body=k==='match'
+    ?`<div id="fs-a" class="stack tight"></div><div id="fs-b"></div><button class="btn" id="fs-cb" data-a="fsconsigne" aria-expanded="false" aria-controls="halfsec">${L('Consigne','Instruction')}</button><div id="fs-c"></div><div class="fsfeed" id="fsfeed" aria-label="${L('Dernières lignes du fil','Latest feed lines')}"></div>`
+    :`<h3>${L('Composition','Line-up')}</h3><b class="qtl">${L('Formation','Formation')}</b><div id="fs-a"></div><div id="fs-b"></div><div id="fs-c"></div><h3>${L('Tactique','Tactics')}</h3><b class="qtl">${L('Style de jeu','Playstyle')}</b><div id="fs-d"></div><b class="qtl">Pressing</b><div id="fs-e"></div><div id="fs-f" class="fszb"></div>`;
+  return `<h2 class="sr" id="fs-t">${L('Sphère en plein écran','Full-screen Sphere')}</h2><div class="fsm" id="fsm"></div><aside class="fsc" id="fsc">${x}${body}</aside>`;
+}
+function fsMount(){
+  const F=UI.fs;if(!F)return;
+  F.mv=[];
+  FS_MOVE[F.k].forEach(([sel,to])=>{
+    const el=app.querySelector(sel),box=document.getElementById(to==='m'?'fsm':'fs-'+to);
+    if(!el||!box)return;
+    const ph=document.createElement('span');ph.className='fsph';ph.hidden=true;
+    el.before(ph);box.appendChild(el);F.mv.push({ph,el});
+  });
+}
+function fsUnmount(){const F=UI.fs;if(!F)return;F.mv.forEach(({ph,el})=>{if(ph.isConnected)ph.replaceWith(el);else el.remove();});F.mv=[];}
+function fsDrop(){const F=UI.fs;if(!F)return;F.mv.forEach(({el})=>el.remove());F.mv=[];}
+function openFS(k){
+  if(UI.fs||!FSQ.matches||!G||UI.scr!=='game')return;
+  if(k==='match'?!(UI.tab==='match'&&UI.live&&!UI.live.done):UI.tab!=='lineup')return;
+  const root=document.createElement('div');
+  root.id='fs';root.className='fs';root.tabIndex=-1;root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-labelledby','fs-t');
+  root.innerHTML=fsHTML(k);document.body.appendChild(root);
+  UI.fs={k,mv:[]};if(UI.live)UI.live.fsh=false;
+  app.setAttribute('inert','');document.documentElement.setAttribute('data-dlg','fs');
+  root.addEventListener('click',e=>{
+    const el=e.target.closest('[data-a]');
+    if(el){if(!el.disabled)act(el.dataset.a,el.dataset);return;}
+    if(e.target.id==='fs'||e.target.id==='fsm')closeFS();   // clic hors de la Sphère
+  });
+  root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='plan-name'){e.preventDefault();const m=/^plan:ren:(\d)$/.exec(String(UI.confirm));if(m)act('plrenok',{i:m[1]});}});
+  fsMount();
+  const x=document.getElementById('fsx');if(x)x.focus();
+  if(k==='match')updateLive();
+}
+// nofocus : le calque se ferme parce que la page change (fin de match, retour au titre) : pas de focus à rendre
+function closeFS(nofocus){
+  const F=UI.fs;if(!F)return;
+  fsUnmount();
+  const r=document.getElementById('fs');if(r)r.remove();
+  UI.fs=null;app.removeAttribute('inert');document.documentElement.removeAttribute('data-dlg');
+  if(UI.live)UI.live.fsh=false;
+  if(!nofocus){const b=app.querySelector(`[data-a="fsopen"][data-k="${F.k}"]`);if(b&&b.focus)b.focus({preventScroll:true});}
+  if(F.k==='match'&&UI.live&&!UI.live.done&&!nofocus)updateLive();
+}
+// Échap : un panneau ouvert d'abord (Consigne en direct, confirmation ou menu des Plans), puis le calque
+function fsEsc(){
+  const Lv=UI.live;
+  if(UI.fs.k==='match'&&Lv&&Lv.fsh){Lv.fsh=false;updateLive();const b=document.getElementById('fs-cb');if(b)b.focus();return;}
+  if(UI.fs.k==='tac'&&/^plan:/.test(String(UI.confirm||''))){UI.confirm=null;render();return;}
+  closeFS();
+}
+// focus piégé dans le calque (Tab / Maj+Tab)
+function fsTab(e){
+  const root=document.getElementById('fs');if(!root)return;
+  const f=Array.from(root.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])')).filter(x=>x.getClientRects().length&&!x.closest('[hidden]'));
+  if(!f.length){e.preventDefault();return;}
+  const i=f.indexOf(document.activeElement);
+  if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus();}
+  else if(!e.shiftKey&&(i<0||i===f.length-1)){e.preventDefault();f[0].focus();}
+}
+// fil compact du calque Match : les 3 dernières lignes (sans les duels dépliables : ils restent dans le fil de la page)
+function fsFeed(Lv){
+  const el=document.getElementById('fsfeed');if(!el)return;
+  el.innerHTML=Lv.M.log.slice(-3).reverse().map(e=>evHTML(Lv.M,e,true)).join('');
+}
+if(FSQ.addEventListener)FSQ.addEventListener('change',()=>{if(!FSQ.matches)closeFS();});
 
 // ---------- Flux de jeu ----------
 function stopTimer(){clearTimeout(UI.timer);UI.timer=null;}
@@ -3318,7 +3771,7 @@ function tick(){
   updateLive();nextTick();
 }
 function finishLive(){
-  const Lv=UI.live;stopTimer();
+  const Lv=UI.live;stopTimer();if(UI.fs)closeFS(true);
   Lv.res=finalizeMatch(Lv.M);Lv.done=true;Lv.subSlot=null;
   const opp=Lv.userSide==='h'?Lv.M.a.team:Lv.M.h.team;
   awardTeam(G,opp,Lv.res.winner!==Lv.userSide,true);
@@ -3377,7 +3830,7 @@ function completeDay(Lv){
   afterDay(G);
   {const f0=G.finLog[0],f1=G.finLog[1];if(f0&&f0.bal<0&&!(f1&&f1.bal<0))news(L('Budget négatif : les recrutements sont bloqués.','Negative budget: signings are blocked.'),'finances',1);}
   G.day++;
-  if(G.day%MARKET_EVERY===0&&G.day<G.schedule.length)G.market=genMarket(G,8);
+  if(marketDue(G))G.market=genMarket(G);
   ensureLineup(u);
   checkBadges(G,{});
   UI.live=null;UI.tab='home';UI.resDay=null;
@@ -3509,6 +3962,33 @@ function act(a,d){
     case 'style':u.style=d.v;save();render();break;
     case 'press':u.press=+d.v;save();render();break;
     case 'auto':setAutoLineup(u);save();render();break;
+    // ---- v0.6.10 (TAC-08) : Plans d'équipe ; indisponibles pendant un match (UI.live) ; le moteur n'écrit que dans l'équipe du joueur et dans G.presets ----
+    case 'plmenu':if(UI.live)break;UI.confirm=UI.confirm==='plan:menu'?null:'plan:menu';render();break;
+    case 'plno':UI.confirm=null;render();break;
+    case 'plapply':{
+      const i=+d.i;if(UI.live){toast(L('Indisponible pendant un match.','Unavailable during a match.'),true);break;}
+      const r=presetApply(G,i);
+      if(!r.ok){toast(r.why==='locked'?L('Composition pas encore débloquée.','Formation not unlocked yet.'):L('Plan vide.','Empty plan.'),true);break;}
+      UI.confirm=null;save();render();toast(plNote(i,r.repl));break;}
+    case 'plsave':{
+      const i=+d.i;if(UI.live)break;
+      if(plPre(i)){UI.confirm='plan:save:'+i;render();break;}   // écraser : confirmation d'abord (modèle UI-40)
+      if(presetSave(G,i)){UI.confirm=null;save();render();toast(L(`${plRef(i)} enregistré.`,`${plRef(i)} saved.`));}
+      else toast(L('Six de départ incomplet.','Starting six incomplete.'),true);
+      break;}
+    case 'plsaveok':{
+      const i=+d.i,ok=UI.confirm==='plan:save:'+i&&!UI.live&&presetSave(G,i);
+      UI.confirm=null;if(ok)save();render();toast(ok?L(`${plRef(i)} remplacé.`,`${plRef(i)} replaced.`):L('Six de départ incomplet.','Starting six incomplete.'),!ok);break;}
+    case 'plren':{
+      const i=+d.i;if(UI.live||!plPre(i))break;
+      UI.confirm='plan:ren:'+i;render();{const e=document.getElementById('plan-name');if(e){e.focus();e.select();}}break;}
+    case 'plrenok':{
+      const i=+d.i;if(UI.confirm!=='plan:ren:'+i||UI.live)break;
+      const e=document.getElementById('plan-name');presetRename(G,i,e?e.value:'');UI.confirm=null;save();render();toast(L(`${plRef(i)} renommé.`,`${plRef(i)} renamed.`));break;}
+    case 'plclear':{const i=+d.i;if(UI.live||!plPre(i))break;UI.confirm='plan:clear:'+i;render();break;}
+    case 'plclearok':{
+      const i=+d.i;if(UI.confirm!=='plan:clear:'+i||UI.live)break;
+      const ref=plRef(i);presetClear(G,i);UI.confirm=null;save();render();toast(L(`${ref} vidé.`,`${ref} cleared.`));break;}
     case 'resday':{const cur=UI.resDay==null?Math.max(0,G.results.length-1):UI.resDay;UI.resDay=clamp(cur+(+d.d),0,G.schedule.length-1);render();break;}
     case 'play':startLive();break;
     case 'sim':quickSim();break;
@@ -3518,6 +3998,10 @@ function act(a,d){
       if(!Lv.paused)Lv.halfPick=null;   // une consigne sélectionnée mais pas activée n'est pas appliquée à la reprise
       updateLive();nextTick();break;}
     case 'half':{const Lv=UI.live;if(!Lv||Lv.done||!Lv.paused||Lv.M.over||Lv.M.ot||!halfOpt(d.v))break;Lv.halfPick=Lv.halfPick===d.v?null:d.v;updateLive();break;}
+    case 'fsopen':openFS(d.k);break;
+    case 'fsclose':closeFS();break;
+    case 'fsconsigne':{const Lv=UI.live;if(!Lv||Lv.done||Lv.M.over||Lv.M.ot)break;Lv.paused=true;stopTimer();Lv.fsh=true;updateLive();const o=document.querySelector('#halfpanel .hopt');if(o)o.focus();break;}
+    case 'hq':{const Lv=UI.live;if(!Lv||Lv.done)break;Lv.hq=!Lv.hq;halfRecap(Lv);break;}
     case 'hb':{const Lv=UI.live;if(!Lv||Lv.done||!Lv.paused)break;Lv.hb=+d.v;updateLive();break;}
     case 'hgo':{
       const Lv=UI.live;if(!Lv||Lv.done||!Lv.paused||!Lv.halfPick)break;
@@ -3538,7 +4022,7 @@ function act(a,d){
     case 'dosub':{
       const Lv=UI.live,M=Lv.M,side=M[Lv.userSide],b=side.bench.find(x=>x.id===+d.id);
       if(!b||side.subs>=3)break;
-      const out=doSub(side,Lv.subSlot,b);
+      const out=doSub(side,Lv.subSlot,b,M);   // MAT-10 : M permet au moteur de rendre libre un remplacement fait avant le coup d'envoi
       M.log.push({sd:Lv.userSide,t:clk(M.n),type:'sys',txt:L(`Remplacement : ${nm(b)} remplace ${nm(out)}.`,`Substitution: ${nm(b)} replaces ${nm(out)}.`)});
       Lv.subSlot=null;updateLive();break;}
     case 'duel':{const Lv=UI.live;if(!Lv)break;const o=Lv.open||(Lv.open=new Set()),i=+d.i;if(o.has(i))o.delete(i);else o.add(i);refreshFeed();break;}
@@ -3549,6 +4033,7 @@ function act(a,d){
 }
 app.addEventListener('click',e=>{
   const tk=e.target.closest('.tacsph .pl');   // UI-12c : toucher un jeton de son équipe = aller à sa ligne du six de départ
+  if(!UI.fs&&FSQ.matches&&FSP.matches){const sp=e.target.closest('.lvmain svg.sphere,.tacsph svg.sphere');if(sp){openFS(sp.closest('.tacsph')?'tac':'match');return;}}   // UI-34b : clic sur la Sphère = plein écran (pointeur précis)
   if(tk&&/^p-h-\d+$/.test(tk.id)){const sl=document.getElementById('slot-'+tk.id.slice(4));if(sl)sl.focus();return;}
   const el=e.target.closest('[data-a]');if(!el||el.disabled)return;
   act(el.dataset.a,el.dataset);
@@ -3557,13 +4042,14 @@ app.addEventListener('keydown',e=>{
   if((e.key==='Enter'||e.key===' ')&&e.target.matches('tr[data-a]')){e.preventDefault();act(e.target.dataset.a,e.target.dataset);}
   if((e.key==='Enter'||e.key===' ')&&narrow()&&e.target.matches('.pr[data-a]')){e.preventDefault();act(e.target.dataset.a,e.target.dataset);}   // UI-53 : la ligne ouvre la feuille aussi au clavier
   if(e.key==='Enter'&&e.target.id==='coach-draft'){e.preventDefault();act('coachok',{});}
+  if(e.key==='Enter'&&e.target.id==='plan-name'){e.preventDefault();const m=/^plan:ren:(\d)$/.exec(String(UI.confirm));if(m)act('plrenok',{i:m[1]});}
   if(e.target.id==='coach-name'&&UI.cedit){
     if(e.key==='Enter'){e.preventDefault();e.target.blur();}
     else if(e.key==='Escape'){e.preventDefault();e.target.value=G.coach.name;endCoachEdit();}
   }
 });
 // UI-40 : Échap annule la confirmation de spécialité (le focus est souvent sur <body> après le rendu, d'où l'écoute sur document).
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&UI.confirm&&String(UI.confirm).startsWith('spec:')&&!UI.dlg){UI.confirm=null;render();}});
+document.addEventListener('keydown',e=>{if(UI.fs){if(e.key==='Escape'){e.preventDefault();fsEsc();}else if(e.key==='Tab')fsTab(e);return;}if(e.key==='Escape'&&UI.confirm&&/^(spec|plan):/.test(String(UI.confirm))&&!UI.dlg){UI.confirm=null;render();}});   // v0.6.10 : aussi le menu et les confirmations des Plans (TAC-08)
 app.addEventListener('focusout',e=>{if(e.target.id==='coach-name'&&UI.cedit&&UI.scr!=='flow')endCoachEdit();});
 document.addEventListener('keydown',dlgKeys);
 app.addEventListener('change',e=>{
@@ -3591,6 +4077,12 @@ app.addEventListener('change',e=>{
 loadPrefs();
 UI.saved=peekSave();   // lecture seule : la sauvegarde n'est chargée que par « Continuer »
 render();
+// ==DEV START==
+// TEC-09 : crochet de l'atelier (tools/atelier.html, hors build). Inerte tant qu'aucun parent de même origine n'expose __BM_ATELIER__ ; aucune évaluation de code.
+try{if(parent!==window&&parent.__BM_ATELIER__===true){const k=(n,g,s)=>[n,g,s],K=[k('FIT_SPEC',()=>FIT_SPEC,v=>FIT_SPEC=v),k('FIT_LINE',()=>FIT_LINE,v=>FIT_LINE=v),k('FIT_SEC',()=>FIT_SEC,v=>FIT_SEC=v),k('FIT_OFF',()=>FIT_OFF,v=>FIT_OFF=v),k('FIT_GK',()=>FIT_GK,v=>FIT_GK=v),k('GK_K',()=>GK_K,v=>GK_K=v),k('NAT_PREF',()=>NAT_PREF,v=>NAT_PREF=v),k('TRAIT_MALUS_P',()=>TRAIT_MALUS_P,v=>TRAIT_MALUS_P=v),k('HALF_K',()=>HALF_K,v=>HALF_K=v),k('HALF_OFF',()=>HALF_OFF,v=>HALF_OFF=v),k('HALF_REST',()=>HALF_REST,v=>HALF_REST=v),k('HALF_COST',()=>HALF_COST,v=>HALF_COST=v),k('HALF_POWER',()=>HALF_POWER,v=>HALF_POWER=v)];
+window.BM_DEV={api:1,get G(){return G},set G(g){G=g},PREFS,UI,render,save,act,applyPrefs,savePrefs,data:{TRAITS,FIRST_F,FIRST_M,LAST,CLUBS},fn:{makePlayer,genTraits,fixPlayer,ovrAt,maxHP,capOf,nm,bestLineup,setAutoLineup,createLeague,migrateSave,importSave,exportSave},
+const:{names:K.map(x=>x[0]),get:n=>K.find(x=>x[0]===n)[1](),set:(n,v)=>K.find(x=>x[0]===n)[2](v)},rng:{get:()=>rnd,set:f=>{rnd=f}}};}}catch(e){}
+// ==DEV END==
 </script>
 
 </body></html>
