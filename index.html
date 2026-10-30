@@ -947,7 +947,7 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
 @media (min-width:1200px){
   .hm{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
   .hcA,.hcB{display:grid;gap:16px;align-content:start;min-width:0}
-  .hcA{grid-template-rows:auto 1fr}.hcB{grid-template-rows:auto auto 1fr}   /* UI-75 : la dernière carte de la colonne la plus courte s'étire, les deux colonnes finissent ensemble */
+  .hcA{display:flex;flex-direction:column}.hcA>:last-child{flex:1 1 auto}.hcB{grid-template-rows:auto auto 1fr}   /* v0.14 : la colonne A peut compter trois cartes (la carte Tournoi s'insère après « À faire ») */   /* UI-75 : la dernière carte de la colonne la plus courte s'étire, les deux colonnes finissent ensemble */
   .hb2.stack{align-content:space-between}.hb6{display:grid;align-content:space-between}
   .hpr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:stretch;min-width:0}
   .hb1,.hb2,.hb3,.hb4,.hb5,.hb6{order:0}
@@ -1177,6 +1177,29 @@ th,td,h3,.ph button,.cgroup h4,.mh,.cmp .lab,.rtag,.legend,.bellmenu,.bcnt,.tag,
 .bhd:has(.jtg){margin-block:-8px 2px;margin-left:-10px}.bhd0:has(.jtg){margin-bottom:-8px}
 /* UI-97 : palmarès à 390 px (353-376 px dans 322) */
 @media (max-width:480px){.hon th,.hon td{padding-inline:5px}.hon th{letter-spacing:.02em}.hon td:last-child{overflow-wrap:anywhere}}
+/* v0.14 (NAR-08, UI A) : tableau de tournoi. ≥ 901 px : une colonne par tour ; en dessous, une liste verticale par tour. Le club du joueur est surligné (tr.me). */
+.tbg{display:grid;grid-template-columns:repeat(var(--c,3),minmax(0,1fr));gap:12px}
+.tbr{display:flex;flex-direction:column;gap:8px;min-width:0}
+.tbc{display:grid;gap:8px;align-content:space-around;flex:1}
+.tbr h4{margin:0;font-size:13px;color:var(--muted)}
+.tbm{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.tbt{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 8px;min-width:0}
+.tbt+.tbt{border-top:1px solid var(--line)}
+.tbn{min-width:0;overflow:hidden}
+.tbt.win{font-weight:700}.tbt.lose{color:var(--muted)}
+.tbt.me{background:var(--water-soft)}
+.trnr td{background:var(--water-soft);font-size:13px}
+@media (max-width:900px){.tbg{grid-template-columns:minmax(0,1fr)}}
+.dfg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.dfc .nm .muted{font-weight:500;font-size:12px}
+/* v0.14 (UI C) : distinctions (étoile de blason, titre, cadre du portrait) et coupes du palmarès */
+.cst{color:var(--warn);font-size:15px;letter-spacing:1px;white-space:nowrap}
+.ctt{font:600 12px var(--font-body);color:var(--p-gk)}
+.cport.fr1,.cport.fr2{margin:5px}.cport.fr1 .pframe{box-shadow:0 0 0 2px var(--surface),0 0 0 5px #8E9AA3}.cport.fr2 .pframe{box-shadow:0 0 0 2px var(--surface),0 0 0 5px #E0A31A}
+@media (max-width:700px){.trc{gap:10px}.trc .bhd{margin-bottom:0}.trc .acts{gap:4px}.td{padding:6px 0}}   /* QA14-03 : carte Tournoi de l'Accueil plus compacte (UI-32) */
+.palh{margin:14px 0 0;font:600 13px var(--font-body);color:var(--muted)}
+.pcup{display:inline-block;vertical-align:-4px;margin-right:5px}.pcup svg{width:18px;height:18px}
+.bst{display:flex;flex-direction:column;align-items:center;gap:2px;flex:none}
 </style>
 
 
@@ -1510,7 +1533,8 @@ t.formation=FORM_DEFAULT;setAutoLineup(t);
 ctInit(t);
 }
 function createLeague(){
-const G={v:9,coach:newCoach(),stadium:newStadium(),honors:[],season:1,day:0,nid:1,userId:null,started:false,teams:[],schedule:[],results:[],table:[],market:[],cash:0,fans:800,news:[],training:'ti',finLog:[],presets:[null,null,null],free:[]};
+const G={v:10,coach:newCoach(),stadium:newStadium(),honors:[],season:1,day:0,nid:1,userId:null,started:false,teams:[],schedule:[],results:[],table:[],market:[],cash:0,fans:800,news:[],training:'ti',finLog:[],presets:[null,null,null],guests:null,free:[]};
+trnGuests(G);
 CLUBS.forEach((c,i)=>{
 const t={id:i,name:c.name,short:c.short,color:c.color,emblem:c.emblem,level:c.level,players:[],formation:FORM_DEFAULT,style:'equilibre',press:0,lineup:[]};
 fillSquad(G,t);G.teams.push(t);
@@ -1547,7 +1571,8 @@ if(px)n.px=c.px;
 }
 function migrateSave(g){
 if(!g||g.userId==null)return null;
-if(g.v!==9||!okSp(g.sp)||!okOff(g.off)||!okOffb(g.offb))return null;
+if(g.v!==9&&g.v!==10||!okSp(g.sp)||!okOff(g.off)||!okOffb(g.offb)||!okTrn(g.trn)||!okPal(g.pal)||!okDfi(g.dfi))return null;
+if(g.v===9)mig10(g);else trnGuests(g);
 if(!Array.isArray(g.presets)||g.presets.length!==PRESET_N)presetsInit(g);
 if(!Array.isArray(g.free))g.free=[];
 g.teams.forEach(t=>t.players.forEach(fixPlayer));g.market.forEach(fixPlayer);g.free.forEach(fixPlayer);if(g.off)g.off.mk.forEach(fixPlayer);
@@ -1572,8 +1597,9 @@ if(typeof text!=='string')return bad('json');
 let o;
 try{o=JSON.parse(text.replace(/^﻿/,''));}catch(e){return bad('json');}
 if(!isObj(o)||o.app!=='blitz-manager'||!Number.isInteger(o.v)||!isObj(o.game)||!Number.isInteger(o.game.v))return bad('format');
-if(o.v!==9||o.game.v!==9)return bad('version');
+if(o.v!==9&&o.v!==10||o.game.v!==o.v)return bad('version');
 const g=o.game;
+if(!okTrn(g.trn)||!okPal(g.pal)||!okDfi(g.dfi))return bad('invalid');
 const okP=p=>isObj(p)&&typeof p.pos==='string'&&typeof p.race==='string'&&typeof p.side==='string'&&isObj(p.sec)&&Array.isArray(p.traits)&&p.traits.length>0&&isObj(p.stats);
 const okC=p=>okP(p)&&Number.isInteger(p.ct)&&p.ct>=1&&p.ct<=CT_MAX+1;
 if(!Array.isArray(g.teams)||g.teams.length!==CLUBS.length||!g.teams.every(t=>isObj(t)&&Array.isArray(t.players)&&t.players.every(okC)))return bad('invalid');
@@ -1590,6 +1616,7 @@ const okPre=P=>P===null||(isObj(P)&&typeof P.n==='string'&&!!FORMATIONS[P.format
 if(g.presets===undefined)g.presets=[null,null,null];
 else if(!Array.isArray(g.presets)||g.presets.length!==PRESET_N||!g.presets.every(okPre))return bad('invalid');
 try{g.teams.forEach(t=>t.players.forEach(fixPlayer));g.market.forEach(fixPlayer);g.free.forEach(fixPlayer);if(g.off)g.off.mk.forEach(fixPlayer);g.teams.forEach(fixCrest);}catch(e){return bad('invalid');}
+if(g.v===9)mig10(g);else trnGuests(g);
 return {ok:true,G:g};
 }
 const BADGES=[
@@ -2064,13 +2091,16 @@ if(!res.mvp||m.rating>res.mvp.rating)res.mvp={id:p.id,name:p.name,rating:m.ratin
 if(res.mvp){const mp=[...M.h.lu,...M.h.bench,...M.a.lu,...M.a.bench].find(q=>q.id===res.mvp.id);if(mp)mp.mvp=(mp.mvp||0)+1;}
 return res;
 }
-function simAuto(M){
+function simRun(M){
 while(!M.over){
 liveStep(M);
 phase(M);
 if(M.status==='half'){aiSubs(M.h);aiSubs(M.a);halfStep(M);M.status='play';}
 if(M.n===27&&!M.ot&&!M.over){aiSubs(M.h);aiSubs(M.a);}
 }
+}
+function simAuto(M){
+simRun(M);
 return finalizeMatch(M);
 }
 function simFixture(G,h,a){
@@ -2156,22 +2186,30 @@ if(sp0){
 const sp=sp0,w=G.table[G.userId].w,ok=w>=sp.thr,gain=ok?sp.bonus:0;
 G.cash+=gain;bil.sp={id:sp.id,thr:sp.thr,wins:w,ok,gain};
 }
-delete G.sp;delete G.off;delete G.offb;
+delete G.sp;delete G.off;delete G.offb;delete G.trn;
 G.season++;G.day=0;G.results=[];
+if(G.dfi&&G.dfi.due>0){const q=defiPay(G,G.dfi,0);if(q)bil.dfi=q;}
 G.schedule=makeSchedule(G.teams.length);
 G.table=G.teams.map(t=>({id:t.id,p:0,w:0,otw:0,otl:0,l:0,gf:0,ga:0,pts:0}));
 G.market=genMarket(G);
 return bil;
 }
-function newTraining(G,oppId){
+function trainSetup(hu,ha,opt,tt){
+opt=opt||{};
+if(opt.hp)hu.players.forEach(p=>{p.hp=Math.max(1,Math.round(maxHP(p)*opt.hp));});
+if(tt)hu.players.forEach(p=>TRAIN_T.set(p,hu));
+const M=newMatch(hu,ha);M.train=true;
+if(opt.sc){M.hs=opt.sc[0];M.as=opt.sc[1];}
+if(opt.subs!=null)M.h.subs=Math.max(0,3-opt.subs);
+return M;
+}
+function newTraining(G,oppId,opt){
 const u=G&&Array.isArray(G.teams)?G.teams[G.userId]:null,o=Number.isInteger(oppId)&&G&&Array.isArray(G.teams)?G.teams[oppId]:null;
 if(!u||!o||o===u)return null;
 const cp=t=>JSON.parse(JSON.stringify(t)),hu=cp(u),ha=cp(o);
 [hu,ha].forEach(t=>t.players.forEach(p=>{p.hp=maxHP(p);p.newInj=false;}));
 prepAI(ha);
-hu.players.forEach(p=>TRAIN_T.set(p,hu));
-const M=newMatch(hu,ha);M.train=true;
-return M;
+return trainSetup(hu,ha,opt,true);
 }
 function closestOpp(G){
 const u=G&&Array.isArray(G.teams)?G.teams[G.userId]:null;if(!u)return null;
@@ -2179,13 +2217,204 @@ const force=forceOf,fu=force(u);let best=null,bd=Infinity;
 G.teams.forEach(t=>{if(t===u)return;const d=Math.abs(force(t)-fu);if(d<bd-1e-9){bd=d;best=t.id;}});
 return best;
 }
+let TRN_ON=1,TRN_XP=.5,TRN_K=.34,PAL_MAX=40;
+let TRN_FEE={m:800,f:1000},TRN_PRIZE={m:[0,800,1500,3000],f:[0,600,1500,3000,6000]},TRN_OPEN={m:4,f:11},TRN_AFTER={m:7,f:14};
+const GUESTS_N=8,TRN_KINDS=['m','f'],trnSize=k=>k==='f'?16:8;
+const lcg=seed=>{let s=seed|0;return()=>{s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};};
+function withRnd(seed,fn){const o=rnd;rnd=lcg(seed);try{return fn();}finally{rnd=o;}}
+const GUEST_DEF=[["Harpons d'Ilmar",'HIL','#8E5A2B',3,1],['Anguilles de Tessen','ATE','#2E7D5B',0,-1],['Goélands de Brenn','GBR','#5E35B1',5,0],['Cormorans de Valk','CVA','#B71C5A',9,1],["Dauphins d'Aldis",'DAL','#00796B',2,0],['Esturgeons de Morvane','EMO','#455A64',6,-1],['Narvals de Skarn','NSK','#9A6B00',11,1],['Flots de Cassel','FCA','#3949AB',8,-1],['Voyageurs de Lorne','VLO','#6D4C41',4,0]];
+const isO=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
+const okGuests=a=>Array.isArray(a)&&a.length===GUESTS_N+1&&a.every(x=>isO(x)&&typeof x.n==='string'&&x.n.length>0&&x.n.length<=40&&/^[A-Z]{3}$/.test(x.c)&&/^#[0-9a-fA-F]{6}$/.test(x.cc)&&Number.isInteger(x.cr)&&x.cr>=0&&x.cr<CREST_N.sym&&Number.isInteger(x.o)&&x.o>=-2&&x.o<=2);
+function trnGuests(G){if(!okGuests(G.guests))G.guests=GUEST_DEF.map(([n,c,cc,cr,o])=>({n,c,cc,cr,o}));return G.guests;}
+function guestTeam(G,i,lv){
+const gd=trnGuests(G)[i];
+return withRnd(hmix(hmix(2020,G.season),i+1),()=>{
+const t={id:100+i,name:gd.n,short:gd.c,color:gd.cc,emblem:gd.cr,level:lv,players:[],formation:FORM_DEFAULT,style:'equilibre',press:0,lineup:[],guest:1};
+fillSquad({nid:1e6+i*100,season:G.season},t);
+return t;
+});
+}
+function trnLevels(G){
+const F=G.teams.map(t=>({id:t.id,f:forceOf(t)})).sort((a,b)=>b.f-a.f||a.id-b.id).map(x=>x.f),n=F.length-1;
+return trnGuests(G).map((gd,i)=>{
+const tg=i<GUESTS_N?F[Math.min(i,n)]:(F[Math.min(3,n)]+F[Math.min(4,n)])/2,fo=l=>forceOf(guestTeam(G,i,l));
+let lo=25,hi=85;
+while(hi-lo>1){const m=lo+hi>>1;if(fo(m)<tg)lo=m;else hi=m;}
+return clamp((Math.abs(fo(lo)-tg)<=Math.abs(fo(hi)-tg)?lo:hi)+gd.o,20,90);
+});
+}
+const TRN_OT=.156,TRN_LS=[.356,.695,.89,.968,.992,.999],TRN_LO=[.143,.472,.775,.925,.981,.996,.998],TRN_MG=[.328,.583,.763,.874,.936,.965];
+function trnLight(fa,fb,u){
+const w=u<1/(1+Math.exp(-TRN_K*(fa-fb)))?0:1,h=hmix(Math.floor(u*4294967296),11),f=i=>hmix(h,i)/4294967296,ix=(t,x)=>{let i=0;while(i<t.length&&x>=t[i])i++;return i;};
+let l,d=1;
+if(f(1)<TRN_OT)l=ix(TRN_LO,f(2));else{l=ix(TRN_LS,f(2));d=1+ix(TRN_MG,f(3));}
+return w?[l,l+d,1]:[l+d,l,0];
+}
+function trnView(T){
+let ids=T.b.slice(),o=0;const rounds=[];
+while(ids.length>1){
+const m=ids.length/2,res=Array.from({length:m},(_,i)=>T.sc[o+i]||null);
+rounds.push({ids,res});
+if(res.some(x=>!x))return{rounds,r:rounds.length-1,done:false,winner:null};
+ids=res.map((x,i)=>ids[2*i+x[2]]);o+=m;
+}
+return{rounds,r:rounds.length,done:true,winner:ids[0]};
+}
+const trnForce=(G,T,id,F)=>F[id]!==undefined?F[id]:(F[id]=forceOf(id<100?G.teams[id]:guestTeam(G,id-100,T.gl[id-100])));
+function trnAdvance(G,T,ur,F){
+const v=trnView(T),ids=v.rounds[v.r].ids,out=[];
+for(let i=0;i<ids.length/2;i++){
+const a=ids[2*i],b=ids[2*i+1];
+if(ur&&(a===G.userId||b===G.userId)){const ua=a===G.userId,w=ur[0]>ur[1]?0:1;out.push(ua?[ur[0],ur[1],w]:[ur[1],ur[0],1-w]);}
+else out.push(trnLight(trnForce(G,T,a,F),trnForce(G,T,b,F),rnd()));
+}
+T.sc.push(...out);
+}
+const trnDone=(G,k)=>!!G.pal&&(G.pal.t.some(x=>x.s===G.season&&x.k===k)||!!G.pal.x&&G.pal.x.s===G.season&&G.pal.x.k.includes(k));
+const trnRun=G=>!!G.trn&&G.trn.st==='run';
+const trnWindow=(G,k)=>!!TRN_ON&&!!G.teams[G.userId]&&G.day>=TRN_OPEN[k]&&G.day<=TRN_AFTER[k]&&!trnDone(G,k)&&!trnRun(G);
+const trnDue=G=>!TRN_ON||!G.teams[G.userId]||trnRun(G)?null:TRN_KINDS.find(k=>G.day===TRN_AFTER[k]&&!trnDone(G,k))||null;
+const trnPending=G=>trnRun(G)?'run':trnDue(G)?'due':null;
+function trnReg(G,k){
+const t=G.teams[G.userId];
+if(!TRN_ON||!t||!TRN_FEE[k])return{ok:false,why:'off'};
+if(!trnWindow(G,k))return{ok:false,why:'window'};
+if(G.trn)return{ok:false,why:'already'};
+if(t.players.length<SQUAD_MIN)return{ok:false,why:'squad'};
+if(!lineupValid(t))return{ok:false,why:'lineup'};
+if(G.cash<TRN_FEE[k])return{ok:false,why:'cash'};
+G.cash-=TRN_FEE[k];G.trn={k,s:G.season,st:'reg',in:1};
+return{ok:true,fee:TRN_FEE[k]};
+}
+function trnUnreg(G){
+const T=G.trn;if(!T||T.st!=='reg')return{ok:false,why:'state'};
+G.cash+=TRN_FEE[T.k];delete G.trn;
+return{ok:true,refund:TRN_FEE[T.k]};
+}
+function trnEnd(G,T){
+const v=trnView(T),u=G.userId;
+let r=-1;
+if(T.in){r=0;v.rounds.forEach(x=>{const i=x.ids.indexOf(u);if(i>=0&&x.ids[2*(i>>1)+x.res[i>>1][2]]===u)r++;});}
+const prize=r>=0?TRN_PRIZE[T.k][r]:0;
+G.cash+=prize;
+const P=G.pal||(G.pal={t:[],l:{m:null,f:null}});
+P.t.push({s:T.s,k:T.k,w:v.winner,r});while(P.t.length>2*PAL_MAX)P.t.shift();
+(P.l=P.l||{m:null,f:null})[T.k]={b:T.b.slice(),sc:T.sc.map(x=>x.slice())};
+delete G.trn;
+return{done:true,k:T.k,winner:v.winner,r,prize};
+}
+function trnGo(G){
+const k=trnDue(G);if(!k)return{ok:false,why:'due'};
+const inn=!!(G.trn&&G.trn.k===k&&G.trn.in);
+const ids=G.teams.map(t=>t.id).filter(i=>inn||i!==G.userId).concat(inn?[]:[100+GUESTS_N],k==='f'?Array.from({length:GUESTS_N},(_,i)=>100+i):[]);
+const T=G.trn={k,s:G.season,st:'run',in:inn?1:0,b:null,gl:trnLevels(G),sc:[]};
+const R=lcg(Math.floor(rnd()*4294967296)),b=ids.slice();
+for(let i=b.length-1;i>0;i--){const j=Math.floor(R()*(i+1)),x=b[i];b[i]=b[j];b[j]=x;}
+T.b=b;
+if(inn)return{ok:true,run:true,k};
+const F={};
+while(!trnView(T).done)trnAdvance(G,T,null,F);
+return{ok:true,run:false,...trnEnd(G,T)};
+}
+function trnNext(G){
+const T=G.trn;if(!trnRun(G)||!T.in)return null;
+const v=trnView(T);if(v.done)return null;
+const ids=v.rounds[v.r].ids,i=ids.indexOf(G.userId);
+return i<0?null:{r:v.r,n:Math.log2(T.b.length),opp:ids[i^1],home:i%2===0};
+}
+function trnTeam(G,id){
+const o=id<100?JSON.parse(JSON.stringify(G.teams[id])):guestTeam(G,id-100,G.trn.gl[id-100]);
+o.players.forEach(p=>{p.hp=maxHP(p);p.newInj=false;});
+prepAI(o);
+return o;
+}
+function trnMatch(G){
+const nx=trnNext(G);if(!nx)return null;
+const u=G.teams[G.userId],o=trnTeam(G,nx.opp),M=nx.home?newMatch(u,o):newMatch(o,u);M.trn=true;
+return M;
+}
+const TRN_KEEP=['apps','g','a','rs','cg','ca','capps','crs','sw','cw','mvp'];
+function trnFinish(G,M){
+const T=G.trn,u=G.teams[G.userId];
+if(!trnRun(G)||!M||!M.trn||M.h.team!==u&&M.a.team!==u)return null;
+if(!M.over)simRun(M);
+const keep=u.players.map(p=>[TRN_KEEP.map(k=>p[k]),JSON.stringify([p.comps,p.posn])]);
+const res=finalizeMatch(M);
+u.players.forEach((p,i)=>{TRN_KEEP.forEach((k,j)=>{p[k]=keep[i][0][j];});[p.comps,p.posn]=JSON.parse(keep[i][1]);});
+const us=M.h.team===u?'h':'a',gu=us==='h'?M.hs:M.as,go=us==='h'?M.as:M.hs,won=M.winner===us,rows=u.players.map(p=>{const xp=Math.round(xpFor(p,won)*TRN_XP);return{p,xp,ups:addXP(p,xp,false),hpEnd:p.hp};});
+u.players.forEach(p=>{p.hp=recovHP(G,u,p);p.newInj=false;});
+const F={};
+trnAdvance(G,T,[gu,go],F);
+if(won&&!trnView(T).done)return{res,rows,won,done:false,next:trnView(T).r};
+while(!trnView(T).done)trnAdvance(G,T,null,F);
+return{res,rows,won,...trnEnd(G,T)};
+}
+function mig10(g){
+g.v=10;trnGuests(g);
+const sk=(g.day>TRN_AFTER.m?'m':'')+(g.day>=TRN_AFTER.f?'f':'');
+if(sk)g.pal={t:[],l:{m:null,f:null},x:{s:g.season,k:sk}};
+}
+const okI=(x,a,b)=>Number.isInteger(x)&&x>=a&&x<=b,okRes=R=>R===null||isO(R)&&Array.isArray(R.b)&&R.b.every(x=>okI(x,0,100+GUESTS_N))&&Array.isArray(R.sc)&&R.sc.length<=15&&R.sc.every(x=>Array.isArray(x)&&x.length===3&&okI(x[0],0,99)&&okI(x[1],0,99)&&okI(x[2],0,1));
+const okTrn=T=>T===undefined||isO(T)&&TRN_KINDS.includes(T.k)&&okI(T.s,1,9999)&&(T.st==='reg'?T.in===1:T.st==='run'&&okI(T.in,0,1)&&Array.isArray(T.b)&&T.b.length===trnSize(T.k)&&new Set(T.b).size===T.b.length&&okRes({b:T.b,sc:T.sc})&&T.sc.length<T.b.length-1&&Array.isArray(T.gl)&&T.gl.length===GUESTS_N+1&&T.gl.every(l=>okI(l,20,90)));
+const okPal=P=>P===undefined||isO(P)&&Array.isArray(P.t)&&P.t.length<=2*PAL_MAX&&P.t.every(x=>isO(x)&&okI(x.s,1,9999)&&TRN_KINDS.includes(x.k)&&okI(x.w,0,100+GUESTS_N)&&okI(x.r,-1,4))&&(P.l===undefined||isO(P.l)&&okRes(P.l.m===undefined?null:P.l.m)&&okRes(P.l.f===undefined?null:P.l.f))&&(P.x===undefined||isO(P.x)&&okI(P.x.s,1,9999)&&/^(m|f|mf)$/.test(P.x.k));
+let DEFI_CAP=1200,DEFI_LOAN=54,DEFI_HP=.6;
+let DEFI_REW=[300,500,800,1200],DEFI_LVL=[52,55,59,62];
+const DEFI_N=12,DEFI_FORM='2-3-2';
+const DEFI=[['Brisants du Nord','BRN','#37474F',1,0,0,-1,-1],['Courants Gris','CGR','#607D8B',7,0,1,-1,3],['Écume Rouge','ECR','#C62828',10,0,2,-1,-1],['Maelström Noir','MNO','#212121',6,0,3,-1,-3],
+['Perle Blanche','PBL','#78909C',2,1,0,-1,-1],['Récif des Sables','RSA','#A1887F',9,1,1,-1,-1],['Lagune Basse','LBS','#00838F',5,1,2,-1,-6],["Algues d'Acier",'AAC','#2E7D32',11,1,3,-1,-5],
+['Houle Dorée','HDO','#F9A825',0,2,0,3,-3],['Marée Haute','MHT','#1565C0',8,2,1,1,-5],['Abysses Bleus','ABL','#283593',4,2,2,0,0],['Tourbillon Vert','TVR','#558B2F',3,2,3,2,-3]];
+const defiLv=id=>clamp(DEFI_LVL[DEFI[id][5]]+DEFI[id][7],20,90);
+function defiTeam(id,role){
+const d=DEFI[id];if(!d)return null;
+const lent=role===1;
+return withRnd(hmix(hmix(3030,id),role+1),()=>{
+const t={id:(lent?300:200)+id,name:lent?L('Équipe prêtée','Loaned team'):d[0],short:lent?'PRT':d[1],color:lent?'#607D8B':d[2],emblem:lent?4:d[3],level:lent?DEFI_LOAN:defiLv(id),players:[],formation:FORM_DEFAULT,style:'equilibre',press:0,lineup:[],defi:1};
+fillSquad({nid:2e6+id*200+role*100,season:1},t);
+return t;
+});
+}
+function newDefi(G,id){
+const d=DEFI[id],u=G&&Array.isArray(G.teams)?G.teams[G.userId]:null;
+if(!d||!u)return null;
+const loan=d[4]===1,x=d[4]===2?d[6]:-1,hu=loan?defiTeam(id,1):JSON.parse(JSON.stringify(u)),ha=defiTeam(id,0);
+[hu,ha].forEach(t=>t.players.forEach(p=>{p.hp=maxHP(p);p.newInj=false;}));
+prepAI(ha);if(loan)prepAI(hu);
+if(x===3){hu.formation=DEFI_FORM;setAutoLineup(hu);}
+const M=trainSetup(hu,ha,x===1?{hp:DEFI_HP}:x===2?{sc:[0,2]}:x===0?{subs:0}:null,!loan);
+M.defi={id,t:d[4],l:d[5],x};
+return M;
+}
+function defiPay(G,D,add){
+if(!D.cap||D.cap.s!==G.season)D.cap={s:G.season,v:0};
+D.due+=add;const pay=Math.min(D.due,Math.max(0,DEFI_CAP-D.cap.v));
+D.due-=pay;D.cap.v+=pay;D.g+=pay;G.cash+=pay;
+return pay;
+}
+function defiFinish(G,M){
+const d=M&&M.defi&&M.train?DEFI[M.defi.id]:null;
+if(!d||!G||M.defi.done)return null;
+if(!M.over)simRun(M);
+M.defi.done=1;
+const res=finalizeMatch(M),id=M.defi.id,won=M.winner==='h',gd=M.hs-M.as;
+const D=G.dfi||(G.dfi={d:{},c:{},s:0,sm:0,g:0,cap:{s:G.season,v:0},due:0}),e=D.d[id]||(D.d[id]={n:0,w:0,b:gd});
+e.n++;if(gd>e.b)e.b=gd;
+let gain=0,paid=0;
+if(won){e.w++;if(++D.s>D.sm)D.sm=D.s;if(!D.c[id]){D.c[id]=1;gain=DEFI_REW[d[5]];paid=defiPay(G,D,gain);}}
+else D.s=0;
+if(paid)M.defi.g=paid;
+return{res,won,gd,gain,paid,due:D.due};
+}
+const defiList=G=>DEFI.map((d,id)=>{const D=G&&G.dfi,e=D&&D.d[id];return{id,name:d[0],code:d[1],color:d[2],crest:d[3],t:d[4],l:d[5],x:d[4]===2?d[6]:-1,lv:defiLv(id),rew:DEFI_REW[d[5]],done:!!(D&&D.c[id]),n:e?e.n:0,w:e?e.w:0,b:e?e.b:null};});
+function defiStats(G){const D=G&&G.dfi;return{s:D?D.s:0,sm:D?D.sm:0,done:D?Object.keys(D.c).length:0,g:D?D.g:0,due:D?D.due:0,room:Math.max(0,DEFI_CAP-(D&&D.cap&&G&&D.cap.s===G.season?D.cap.v:0))};}
+const okDfi=D=>D===undefined||isO(D)&&isO(D.d)&&isO(D.c)&&Object.keys(D.d).every(k=>/^(\d|1[01])$/.test(k)&&isO(D.d[k])&&okI(D.d[k].n,0,99999)&&okI(D.d[k].w,0,D.d[k].n)&&okI(D.d[k].b,-99,99))
+&&Object.keys(D.c).every(k=>D.c[k]===1&&isO(D.d[k])&&D.d[k].w>=1)&&okI(D.s,0,99999)&&okI(D.sm,D.s,99999)&&okI(D.g,0,99999)&&okI(D.due,0,99999)&&isO(D.cap)&&okI(D.cap.s,1,9999)&&okI(D.cap.v,0,99999);
 const LOG_V=1,LOG_MAX=131072,LOG_ERR_MAX=20;
 function logMatch(M,G){
 if(!M||!M.over)return null;
 const uid=G?G.userId:null,sd=M.train?'h':M.h.team.id===uid?'h':M.a.team.id===uid?'a':null;
 if(!sd)return null;
 const od=sd==='h'?'a':'h',U=M[sd],O=M[od],gu=sd==='h'?M.hs:M.as,go=sd==='h'?M.as:M.hs,x=M.so?2:M.ot?1:0;
-if(M.train)return{k:'m',m:'t',o:O.team.short,sc:[gu,go],x,f:U.team.formation};
+if(M.train)return M.defi?{k:'m',m:'d',d:M.defi.id,sc:[gu,go],x,f:U.team.formation,...(M.defi.g?{g:M.defi.g}:{})}:{k:'m',m:'t',o:O.team.short,sc:[gu,go],x,f:U.team.formation};
 const ts=teamStats(M),c=[];
 M.log.forEach(e=>{
 if(e.type!=='sys'||e.sd!==sd||typeof e.txt!=='string'||!/Consigne|instruction/.test(e.txt))return;
@@ -2363,12 +2592,12 @@ return `<div class="optrow"><div><b>${L('Sons','Sounds')}</b><span class="hint">
 const sndGesture=()=>{if(SND.g)return;SND.g=true;if(PREFS.snd.fx||PREFS.snd.mus)sndCtx();};
 try{['pointerdown','pointerup','keydown','touchend'].forEach(e=>window.addEventListener(e,sndGesture,{capture:true,passive:true}));
 document.addEventListener('visibilitychange',()=>{try{const c=SND.c;if(!c)return;sndP(document.hidden?c.suspend():c.resume());}catch(e){}});}catch(e){}
-const VERSION='v0.13';
+const VERSION='v0.14';
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 const TITLE_NEWS=[
 {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-{v:VERSION,t:['Nouveautés v0.13','What\'s new in v0.13'],b:['v0.13 « Contrats et économie » : contrats de 1 à 3 saisons avec renouvellement, sponsors et primes de match variables, et un mercato d’avant-saison pour renforcer l’effectif.','v0.13 “Contrats et économie” (Contracts and economy): contracts of 1 to 3 seasons with renewal, variable sponsors and match bonuses, and a pre-season transfer window to strengthen your squad.']}
+{v:VERSION,t:['Nouveautés v0.14','What\'s new in v0.14'],b:['v0.14 « Défis et Tournois » : deux tournois par saison (mi-saison à 8 clubs, fin de saison à 16), douze défis contre des équipes inventées, et un palmarès avec coupes, étoiles de blason et titres d’entraîneur.','v0.14 “Défis et Tournois” (Challenges and tournaments): two tournaments a season (mid-season with 8 clubs, end of season with 16), twelve challenges against invented teams, and honours with cups, crest stars and coach titles.']}
 ];
 const TX={
 't.tag':['Un hommage au Blitzball, mini-jeu de FFX, par Ravaged King','A tribute to Blitzball, the FFX mini-game, by Ravaged King'],
@@ -2471,14 +2700,14 @@ const SECT={
 accueil:[['home',['Tableau de bord','Dashboard']]],
 club:[['club',['Fiche du club','Club sheet']],['coach',['Entraîneur','Coach']],['finance',['Finances','Finances']],['contrats',['Contrats','Contracts']],['journal',['Journal','Journal']],['cust',['Personnalisation','Customisation']]],
 effectif:[['squad',['Joueurs','Players']],['lineup',['Tactique','Tactics']],['train',['Entraînement','Training']],['market',['Marché','Market']]],
-jouer:[['match',['Match','Match']],['calendar',['Calendrier','Fixtures']],['table',['Classement','Table']]],
+jouer:[['match',['Match','Match']],['calendar',['Calendrier','Fixtures']],['table',['Classement','Table']],['trn',['Tournoi','Tournament']]],
 options:[['settings',['Paramètres','Settings']],['rules',['Règles','Rules']],['about',['À propos','About']]]
 };
 const TABALIAS={style:'lineup',arena:'finance'};
 const tabId=t=>TABALIAS[t]||t;
 const sectOf=t=>{t=tabId(t);if(t==='tmatch')return 'jouer';for(const s in SECT)if(SECT[s].some(x=>x[0]===t))return s;return 'accueil';};
-const MODES=[{id:'season',n:['Saison','Season'],pages:['match','calendar','table']},{id:'training',n:['Entraînement','Training'],pages:['tmatch']}];
-const pagesOf=sect=>sect==='jouer'&&UI.mode==='training'?[['tmatch',['Entraînement','Training']]]:SECT[sect];
+const MODES=[{id:'season',n:['Saison','Season'],pages:['match','calendar','table','trn']},{id:'training',n:['Entraînement','Training'],pages:['tmatch']},{id:'defi',n:['Défi','Challenge'],pages:['tmatch']}];
+const pagesOf=sect=>sect==='jouer'&&UI.mode!=='season'?[['tmatch',MODES.find(m=>m.id===UI.mode).n]]:SECT[sect];
 function lastDef(){return{accueil:'home',club:'club',effectif:'squad',jouer:'match',options:'settings'};}
 const NAVICO={
 accueil:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
@@ -2838,8 +3067,8 @@ app.innerHTML=st===1?coachStepHTML():st===2?pickHTML():`<div class="wrap main" s
 }
 ensureLineup(U());
 UI.tab=tabId(UI.tab);UI.sect=sectOf(UI.tab);if(UI.tab!=='coach')UI.cedit=UI.cpick=false;
-if(UI.tab!=='tmatch'&&UI.mode==='training')leaveTraining();
-const pages={home:homeHTML,coach:coachHTML,finance:financeHTML,contrats:contratsHTML,club:()=>clubHTML(false),cust:custPageHTML,journal:journalHTML,squad:squadHTML,train:trainHTML,market:marketHTML,match:matchHTML,tmatch:tmatchHTML,lineup:lineupHTML,calendar:calendarHTML,table:tableHTML,settings:settingsHTML,rules:rulesHTML,about:aboutHTML};
+if(UI.tab!=='tmatch'&&UI.mode!=='season')leaveTraining();
+const pages={home:homeHTML,coach:coachHTML,finance:financeHTML,contrats:contratsHTML,club:()=>clubHTML(false),cust:custPageHTML,journal:journalHTML,squad:squadHTML,train:trainHTML,market:marketHTML,match:matchHTML,tmatch:tmatchHTML,lineup:lineupHTML,calendar:calendarHTML,table:tableHTML,trn:trnHTML,settings:settingsHTML,rules:rulesHTML,about:aboutHTML};
 const HELP={lineup:'tactics',train:'train',coach:'train',finance:'stade',club:'stade',cust:'stade'};
 const fk=UI.fs?fsFocusKey():null;
 if(UI.fs)fsDrop();
@@ -2868,12 +3097,12 @@ const r=document.getElementById('fs');if(!r)return;
 const a=document.activeElement;if(a&&r.contains(a)&&a!==r)return;
 const t=(k&&r.querySelector(k+':not([disabled])'))||r.querySelector('#fsx');if(t&&t.focus)t.focus({preventScroll:true});
 }
-const ALERT_GO={inj:'lineup',tired:'lineup',cash:'finance',ct:'contrats',sp:'finance',merc:'market',pts:'squad',spec:'coach'};
+const ALERT_GO={inj:'lineup',tired:'lineup',cash:'finance',ct:'contrats',sp:'finance',merc:'market',trn:'trn',pts:'squad',spec:'coach'};
 function todoLines(G){
 const out=[],t=G&&G.teams&&G.userId!=null?G.teams[G.userId]:null;
 if(!t)return out;
 const lu=(t.lineup||[]).map(id=>t.players.find(p=>p.id===id)).filter(Boolean);
-const pj=!!(UI.live&&UI.live.done&&!UI.live.train),hp=p=>pj?recovProj(G,p).hp1:p.hp,inj=p=>p.inj-(pj&&p.inj>0&&!p.newInj?1:0);
+const pj=!!(UI.live&&UI.live.done&&!UI.live.train&&!UI.live.trn),hp=p=>pj?recovProj(G,p).hp1:p.hp,inj=p=>p.inj-(pj&&p.inj>0&&!p.newInj?1:0);
 const hurt=lu.filter(p=>inj(p)>0);
 if(hurt.length)out.push({id:'inj',go:ALERT_GO.inj,sev:'block',n:hurt.length,who:hurt[0]});
 const tired=lu.filter(p=>!(inj(p)>0)&&hpBand(hp(p),maxHP(p))!=='ok').length;
@@ -2882,6 +3111,7 @@ if(G.cash<0)out.push({id:'cash',go:ALERT_GO.cash,sev:'warn',n:1});
 {const nd=ctWindow(G)?ctDue(G).length:0;if(nd)out.push({id:'ct',go:ALERT_GO.ct,sev:'warn',n:nd});}
 {const s=spStatus(G);if(s&&s.state==='open'&&!s.chosen)out.push({id:'sp',go:ALERT_GO.sp,sev:'warn',n:1});}
 if(offOn(G))out.push({id:'merc',go:ALERT_GO.merc,sev:'warn',n:1});
+{const k=trnPending(G)?null:TRN_KINDS.find(x=>trnWindow(G,x));if(k&&!G.trn&&!trnWhy(k))out.push({id:'trn',go:ALERT_GO.trn,sev:'warn',n:1});}
 const pts=sum(t.players.map(p=>p.pts||0));
 if(pts>0)out.push({id:'pts',go:ALERT_GO.pts,sev:'warn',n:pts});
 if(G.coach&&coachLvl(G.coach).lvl>=SPEC_MIN&&!G.coach.spec)out.push({id:'spec',go:ALERT_GO.spec,sev:'warn',n:1});
@@ -2895,6 +3125,7 @@ case 'cash':return L('Budget négatif : recrutements bloqués','Negative budget:
 case 'ct':return L(`Renouveler ${l.n} contrat${l.n>1?'s':''}`,`Renew ${l.n} contract${l.n>1?'s':''}`);
 case 'sp':return L('Choisir un sponsor','Choose a sponsor');
 case 'merc':return L('Mercato ouvert : le tirage élargi disparaît au 1er match','Transfer window open: the extended draw vanishes at the first match');
+case 'trn':return L('Tournoi : inscriptions ouvertes','Tournament: entries open');
 case 'pts':return L(`${l.n} point${l.n>1?'s':''} de talent à répartir`,`${l.n} talent point${l.n>1?'s':''} to spend`);
 default:return L('Choisis une spécialité (gratuite)','Pick a specialty (free)');
 }
@@ -2903,6 +3134,7 @@ const brandHd=`<div class="brand">${LOGO}<span class="bt">BLITZ</span><span clas
 const seasonLive=()=>UI.live&&!UI.live.train?UI.live:null;
 function playState(){
 const Lv=seasonLive();
+{const pd=Lv?null:trnPending(G);if(pd)return{k:'trn',go:1,act:1,full:L(`Tournoi : jour ${pd==='run'?trnView(G.trn).r+1:1}`,`Tournament: day ${pd==='run'?trnView(G.trn).r+1:1}`),short:L('Tournoi','Tourn.')};}
 if(G.day>=G.schedule.length&&!Lv)return{k:'end',go:1,act:1,full:L('Fin de saison','Season over'),short:L('Fin','End')};
 if(Lv&&Lv.done)return{k:'report',go:1,act:1,full:L('Bilan du match','Match report'),short:L('Bilan','Report')};
 if(Lv)return{k:'resume',go:1,act:1,full:L('Reprendre le match','Resume the match'),short:L('Reprendre','Resume')};
@@ -2940,7 +3172,7 @@ function peekSave(){
 let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
 if(!s)return {st:'none'};
 let g;try{g=JSON.parse(s);}catch(e){return {st:'bad'};}
-if(!g||typeof g!=='object'||g.userId==null||g.v!==9)return {st:'foreign'};
+if(!g||typeof g!=='object'||g.userId==null||g.v!==9&&g.v!==10)return {st:'foreign'};
 try{
 const t=g.teams[g.userId],num=(x,d)=>Number.isFinite(+x)?+x:d;
 return {st:'ok',club:String(t.name).slice(0,40),season:num(g.season,1),day:num(g.day,0),n:g.schedule.length};
@@ -3295,7 +3527,7 @@ return `<div class="wrap main" style="padding-block:12px 0">${prefBar()}<div cla
 }
 const pageName=id=>{id=tabId(id);for(const s in SECT){const x=SECT[s].find(y=>y[0]===id);if(x)return P(x[1]);}return id;};
 const TODO_LBL={squad:['Effectif','Squad']};
-const TODO_ICO={inj:'⚠',tired:ic('dn'),cash:'⊖',ct:'↻',sp:'¤',merc:'⇄',pts:'+',spec:'★'};
+const TODO_ICO={inj:'⚠',tired:ic('dn'),cash:'⊖',ct:'↻',sp:'¤',merc:'⇄',trn:'◆',pts:'+',spec:'★'};
 const goLink=(t,label)=>`<button class="linkbtn pgl" data-a="goto" data-t="${t}">${label||pageName(t)} →</button>`;
 const blockHd=(title,t,label)=>`<div class="row between bhd"><h3>${title}</h3>${t?goLink(t,label):''}</div>`;
 function todoListHTML(){
@@ -3318,9 +3550,10 @@ return `<div class="oppc"><div class="frow"><span class="muted">${L('Classement'
 }
 function homeHTML(){
 const u=U();
-if(G.day>=G.schedule.length)return seasonEndHTML();
-const [h,a]=todayFx(),home=h===u.id,opp=G.teams[home?a:h];
-const next=`<section class="panel stack hb2"><h3>${L('Prochain match','Next match')} · ${L('Journée','Matchday')} ${G.day+1}</h3>
+const pd=trnPending(G),over=G.day>=G.schedule.length;
+if(over&&!pd)return seasonEndHTML();
+const [h,a]=over?[u.id,u.id]:todayFx(),home=h===u.id,opp=G.teams[home?a:h];
+const next=pd?trnCardHTML('hb2'):`<section class="panel stack hb2"><h3>${L('Prochain match','Next match')} · ${L('Journée','Matchday')} ${G.day+1}</h3>
   <div class="vs"><div class="side">${badge(u,true)}<span class="nm">${esc(u.name)}</span>${formChips(u.id)}</div>
   <div class="mid">${home?L('DOMICILE','HOME'):L('EXTÉRIEUR','AWAY')}<br>VS</div>
   <div class="side">${badge(opp,true)}<span class="nm">${esc(opp.name)}</span>${formChips(opp.id)}</div></div>
@@ -3333,18 +3566,18 @@ const last=G.finLog[0],C=G.coach,nw1=netIf(true,home),nw0=netIf(false,home),cl=c
 const fin=`<section class="panel hb6">${blockHd(L('Finances','Finances'),'finance')}<div class="stack tight"><div class="frow"><span class="muted">${L('Budget','Budget')}</span><b class="mono">${fmt(G.cash)} gils</b></div>
   <div class="frow"><span class="muted">${L('Salaires et staff / journée','Wages and staff / matchday')}</span><b class="mono">−${fmt(sum(u.players.map(p=>p.wage))+800)}</b></div>
   ${last?`<div class="frow"><span class="muted">${L('Dernier match','Last match')}</span><b class="mono ${last.net>=0?'pos-v':'neg-v'}">${signed(last.net)}</b></div>`:''}
-  <div class="nxfin"><b class="nxh">${L('Prochain match, résultat net prévu','Next match, projected net result')}<span class="mono muted"> · ${home?L('domicile','home'):L('extérieur','away')}</span></b>
+  ${over?'':`<div class="nxfin"><b class="nxh">${L('Prochain match, résultat net prévu','Next match, projected net result')}<span class="mono muted"> · ${home?L('domicile','home'):L('extérieur','away')}</span></b>
   <div class="frow"><span class="muted">${L('Victoire','Win')}</span><b class="mono ${nw1.net>=0?'pos-v':'neg-v'}">${signed(nw1.net)}</b></div>
   <div class="frow"><span class="muted">${L('Défaite','Loss')}</span><b class="mono ${nw0.net>=0?'pos-v':'neg-v'}">${signed(nw0.net)}</b></div>
-  <p class="hint">${L(`Seule différence : la prime de victoire (≈ +${fmt(nw1.bonus)}).`,`Only difference: the win bonus (≈ +${fmt(nw1.bonus)}).`)}</p></div></div></section>`;
+  <p class="hint">${L(`Seule différence : la prime de victoire (≈ +${fmt(nw1.bonus)}).`,`Only difference: the win bonus (≈ +${fmt(nw1.bonus)}).`)}</p></div>`}</div></section>`;
 const spec=C.spec&&SPECS[C.spec]?P(SPECS[C.spec].n):cl.lvl>=SPEC_MIN?L('à choisir','to pick'):L(`dès le niveau ${SPEC_MIN}`,`from level ${SPEC_MIN}`);
 const pc0=winPct(C),dm=pc0===null?'—':null,ttl=G.honors.filter(h=>h.rank===1).length;
 const cr=(l,v)=>`<div class="frow"><span class="muted">${l}</span><b class="mono">${v}</b></div>`;
 const cc=`<section class="panel hb5">${blockHd(L('Entraîneur','Coach'),'coach')}<div class="stack tight">${coachBar()}<div><div class="frow"><span class="muted">${L('Spécialité','Specialty')}</span><b>${spec}</b></div>
-  ${cr(L('Bilan','Record'),`${C.w} ${L('V','W')} · ${C.l} ${L('D','L')}`)}${cr(L('Taux de victoire','Win rate'),dm||pc0+'%')}${cr(L('Série · record','Streak · best'),`${C.streak} · ${C.best}`)}${cr(L('BP · BC / m','GF · GA / m'),dm||`${(C.gf/C.m).toFixed(1)} · ${(C.ga/C.m).toFixed(1)}`)}${cr(L('Saisons · titres','Seasons · titles'),`${C.seasons} · ${ttl}`)}</div></div></section>`;
+  ${cr(L('Bilan','Record'),`${C.w} ${L('V','W')} · ${C.l} ${L('D','L')}`)}${cr(L('Taux de victoire','Win rate'),dm||pc0+'%')}${cr(L('Série · record','Streak · best'),`${C.streak} · ${C.best}`)}${cr(L('BP · BC / m','GF · GA / m'),dm||`${(C.gf/C.m).toFixed(1)} · ${(C.ga/C.m).toFixed(1)}`)}${cr(L('Saisons · titres','Seasons · titles'),`${C.seasons} · ${ttl}`)}${palWins().length?cr(L('Coupes','Cups'),palWins().length):''}</div></div></section>`;
 const tbl=`<section class="panel hb3">${blockHd(L('Classement','League table'),'table')}<div class="tbl"><table><thead><tr><th class="num">#</th><th>Club</th><th class="num hx">${L('J','P')}</th><th class="num hx">+/−</th><th class="num">Pts</th></tr></thead><tbody>${mini}</tbody></table></div></section>`;
 const jrn=homeJrn();
-const hm=`<div class="hm"><div class="hcA">${todoBlock()}${next}</div><div class="hcB"><div class="hpr">${tbl}${cc}</div>${jrn}${fin}</div>${helpRow('game')}</div>`,bl=bilanHTML();
+const hm=`<div class="hm"><div class="hcA">${todoBlock()}${pd?'':trnCardHTML('hb1')}${next}</div><div class="hcB"><div class="hpr">${tbl}${cc}</div>${jrn}${fin}</div>${helpRow('game')}</div>`,bl=bilanHTML();
 return bl?`<div class="stack">${bl}${hm}</div>`:hm;
 }
 const jrnOpen=()=>UI.jopen!=null?UI.jopen:!!(window.matchMedia&&matchMedia('(min-width:1200px)').matches);
@@ -3415,10 +3648,21 @@ return `<aside class="panel ppanel stack tight sticky"><div class="who">${badge(
 const medal=on=>`<svg viewBox="0 0 36 36" aria-hidden="true"><path d="M11 3h6l1 9h-6zM25 3h-6l-1 9h6z" fill="var(--water)"/><circle cx="18" cy="21" r="11" fill="${on?'var(--ball)':'var(--line)'}"/><path d="M18 14l2 4.2 4.6.5-3.4 3.1 1 4.5-4.2-2.4-4.2 2.4 1-4.5-3.4-3.1 4.6-.5z" fill="#fff"/></svg>`;
 const cupSvg=col=>`<svg viewBox="0 0 36 36" aria-hidden="true"><path d="M10 5h16v8a8 8 0 0 1-16 0z" fill="${col}"/><path d="M10 8H5v3a5 5 0 0 0 5 5M26 8h5v3a5 5 0 0 1-5 5" fill="none" stroke="${col}" stroke-width="2.5"/><rect x="16" y="20" width="4" height="6" fill="${col}"/><rect x="11" y="26" width="14" height="4" rx="1" fill="${col}"/></svg>`;
 const CUPCOL={gold:'#E0A31A',silver:'#8E9AA3',bronze:'#B0693A'};
+const palT=k=>(G.pal&&G.pal.t||[]).filter(x=>!k||x.k===k),palTier=x=>{const n=trnN(x.k);return x.r>=n?0:x.r===n-1?1:x.r===n-2?2:3;};
+const palWins=()=>palT().filter(x=>palTier(x)===0),palCup=t=>cupSvg(CUPCOL[['gold','silver','bronze'][t]]);
+const TTL=[['Double couronné','Double crown'],['Briseur de défis','Challenge breaker'],['Vainqueur de fin de saison','End-of-season winner'],['Vainqueur de mi-saison','Mid-season winner']];
+const ttlOn=()=>{const w=palWins(),h=k=>w.some(x=>x.k===k);return[w.some(x=>x.k==='m'&&w.some(y=>y.k==='f'&&y.s===x.s)),defiStats(G).done>=DEFI_N,h('f'),h('m')];};
+const coachTitle=()=>TTL[ttlOn().indexOf(true)]||null,frameK=()=>{const o=ttlOn();return o[0]?2:o.includes(true)?1:0;};
+const crestStars=()=>{const n=palWins().length;return n?`<span class="cst" role="img" aria-label="${L('Tournois gagnés','Tournaments won')} : ${n}">${n>5?'★ × '+n:'★'.repeat(n)}</span>`:'';};
+function palTbl(k){
+const a=palT(k).reverse(),n=trnN(k);
+return a.length?`<h4 class="palh">${k==='f'?L('Coupes de fin de saison','End-of-season cups'):L('Coupes de mi-saison','Mid-season cups')}</h4><div class="tbl"><table class="hon"><thead><tr><th class="num">${L('Saison','Season')}</th><th>${L('Résultat','Result')}</th><th>${L('Vainqueur','Winner')}</th></tr></thead><tbody>${a.map(x=>{const t=palTier(x);return `<tr><td class="num">${x.s}</td><td>${t<3?`<span class="pcup">${palCup(t)}</span>`:''}${trnRes(x.r,n)}</td><td>${esc(trnClub(x.w).name)}</td></tr>`;}).join('')}</tbody></table></div>`:'';
+}
 const kpi=(v,l)=>`<div class="kpi"><b>${v}</b><span>${l}</span></div>`;
 function trophyCards(){
 const out=[];
 G.honors.forEach(h=>{if(h.rank<=3)out.push(`<div class="cupc">${cupSvg(CUPCOL[h.rank===1?'gold':h.rank===2?'silver':'bronze'])}<b>${h.rank===1?L('Champion','Champions'):h.rank===2?L('Vice-champion','Runners-up'):L('Troisième','Third place')}</b><span>${L('Saison','Season')} ${h.s}</span></div>`);});
+palT().forEach(x=>{const t=palTier(x);if(t<3)out.push(`<div class="cupc">${palCup(t)}<b>${[L('Vainqueur','Winner'),L('Finaliste','Runner-up'),L('Demi-finaliste','Semi-finalist')][t]}</b><span>${x.k==='f'?L('Fin de saison','End of season'):L('Mi-saison','Mid-season')} · ${L('Saison','Season')} ${x.s}</span></div>`);});
 CUPS.forEach(([n,t])=>{const on=G.coach.w>=n;out.push(`<div class="cupc ${on?'':'lock'}">${cupSvg(CUPCOL[t])}<b>${L(`Coupe des ${n} victoires`,`${n}-win cup`)}</b><span>${on?L('Obtenue','Earned'):`${G.coach.w}/${n}`}</span></div>`);});
 return out.join('');
 }
@@ -3432,22 +3676,25 @@ const SWAPIC='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"
 const cpi=()=>{const v=G.coach.portrait;return Number.isInteger(v)&&v>=0&&v<8?v:0;};
 function coachPortraitHTML(){
 const t=L('Changer le portrait','Change portrait');
-return `<div class="cport">${pFrame(COACHF[cpi()],U(),L('Portrait de l’entraîneur','Coach portrait'),3)}<button type="button" class="ibtn cpchg" data-a="cpick" aria-expanded="${!!UI.cpick}" aria-label="${t}" title="${t}">${SWAPIC}</button></div>`;
+return `<div class="cport${frameK()?' fr'+frameK():''}">${pFrame(COACHF[cpi()],U(),L('Portrait de l’entraîneur','Coach portrait'),3)}<button type="button" class="ibtn cpchg" data-a="cpick" aria-expanded="${!!UI.cpick}" aria-label="${t}" title="${t}">${SWAPIC}</button></div>`;
 }
 const coachPickHTML=()=>`<div class="cpick" role="radiogroup" aria-label="${L('Portrait de l’entraîneur','Coach portrait')}">${COACHF.map((f,i)=>`<button type="button" class="cpb" role="radio" aria-checked="${i===cpi()}" data-a="cport" data-v="${i}" aria-label="${L('Portrait','Portrait')} ${i+1}">${pFrame(f,U(),'',2)}</button>`).join('')}</div>`;
 function endCoachEdit(){UI.cedit=false;const n=document.getElementById('cname');if(n)n.innerHTML=coachNameHTML();}
 function coachHTML(){
-const C=G.coach,u=U(),pct=winPct(C)??0;
+const C=G.coach,u=U(),pct=winPct(C)??0,S=defiStats(G),DL=defiList(G),tOn=ttlOn(),ct=coachTitle();
 const comps=Object.entries(C.comps).map(([k,v])=>{const [f,s,pr]=k.split('|');return{f,s,pr:+pr,...v};}).sort((a,b)=>b.p-a.p||b.w-a.w);
 const best=comps.filter(c=>c.p>=3).sort((a,b)=>b.w/b.p-a.w/a.p||(b.gf-b.ga)-(a.gf-a.ga))[0];
 const crow=comps.map(c=>{const r=Math.round(c.w/c.p*100);return `<tr class="${best===c?'me':''}"><td class="mono"><b>${c.f}</b></td><td>${nN(c.s)}</td><td class="x">${pN(c.pr)}</td><td class="num">${c.p}</td><td><div class="wbar">${barH(r)}<span class="mono">${r}%</span></div></td><td class="num x">${(c.gf/c.p).toFixed(1)}</td><td class="num x">${(c.ga/c.p).toFixed(1)}</td></tr>`;}).join('');
 const bd=BADGES.map(b=>{const g=C.badges[b.id];return `<div class="bdg ${g?'':'lock'}">${medal(!!g)}<div><b>${P(b.n)}</b><small>${P(b.d)}</small><small>${g?L(`Obtenu saison ${g.s}, journée ${g.d}`,`Earned season ${g.s}, matchday ${g.d}`):L('À débloquer','Locked')}</small></div></div>`;}).join('');
 return `<div class="stack"><h2>${L(`Profil d'entraîneur`,'Coach profile')}</h2>
-  <section class="panel stack"><div class="row between"><div class="who">${coachPortraitHTML()}${badge(u,true)}<div class="grow"><div id="cname" class="cname">${coachNameHTML()}</div><span class="muted">${esc(u.name)} · ${L('Saison','Season')} ${G.season}</span></div></div></div>
+  <section class="panel stack"><div class="row between"><div class="who">${coachPortraitHTML()}<span class="bst">${badge(u,true)}${crestStars()}</span><div class="grow"><div id="cname" class="cname">${coachNameHTML()}</div><span class="muted">${esc(u.name)} · ${L('Saison','Season')} ${G.season}</span>${(c=>c?`<div class="ctt">${P(c)}</div>`:'')(coachTitle())}</div></div></div>
   ${UI.cpick?coachPickHTML():''}${coachBar()}${specPanel()}<div class="kpis k5">${kpi(C.m,L('Matchs','Matches'))}${kpi(C.w,L('Victoires','Wins'))}${kpi(C.l,L('Défaites','Losses'))}${kpi(pct+'%',L('Taux de victoire','Win rate'))}${kpi(C.gf,L('Buts marqués','Goals for'))}${kpi(C.ga,L('Buts encaissés','Goals against'))}${kpi(C.cs,L('Matchs sans encaisser','Clean sheets'))}${kpi(C.best,L('Meilleure série','Best streak'))}${kpi(C.ow,L('Victoires en prolongation','Overtime wins'))}${kpi(Object.keys(C.badges).length+'/'+BADGES.length,'Badges')}</div></section>
   <section class="panel"><h3>${L('Compositions jouées','Line-ups used')}</h3>
   ${comps.length?`<div class="tbl" style="margin-top:12px"><table><thead><tr><th>${L('Formation','Formation')}</th><th>${L('Style','Style')}</th><th class="x">${L('Pressing','Pressing')}</th><th class="num">${L('Joués','Played')}</th><th>${L('Victoires','Win rate')}</th><th class="num x">${L('BP/m','GF/m')}</th><th class="num x">${L('BC/m','GA/m')}</th></tr></thead><tbody>${crow}</tbody></table></div>
   <p class="hint" style="margin-top:8px">${best?L(`Meilleure composition (au moins 3 matchs) : ${best.f}, ${nN(best.s).toLowerCase()}, pressing ${pN(best.pr).toLowerCase()} — ${Math.round(best.w/best.p*100)} % de victoires.`,`Best set-up (at least 3 matches): ${best.f}, ${nN(best.s).toLowerCase()}, ${pN(best.pr).toLowerCase()} pressing — ${Math.round(best.w/best.p*100)}% wins.`):L('Joue au moins 3 matchs avec une même composition pour désigner la meilleure.','Play at least 3 matches with the same set-up to name the best one.')}</p>`:`<p class="hint" style="margin-top:8px">${L('Aucun match joué pour le moment.','No match played yet.')}</p>`}</section>
+  <section class="panel"><h3>${L('Défis','Challenges')}</h3><div class="kpis k5" style="margin-top:12px">${kpi(S.done+'/'+DEFI_N,L('Défis terminés','Challenges done'))}${kpi(S.sm,L('Meilleure série','Best streak'))}${kpi(fmt(S.g),L('Gils gagnés','Gil earned'))}</div>
+  <div class="cups" style="margin-top:12px">${[0,1,2,3].map(l=>{const a=DL.filter(d=>d.l===l),n=a.filter(d=>d.done).length,on=n===a.length;return `<div class="cupc ${on?'':'lock'}">${medal(on)}<b>${P(DEFI_L[l])}</b><span>${n}/${a.length}</span></div>`;}).join('')}</div></section>
+  <section class="panel"><h3>${L('Titres','Titles')}</h3><div style="margin-top:8px">${TTL.map((t,i)=>`<div class="frow"><span class="${tOn[i]?'':'muted'}">${P(t)}</span><b class="mono">${tOn[i]?(t===ct?L('Actif','Active'):L('Obtenu','Earned')):'–'}</b></div>`).join('')}<div class="frow"><span class="muted">${L('Cadre du portrait','Portrait frame')}</span><b class="mono">${[L('Aucun','None'),L('Argenté','Silver'),L('Doré','Gold')][frameK()]}</b></div></div></section>
   <section class="panel"><h3>${L('Trophées','Trophies')}</h3><div class="cups" style="margin-top:12px">${trophyCards()}</div></section>
   <section class="panel"><h3>Badges</h3><div class="badges" style="margin-top:12px">${bd}</div></section></div>`;
 }
@@ -3531,11 +3778,11 @@ const hrows=H.slice().reverse().map(h=>`<tr><td class="num">${h.s}</td><td class
 const leg=(k,l)=>{const top=u.players.filter(p=>p[k]>0).sort((a,b)=>b[k]-a[k]).slice(0,5);return `<section class="panel"><h3>${l}</h3><div style="margin-top:8px">${top.map(p=>`<div class="frow"><span>${esc(p.name)} ${posTag(p)}</span><b class="mono">${p[k]}</b></div>`).join('')||`<p class="hint">${L('Rien pour le moment.','Nothing yet.')}</p>`}</div></section>`;};
 const val=sum(u.players.map(valueOf)),wag=sum(u.players.map(p=>p.wage)),age=avg(u.players.map(p=>p.age));
 return `<div class="stack"><h2>${L('Fiche du club','Club sheet')}</h2>
-  <section class="panel stack"><div class="row between"><div class="who">${badge(u,true)}<div><div style="font:600 17px var(--font-display)">${esc(u.name)}</div><span class="muted">${L('Entraîneur','Coach')} : ${esc(coachName())} · ${L('Saison','Season')} ${G.season}</span></div></div>
+  <section class="panel stack"><div class="row between"><div class="who"><span class="bst">${badge(u,true)}${crestStars()}</span><div><div style="font:600 17px var(--font-display)">${esc(u.name)}</div><span class="muted">${L('Entraîneur','Coach')} : ${esc(coachName())} · ${L('Saison','Season')} ${G.season}</span></div></div>
   </div>
   <div class="kpis">${kpi(titles,L('Titres de champion','League titles'))}${kpi(podiums,L('Podiums','Podiums'))}${kpi(bestRank?rankTxt(bestRank):'–',L('Meilleur classement','Best finish'))}${kpi(H.length,L('Saisons terminées','Seasons completed'))}${kpi(fmt(G.cash),L('Budget (gils)','Budget (gil)'))}${kpi(fmt(G.fans),L('Public moyen','Average crowd'))}${kpi(fmt(val),L('Valeur de l’effectif','Squad value'))}${kpi(fmt(wag),L('Salaires / journée','Wages / matchday'))}${kpi(age.toFixed(1),L('Âge moyen','Average age'))}</div></section>
   <section class="panel"><h3>${L('Palmarès','Honours')}</h3>
-  ${H.length?`<div class="tbl" style="margin-top:12px"><table class="hon"><thead><tr><th class="num">${L('Saison','Season')}</th><th class="num">${L('Rang','Rank')}</th><th class="num">Pts</th><th class="num">${L('Bilan','Record')}</th><th class="num">${L('Buts','Goals')}</th><th>${L('Champion','Champions')}</th></tr></thead><tbody>${hrows}</tbody></table></div>`:`<p class="hint" style="margin-top:8px">${L('Le palmarès se remplit à la fin de chaque saison.','The honours list fills up at the end of every season.')}</p>`}</section>
+  ${palT().length?`<h4 class="palh">${L('Championnat','League')}</h4>`:''}${H.length?`<div class="tbl" style="margin-top:12px"><table class="hon"><thead><tr><th class="num">${L('Saison','Season')}</th><th class="num">${L('Rang','Rank')}</th><th class="num">Pts</th><th class="num">${L('Bilan','Record')}</th><th class="num">${L('Buts','Goals')}</th><th>${L('Champion','Champions')}</th></tr></thead><tbody>${hrows}</tbody></table></div>`:`<p class="hint" style="margin-top:8px">${L('Le palmarès se remplit à la fin de chaque saison.','The honours list fills up at the end of every season.')}</p>`}${palTbl('m')}${palTbl('f')}</section>
   <div class="grid2">${leg('cg',L('Légendes · buts en carrière','Legends · career goals'))}${leg('ca',L('Légendes · passes en carrière','Legends · career assists'))}${leg('capps',L('Légendes · matchs en carrière','Legends · career appearances'))}</div>
   ${clubSeasonHTML()}
   <p class="hint">${L(`Bilan de l’ère ${esc(coachName())} : ${C.w} victoires, ${C.l} défaites, ${C.gf} buts marqués.`,`Under ${esc(coachName())}: ${C.w} wins, ${C.l} losses, ${C.gf} goals scored.`)}</p></div>`;
@@ -3556,7 +3803,7 @@ return `<div class="stack"><h2>${L('Paramètres','Settings')}</h2>
   ${logRowsHTML(seg)}
   ${live?`<div class="optrow"><div><b>${T('s.title')}</b><span class="hint">${conf?T('s.title.live'):T('s.title.h')}</span></div><button class="btn${conf?' danger':''}" data-a="totitle">${conf?T('s.title.sure'):T('s.title.go')}</button></div>`:''}</section></div>`;
 }
-const RTABS=[['game',['Saison et match','Season and match']],['stats',['Lire les stats','Reading stats']],['races',['Races','Races']],['tactics',['Postes et tactique','Positions and tactics']],['train',['XP et entraînement','XP and training']],['stade',['Stade et finances','Stadium and finances']]];
+const RTABS=[['game',['Saison et match','Season and match']],['stats',['Lire les stats','Reading stats']],['races',['Races','Races']],['tactics',['Postes et tactique','Positions and tactics']],['train',['XP et entraînement','XP and training']],['stade',['Stade et finances','Stadium and finances']],['trn',['Défis et tournois','Challenges and tournaments']]];
 const helpLink=(tab,fr,en)=>`<button class="linkbtn" data-a="gorules" data-v="${tab}">ⓘ ${L(fr,en)}</button>`;
 function rulesHTML(){
 const li=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
@@ -3618,6 +3865,19 @@ body=`<div class="grid2">${sec('Postes','Positions',li([L('Quatre lignes : gardi
 body=`<div class="grid2">${sec('XP et niveaux','XP and levels',li([L('Match joué : 30 XP, +30 par but, +18 par passe décisive, +9 par tacle gagné ou interception, +7 par arrêt, +3 par passe réussie, +14 par point de note au-dessus de 6 et +20 pour une victoire, le tout modulé par l’âge (plus pour les jeunes). Remplaçant non utilisé : 8 XP.','Match played: 30 XP, +30 per goal, +18 per assist, +9 per tackle won or interception, +7 per save, +3 per completed pass, +14 per rating point above 6 and +20 for a win, all scaled by age (more for the young). Unused substitute: 8 XP.'),L('Chaque niveau demande 100 + 40 × niveau XP et donne 2 points de talent (3 jusqu’à 23 ans), à répartir dans la limite du plafond du joueur. Niveau maximum : 40.','Each level needs 100 + 40 × level XP and gives 2 talent points (3 up to age 23), to spend within the player’s ceiling. Maximum level: 40.')]))}
     ${sec('Entraînement','Training',li([L('Séance collective après chaque match : XP pour tous les joueurs aptes (plus aux jeunes) et 35 % de chances de +1 dans la stat travaillée. Le repos ne donne pas d’XP mais aide à récupérer.','Team session after every match: XP for all fit players (more for the young) and a 35% chance of +1 in the trained stat. Rest gives no XP but helps recovery.'),L(`Programme individuel : ${MAX_INDIV} joueurs au maximum, ${fmt(TRAIN_FEE)} gils par joueur et par match, AR réservé aux gardiens. En échange : 1,5× l’XP d’entraînement et 55 % de chances de +1. Un joueur blessé ne coûte rien.`,`Individual programme: at most ${MAX_INDIV} players, ${fmt(TRAIN_FEE)} gil per player per match, AR for keepers only. In return: 1.5× training XP and a 55% chance of +1. An injured player costs nothing.`),L('Dans le bilan d’après-match, chaque stat gagnée à l’entraînement apparaît à droite de la barre d’XP du joueur (par exemple « +1 TI »).','In the match report, every stat gained in training shows to the right of the player’s XP bar (for example “+1 TI”).')]))}</div>
     ${sec('Entraîneur','Coach',li([L('Chaque match rapporte de l’XP d’entraîneur : 40 pour une victoire, 15 pour une défaite, +10 sans encaisser. Passer du niveau n au suivant coûte 80 + 60 × n XP.','Every match earns coach XP: 40 for a win, 15 for a loss, +10 for a clean sheet. Going from level n to the next costs 80 + 60 × n XP.'),L('Le niveau débloque de nouvelles compositions. Dès le niveau 2, tu choisis une spécialité d’entraîneur (gratuite la première fois, puis 3 000 gils pour en changer). Son effet croît avec le niveau, par palier jusqu’au niveau 6 :','The level unlocks new formations. From level 2 you pick a coach specialty (free the first time, then 3,000 gil to change). Its effect grows with level, one tier per level up to level 6:'),`<ul>${SPEC_KEYS.map(s=>`<li><b>${P(SPECS[s].n)}</b> — ${P(SPECS[s].d)}</li>`).join('')}</ul>`,L('Les badges et trophées se débloquent selon tes résultats (Club › Entraîneur).','Badges and trophies unlock with your results (Club › Coach).')]))}`;
+}else if(t==='trn'){
+const pz=k=>TRN_PRIZE[k].slice(1).reverse().map(fmt).join(' / ');
+body=`<div class="grid2">${sec('Tournois','Tournaments',li([L(`Deux tournois par saison, en plus du championnat : mi-saison (8 clubs, 3 tours) après la journée ${TRN_AFTER.m}, fin de saison (16 clubs, 4 tours) après la journée ${TRN_AFTER.f}. Élimination directe, un tour par jour de tournoi, mêmes règles qu’un match de saison.`,`Two tournaments a season, besides the league: mid-season (8 clubs, 3 rounds) after matchday ${TRN_AFTER.m}, end of season (16 clubs, 4 rounds) after matchday ${TRN_AFTER.f}. Knockout, one round per tournament day, same rules as a season match.`),
+L(`Inscription facultative et payante, ouverte dès la journée ${TRN_OPEN.m} (mi-saison) ou ${TRN_OPEN.f} (fin de saison) ; annulable, remboursée à 100 %, tant que le tirage n’est pas fait. Il faut la trésorerie, un huit de départ valide et au moins ${SQUAD_MIN} joueurs.`,`Entry is optional and paid, open from matchday ${TRN_OPEN.m} (mid-season) or ${TRN_OPEN.f} (end of season); cancel for a 100% refund until the draw. You need the funds, a valid starting eight and at least ${SQUAD_MIN} players.`),
+L('Sans inscription, le tournoi se joue entre clubs IA : résultat consultable, vainqueur au palmarès. Éliminé, le reste se simule. Des clubs invités inventés complètent le tableau de fin de saison.','Without entry, the tournament is played between AI clubs: result viewable, winner in the honours. Once out, the rest is simulated. Invented guest clubs fill the end-of-season bracket.')]))}
+    ${sec('Jours de tournoi','Tournament days',li([L('Jours neutres : ni salaires, ni billetterie, ni sponsor, ni prime ; contrats inchangés. Fatigue, blessures et XP des joueurs (× 0,5) restent.','Neutral days: no wages, gate, sponsor or bonus; contracts unchanged. Fatigue, injuries and player XP (× 0.5) still apply.'),
+L('Exclus : salaires, maîtrise de formation, XP d’entraîneur, public, statistiques de saison, classement et sponsor.','Excluded: wages, formation mastery, coach XP, crowd, season stats, league table and sponsor.')]))}
+    ${sec('Défis','Challenges',li([L(`${DEFI_N} défis : trois types (Duel, Équipe prêtée, Contrainte) à quatre niveaux (Facile à Expert), contre des équipes inventées. Gratuits, jouables à tout moment depuis Jouer › Défi.`,`${DEFI_N} challenges: three types (Duel, Loaned team, Constraint) at four levels (Easy to Expert), against invented teams. Free, playable any time from Play › Challenge.`),
+L('Un défi se joue sur des copies : aucun effet sur l’effectif, la journée, la fatigue, l’XP ni les statistiques.','A challenge is played on copies: no effect on your squad, the matchday, fatigue, XP or stats.'),
+L(`Les gils d’un défi sont versés une seule fois, à la première victoire, dans la limite de ${fmt(DEFI_CAP)} par saison ; le solde est reporté à la saison suivante. Rejouable sans limite pour le record et la série.`,`A challenge’s gils are paid once, on the first win, up to ${fmt(DEFI_CAP)} a season; the rest carries over to the next season. Replay without limit for the record and streak.`)]))}
+    ${sec('Barème','Rewards',tb([[L('Épreuve','Event')],[L('Inscription','Entry'),'num'],[L('Gils','Gil')]],[[trnTitle('m'),fmt(TRN_FEE.m),pz('m')],[trnTitle('f'),fmt(TRN_FEE.f),pz('f')],[L('Défi','Challenge'),L('gratuit','free'),DEFI_REW.map(fmt).join(' / ')]])+`<p class="hint">${L('Tournois : vainqueur / finaliste / demi-finaliste (/ quart en fin de saison). Défi : Facile / Moyen / Difficile / Expert.','Tournaments: winner / runner-up / semi-finalist (/ quarter-finalist at season end). Challenge: Easy / Medium / Hard / Expert.')}</p>`)}
+    ${sec('Distinctions','Distinctions',li([L('Esthétiques, sans effet de jeu : coupes or, argent et bronze (vainqueur, finaliste, demi-finaliste), une étoile de blason par tournoi gagné (cinq au plus, puis × n), titre d’entraîneur, cadre du portrait et une médaille par niveau de défi terminé.','Cosmetic, no effect on the game: gold, silver and bronze cups (winner, runner-up, semi-finalist), a crest star per tournament won (five at most, then × n), coach title, portrait frame and a medal per completed challenge level.'),
+L('Titres, par priorité : Double couronné (les deux tournois gagnés la même saison), Briseur de défis (les 12 défis terminés), Vainqueur de fin de saison, Vainqueur de mi-saison. Cadre doré pour Double couronné, argenté pour un autre titre.','Titles, by priority: Double crown (both tournaments won in the same season), Challenge breaker (all 12 challenges done), End-of-season winner, Mid-season winner. Gold frame for Double crown, silver for any other title.')]))}</div>`;
 }else{
 const c=x=>Math.round(x*100),frows=FAC.map(k=>[`<b>${P(FACD[k].n)}</b>`,P(FACD[k].d),`<span class="mono">${FACD[k].cost.map(fmt).join(' · ')}</span>`]);
 body=`${sec('Installations','Facilities',tb([[L('Installation','Facility')],[L('Effet','Effect')],[L('Coût des niveaux 1 à 5 (gils)','Cost of levels 1 to 5 (gil)')]],frows)+`<p>${L(`Chaque niveau d’installation coûte ${UPKEEP} gils d’entretien par match. Les panneaux sponsors rapportent, en plus de l’offre de sponsor, +900, +700, +600, +500 puis +400 gils par match aux niveaux 1 à 5. La personnalisation (Club › Personnalisation : eau, ballon, marqueurs, bandeau de but) est purement visuelle.`,`Each facility level costs ${UPKEEP} gil upkeep per match. Sponsor boards bring, on top of the sponsor offer, +900, +700, +600, +500 then +400 gil per match at levels 1 to 5. Customisation (Club › Customisation: water, ball, markers, goal banner) is purely cosmetic.`)}</p>`)}
@@ -3998,15 +4258,17 @@ return `<section class="panel stack quick"><h3>${L('Tactique rapide','Quick tact
   <button class="linkbtn" data-a="tab" data-t="lineup" style="justify-self:start">${L('Détail dans Effectif › Tactique','Details in Squad › Tactics')}</button></section>`;
 }
 function matchHTML(){
-if(G.day>=G.schedule.length&&!UI.live)return seasonEndHTML();
-const Lv=UI.live;
+const Lv=UI.live,pd=trnPending(G);
+if(Lv&&Lv.trn)return `<div class="stack">${trnBan()}${Lv.done?trnSummaryHTML(Lv):liveHTML(Lv)}</div>`;
+if(pd&&!Lv)return `<div class="stack">${trnBan()}${trnCardHTML('',1)}${pd==='run'?trnNextHTML():''}</div>`;
+if(G.day>=G.schedule.length&&!Lv)return seasonEndHTML();
 if(Lv&&Lv.done)return summaryHTML(Lv);
 if(Lv)return liveHTML(Lv);
 const u=U(),[h,a]=todayFx(),home=h===u.id,opp=G.teams[home?a:h];
 ensureLineup(u);
 const lu=u.lineup.map(id=>u.players.find(p=>p.id===id)),sl=slotsOf(u.formation),ss=slotSides(sl);
 const rows=lu.map((p,i)=>`<div class="lu-row pre-r">${slotTag(sl[i],ss[i])}<span class="nm">${sixSel(u,sl[i],ss[i],i)}</span>${fitBadge(p,sl[i],ss[i],true)}${hpBarP(p)}<span class="mono">${Math.round(hpPct(p)*100)}%</span><span></span></div>`).join('');
-return `<div class="stack"><div class="grid2 pre"><div class="stack"><section class="panel stack"><h3>${L('Journée','Matchday')} ${G.day+1} · ${home?L('à domicile','at home'):L(`à l'extérieur`,'away')}</h3>
+return `<div class="stack">${trnCardHTML('')}<div class="grid2 pre"><div class="stack"><section class="panel stack"><h3>${L('Journée','Matchday')} ${G.day+1} · ${home?L('à domicile','at home'):L(`à l'extérieur`,'away')}</h3>
   <div class="vs"><div class="side">${badge(u,true)}<span class="nm">${esc(u.name)}</span></div><div class="mid">VS</div><div class="side">${badge(opp,true)}<span class="nm">${esc(opp.name)}</span></div></div>
   <p class="muted">${L('Formation','Formation')} <b class="mono" style="color:var(--ink)">${u.formation}</b> · ${nN(u.style)} · Pressing ${pN(u.press).toLowerCase()}</p>
   <div class="row acts"><button class="btn primary" data-a="play">${L(`Coup d'envoi en direct`,'Live kick-off')}</button><button class="btn" data-a="sim">${L('Simuler','Simulate')}</button><button class="btn" data-a="tab" data-t="lineup">${L('Tactique','Tactics')}</button></div></section>
@@ -4020,7 +4282,7 @@ const cal=G.schedule.map((day,d)=>{
 const f=day.find(x=>x[0]===u.id||x[1]===u.id),hm=f[0]===u.id,o=G.teams[hm?f[1]:f[0]];
 const r=G.results[d]&&G.results[d].find(x=>x.h===f[0]&&x.a===f[1]);
 const res=r?`<b>${r.hs} – ${r.as}</b> ${(r.hs>r.as)===hm?`<span class="tag good">${L('V','W')}</span>`:`<span class="tag bad">${L('D','L')}</span>`}`:(d===G.day?`<span class="tag ball">${L('Prochain','Next')}</span>`:`<span class="muted">${L('à venir','upcoming')}</span>`);
-return `<tr class="${d===G.day?'me':''}"><td class="num">J${d+1}</td><td>${hm?L('Dom.','Home'):L('Ext.','Away')}</td><td>${badge(o)}</td><td class="num">${res}</td></tr>`;
+return `<tr class="${d===G.day?'me':''}"><td class="num">J${d+1}</td><td>${hm?L('Dom.','Home'):L('Ext.','Away')}</td><td>${badge(o)}</td><td class="num">${res}</td></tr>`+trnCalRow(d+1);
 }).join('');
 const maxD=G.results.length;
 const rd=UI.resDay==null?Math.max(0,maxD-1):clamp(UI.resDay,0,G.schedule.length-1);
@@ -4409,6 +4671,7 @@ el.innerHTML=Lv.M.log.slice(-3).reverse().map(e=>evHTML(Lv.M,e,true)).join('');
 if(FSQ.addEventListener)FSQ.addEventListener('change',()=>{if(!FSQ.matches)closeFS();});
 function stopTimer(){clearTimeout(UI.timer);UI.timer=null;}
 function startLive(){
+if(trnPending(G))return;
 spLock(G);
 UI.planLast=null;
 const u=U(),[h,a]=todayFx(),opp=G.teams[h===u.id?a:h];
@@ -4437,6 +4700,8 @@ updateLive();nextTick();
 }
 function finishLive(){
 const Lv=UI.live;stopTimer();if(UI.fs)closeFS(true);
+if(Lv.trn){Lv.tr=trnFinish(G,Lv.M);Lv.res=Lv.tr.res;Lv.done=true;Lv.subSlot=null;sndEnd(Lv);trnEnded(Lv.tr);save();render();return;}
+if(Lv.defi){Lv.dr=defiFinish(G,Lv.M);Lv.res=Lv.dr.res;Lv.done=true;Lv.subSlot=null;sndEnd(Lv);logM(Lv.M);save();render();return;}
 Lv.res=finalizeMatch(Lv.M);Lv.done=true;Lv.subSlot=null;sndEnd(Lv);
 if(Lv.train){logM(Lv.M);render();return;}
 const opp=Lv.userSide==='h'?Lv.M.a.team:Lv.M.h.team;
@@ -4444,6 +4709,7 @@ awardTeam(G,opp,Lv.res.winner!==Lv.userSide,true);
 makeReport(Lv);render();
 }
 function quickSim(){
+if(trnPending(G))return;
 stopTimer();UI.planLast=null;
 const u=U(),[h,a]=todayFx();
 const {M,res}=simFixture(G,h,a);
@@ -4496,6 +4762,7 @@ afterDay(G);
 {const f0=G.finLog[0],f1=G.finLog[1];if(f0&&f0.bal<0&&!(f1&&f1.bal<0))news(L('Budget négatif : les recrutements sont bloqués.','Negative budget: signings are blocked.'),'finances',1);}
 G.day++;
 logD();
+trnAuto();
 if(marketDue(G))G.market=genMarket(G);
 ensureLineup(u);
 checkBadges(G,{});
@@ -4518,6 +4785,100 @@ if(retired.length)news(L(`Retraite : ${retired.join(', ')}. Des jeunes espoirs l
 nb.forEach(b=>news(L('Badge obtenu : ','Badge earned: ')+P(b.n)+'.','club'));
 UI.tab='home';UI.live=null;save();render();
 }
+const trnClub=id=>{if(id<100)return G.teams[id];const g=trnGuests(G)[id-100];return{id,name:g.n,short:g.c,color:g.cc,emblem:g.cr};};
+const trnN=k=>k==='f'?4:3;
+const trnTitle=k=>k==='f'?L('Tournoi de fin de saison','End-of-season tournament'):L('Tournoi de mi-saison','Mid-season tournament');
+const trnRn=m=>[0,L('Finale','Final'),L('Demi-finales','Semi-finals'),L('Quarts de finale','Quarter-finals'),L('Huitièmes de finale','Round of 16')][m];
+const trnRes=(r,n)=>r<0?L('Absent','Not entered'):r>=n?L('Vainqueur','Winner'):r===n-1?L('Finaliste','Runner-up'):L(`Éliminé en ${trnRn(n-r).toLowerCase()}`,`Out in the ${trnRn(n-r).toLowerCase()}`);
+const trnWhy=k=>{const u=U();return u.players.length<SQUAD_MIN?'squad':!lineupValid(u)?'lineup':G.cash<TRN_FEE[k]?'cash':'';};
+const trnWhyTxt=w=>w==='squad'?L(`Effectif trop court (${SQUAD_MIN} joueurs minimum)`,`Squad too small (${SQUAD_MIN} players minimum)`):w==='lineup'?L('Composition invalide : corrige la Tactique','Invalid lineup: fix Tactics'):w==='cash'?L('Trésorerie insuffisante','Not enough funds'):L('Inscription impossible','Cannot enter');
+const trnBan=()=>`<div class="trban" role="note"><span class="trt"><span aria-hidden="true">⚑</span> ${L('Tournoi · jour neutre : ni salaires, ni classement','Tournament · neutral day: no wages, no table')}</span></div>`;
+function trnCardHTML(cls,page){
+if(!TRN_ON||!G.teams[G.userId])return '';
+const T=G.trn,pd=trnPending(G),k=T?T.k:pd?trnDue(G):TRN_KINDS.find(x=>trnWindow(G,x));
+if(!k)return '';
+const n=trnN(k),fee=TRN_FEE[k],A=TRN_AFTER[k];
+let st,act;
+if(trnRun(G)){const v=trnView(T);st=`${L('Jour','Day')} ${v.r+1}/${n} · ${trnRn(n-v.r)}`;act=`<button class="btn primary" data-a="goto" data-t="match">${L('Jouer le tour','Play the round')}</button>`;}
+else if(pd==='due'){st=L('Tirage au sort prêt','Draw ready');act=`<button class="btn primary" data-a="trngo">${L('Tournoi : jour 1','Tournament: day 1')}</button>`;}
+else if(T){st=L(`Inscrit · tirage après la ${cls?'J':'journée '}${A}`,`Entered · draw after matchday ${A}`);act=`<button class="btn" data-a="trnunreg">${L('Annuler (remboursé à 100 %)','Cancel (100% refund)')}</button>`;}
+else{const w=trnWhy(k);st=L(`Inscriptions jusqu'à ${cls?'la J':'la fin de la journée '}${A}`,`Entries until ${cls?'':'the end of '}matchday ${A}`);act=`<button class="btn primary" data-a="trnreg"${w?' disabled':''}>${L(`S'inscrire`,'Enter')} · ${fmt(fee)} gils</button>${w?`<p class="hint">${trnWhyTxt(w)}</p>`:''}`;}
+const nm=[L('Vainqueur','Winner'),L('Finaliste','Runner-up'),L('Demi','Semi'),L('Quart','Quarter')],pz=TRN_PRIZE[k].slice(1).reverse().map((v,i)=>`${nm[i]} ${fmt(v)}`).join(' · ');
+return `<section class="panel stack ${cls?'trc '+cls:''}">${page?`<h3>${trnTitle(k)}</h3>`:blockHd(trnTitle(k),'trn',L('Tournoi','Tournament'))}
+  <p class="muted">${n===4?16:8} ${L('clubs','clubs')} · ${n} ${L('tours','rounds')} · ${st}</p>
+  ${page||!cls?`<div class="frow"><span class="muted">${L('Inscription','Entry fee')}</span><b class="mono">${fmt(fee)} gils</b></div>
+  <p class="hint">${L('Prix','Prizes')} : ${pz}</p>`:''}
+  <div class="row acts">${act}</div></section>`;
+}
+function trnNextHTML(){
+const u=U(),nx=trnNext(G);if(!nx)return '';
+const o=nx.opp<100?G.teams[nx.opp]:guestTeam(G,nx.opp-100,G.trn.gl[nx.opp-100]),hurt=hurtTrn(u),dis=hurt.length?' disabled':'';
+const warn=hurtWarn(hurt.length?hurt:hurtStarters(u));
+return `<div class="grid2"><section class="panel stack"><h3>${trnRn(nx.n-nx.r)} · ${L('jour','day')} ${nx.r+1}/${nx.n}</h3>
+  <div class="vs"><div class="side">${badge(u,true)}<span class="nm">${esc(u.name)}</span></div><div class="mid">${nx.home?L('DOMICILE','HOME'):L('EXTÉRIEUR','AWAY')}<br>VS</div><div class="side">${badge(o,true)}<span class="nm">${esc(o.name)}</span></div></div>
+  <p class="muted">${L('Formation','Formation')} <b class="mono" style="color:var(--ink)">${u.formation}</b> · ${nN(u.style)} · Pressing ${pN(u.press).toLowerCase()}</p>${warn}
+  <div class="row acts"><button class="btn primary" data-a="trnplay"${dis}>${L(`Coup d'envoi en direct`,'Live kick-off')}</button><button class="btn" data-a="trnsim"${dis}>${L('Simuler','Simulate')}</button><button class="btn" data-a="tab" data-t="lineup">${L('Tactique','Tactics')}</button></div></section>
+  <section class="panel stack"><h3>${L('Comparatif','Comparison')}</h3>${cmpFused(u,o)}</section></div>`;
+}
+function trnPlay(how){
+if(UI.scr!=='game'||!trnRun(G)||UI.live)return;
+const u=U();
+if(hurtTrn(u).length){toast(L('Un titulaire est blessé : change la composition.','A starter is injured: change the lineup.'),true);return;}
+const M=trnMatch(G);if(!M)return;
+const us=M.h.team===u?'h':'a';
+stopTimer();if(UI.fs)closeFS(true);UI.planLast=null;
+if(how==='sim'){const tr=trnFinish(G,M);UI.live={M,paused:true,speed:1,subSlot:null,done:true,res:tr.res,tr,rep:null,userSide:us,open:new Set(),trn:true};trnEnded(tr);save();}
+else UI.live={M,paused:true,speed:1,subSlot:null,done:false,res:null,rep:null,userSide:us,dotKey:'',open:new Set(),alerts:[],low:new Set(),halfPick:null,halfDone:false,hb:1,souf:{h:null,a:null},start:new Set(M[us].lu.map(p=>p.id)),trn:true};
+UI.tab='match';render();window.scrollTo(0,0);
+}
+function trnEnded(tr){
+if(!tr.done)return;
+const w=trnClub(tr.winner).name,n=trnN(tr.k);
+news(L(`${trnTitle(tr.k)} : ${w} l'emporte${tr.r>=0?` · ${trnRes(tr.r,n)}${tr.prize?`, +${fmt(tr.prize)} gils`:''}`:''}.`,`${trnTitle(tr.k)}: ${w} win${tr.r>=0?` · ${trnRes(tr.r,n)}${tr.prize?`, +${fmt(tr.prize)} gil`:''}`:''}.`),tr.prize?'finances':'club');
+}
+function trnAuto(){
+if(!trnDue(G)||G.trn&&G.trn.in)return;
+const r=trnGo(G);if(r.ok&&!r.run)trnEnded(r);
+}
+function trnCont(){
+const Lv=UI.live,tr=Lv&&Lv.tr;
+UI.live=null;UI.tab=tr&&tr.done?'trn':'match';if(tr&&tr.done)UI.trnView=tr.k;UI.last.jouer=UI.tab;
+save();render();window.scrollTo(0,0);
+}
+function trnOutcomeHTML(tr){
+const k=tr.done?tr.k:G.trn.k,n=trnN(k);
+if(!tr.done)return `<div class="alert">${L('Qualifié pour les','Through to the')} <b>${trnRn(n-tr.next).toLowerCase()}</b>.</div>`;
+return `<div class="alert">${trnTitle(k)} : <b>${trnRes(tr.r,n)}</b>${tr.prize?` · +${fmt(tr.prize)} gils`:''}. ${L('Vainqueur','Winner')} : ${esc(trnClub(tr.winner).name)}.</div>`;
+}
+function trnSummaryHTML(Lv){
+const tr=Lv.tr,rows=tr.rows.filter(r=>r.p.m&&r.p.m.played).map(r=>`<div class="frow"><span>${posTag(r.p)} ${esc(r.p.name)}</span><b class="mono">+${r.xp} XP${r.ups?` · ${L('niv','lvl')} ${r.p.lvl}`:''}</b></div>`).join('');
+return `<section class="panel stack">${finalHTML(Lv)}${trnOutcomeHTML(tr)}
+  <div class="row acts"><button class="btn primary" data-a="trncont">${L('Continuer','Continue')}</button></div>
+  <details class="sumd"><summary><b>${L('Joueurs · XP du jour','Players · day XP')}</b></summary><div class="stack tight">${rows}</div></details></section>`;
+}
+function bracketHTML(T){
+const v=trnView(T),u=G.userId;
+const cell=(id,sc,w)=>{const t=trnClub(id);return `<div class="tbt${sc==null?'':w?' win':' lose'}${id===u?' me':''}"><span class="tbn">${badge(t)}</span><b class="mono">${sc==null?'':sc}</b></div>`;};
+const cols=v.rounds.map((R,ri)=>`<div class="tbr"><h4>${trnRn(trnN(T.b.length===16?'f':'m')-ri)}</h4><div class="tbc">${R.res.map((x,i)=>`<div class="tbm">${cell(R.ids[2*i],x&&x[0],x&&x[2]===0)}${cell(R.ids[2*i+1],x&&x[1],x&&x[2]===1)}</div>`).join('')}</div></div>`).join('');
+return `<div class="tbg" style="--c:${v.rounds.length}">${cols}</div>`;
+}
+function trnHTML(){
+const T=G.trn,run=trnRun(G),L2=G.pal&&G.pal.l||{};
+let k=run?T.k:UI.trnView;
+if(k!=='m'&&k!=='f')k=L2.f?'f':'m';
+const src=run?T:L2[k]&&{b:L2[k].b,sc:L2[k].sc},last=G.pal&&G.pal.t.slice().reverse().find(x=>x.k===k);
+const seg=run?'':`<div class="row" role="group" aria-label="${L('Dernier tournoi','Last tournament')}">${TRN_KINDS.map(x=>`<button class="chip" data-a="trnview" data-v="${x}" aria-pressed="${x===k}">${trnTitle(x)}</button>`).join('')}</div>`;
+const info=run||!src?'':`<p class="muted">${L('Saison','Season')} ${last?last.s:'—'} · ${L('Vainqueur','Winner')} : <b style="color:var(--ink)">${esc(trnClub(trnView(src).winner).name)}</b>${last?` · ${L('ton résultat','your result')} : ${trnRes(last.r,trnN(k))}`:''}</p>`;
+const end=G.day>=G.schedule.length&&!trnPending(G)?`<div class="row"><button class="btn primary" data-a="goto" data-t="match">${L('Fin de saison','Season over')}</button></div>`:'';
+return `<div class="stack"><h2>${L('Tournoi','Tournament')}</h2>${trnCardHTML('',1)}${end}
+  <section class="panel stack"><h3>${run?L('Tableau en cours','Current bracket'):L('Dernier tournoi','Last tournament')}</h3>${seg}${src?info+bracketHTML(src):`<p class="hint">${L('Aucun tournoi joué pour le moment.','No tournament played yet.')}</p>`}</section></div>`;
+}
+function trnCalRow(n){
+const k=TRN_ON&&TRN_KINDS.find(x=>TRN_AFTER[x]===n);if(!k)return '';
+const p=G.pal&&G.pal.t.slice().reverse().find(x=>x.s===G.season&&x.k===k),T=G.trn&&G.trn.k===k;
+const st=p?trnRes(p.r,trnN(k)):T?(trnRun(G)?L('En cours','In progress'):L('Inscrit','Entered')):trnWindow(G,k)?L('Inscriptions ouvertes','Entries open'):trnDone(G,k)?'—':L('à venir','upcoming');
+return `<tr class="trnr"><td colspan="3"><b>${trnTitle(k)}</b> <span class="muted">(${trnN(k)} ${L('jours','days')})</span></td><td class="num">${st}</td></tr>`;
+}
 function modeRowHTML(){
 if(UI.sect!=='jouer'||UI.live)return '';
 return `<div class="modes" role="tablist" aria-label="${L('Mode de jeu','Game mode')}">${MODES.map(m=>`<button class="mseg" role="tab" data-a="mode" data-v="${m.id}" aria-selected="${UI.mode===m.id}" aria-controls="pg" tabindex="${UI.mode===m.id?0:-1}">${P(m.n)}</button>`).join('')}</div>`;
@@ -4525,19 +4886,22 @@ return `<div class="modes" role="tablist" aria-label="${L('Mode de jeu','Game mo
 function setMode(v){
 if(UI.scr!=='game'||!MODES.some(m=>m.id===v)||v===UI.mode||UI.live||UI.sect!=='jouer')return;
 if(v==='training'){UI.mode='training';UI.tab='tmatch';UI.tr={opp:closestOpp(G),how:'live'};}
+else if(v==='defi'){UI.mode='defi';UI.tab='tmatch';UI.df=null;}
 else{UI.mode='season';UI.tab=UI.last.jouer&&UI.last.jouer!=='tmatch'?UI.last.jouer:'match';}
 UI.confirm=null;render();
 const b=app.querySelector('.mseg[aria-selected="true"]');if(b&&b.focus)b.focus({preventScroll:true});
 }
 function leaveTraining(){
 if(UI.live&&UI.live.train){stopTimer();if(UI.fs)closeFS(true);UI.live=null;}
-UI.mode='season';
+UI.mode='season';UI.df=null;
 }
 function trainStage(st){
 if(st!=='pick')return;
 stopTimer();if(UI.fs)closeFS(true);UI.live=null;render();window.scrollTo(0,0);
 }
+const hurtTrn=t=>t.players.filter(p=>!p.inj).length<slotsOf(t.formation).length?[]:hurtStarters(t);
 const hurtStarters=t=>(t.lineup||[]).map(id=>t.players.find(p=>p.id===id)).filter(p=>p&&p.inj>0);
+const trLive=M=>({M,paused:true,speed:1,subSlot:null,done:false,res:null,rep:null,userSide:'h',dotKey:'',open:new Set(),alerts:[],low:new Set(),halfPick:null,halfDone:false,hb:1,souf:{h:null,a:null},start:new Set(M.h.lu.map(p=>p.id)),train:true});
 function startTraining(how){
 if(UI.scr!=='game'||UI.mode!=='training')return;
 const u=U();
@@ -4546,14 +4910,15 @@ const M=newTraining(G,UI.tr.opp);if(!M)return;
 stopTimer();if(UI.fs)closeFS(true);
 UI.tr.how=how==='sim'?'sim':'live';
 if(UI.tr.how==='sim'){const res=simAuto(M);UI.live={M,paused:true,speed:1,subSlot:null,done:true,res,rep:null,userSide:'h',open:new Set(),train:true};logM(M);}
-else UI.live={M,paused:true,speed:1,subSlot:null,done:false,res:null,rep:null,userSide:'h',dotKey:'',open:new Set(),alerts:[],low:new Set(),halfPick:null,halfDone:false,hb:1,souf:{h:null,a:null},start:new Set(M.h.lu.map(p=>p.id)),train:true};
+else UI.live=trLive(M);
 UI.tab='tmatch';render();window.scrollTo(0,0);
 }
 function tmatchHTML(){
 const Lv=UI.live&&UI.live.train?UI.live:null;
-const ban=`<div class="trban" role="note"><span class="trt"><span aria-hidden="true">⚑</span> ${L('Entraînement · sans effet sur la saison','Training · no effect on the season')}</span>${Lv&&!Lv.done?`<button class="btn small" data-a="trquit">${L('Quitter','Leave')}</button>`:''}</div>`;
-return `<div class="stack">${ban}${Lv?(Lv.done?trainSummaryHTML(Lv):liveHTML(Lv)):trainPickHTML()}</div>`;
+const df=UI.mode==='defi',ban=`<div class="trban" role="note"><span class="trt"><span aria-hidden="true">⚑</span> ${df?L('Défi · sans effet sur l’effectif','Challenge · no effect on the squad'):L('Entraînement · sans effet sur la saison','Training · no effect on the season')}</span>${Lv&&!Lv.done?`<button class="btn small" data-a="trquit">${L('Quitter','Leave')}</button>`:''}</div>`;
+return `<div class="stack">${ban}${Lv?(Lv.done?(df?defiSummaryHTML(Lv):trainSummaryHTML(Lv)):liveHTML(Lv)):df?(UI.df==null?defiListHTML():defiDetailHTML(UI.df)):trainPickHTML()}</div>`;
 }
+const hurtWarn=hurt=>hurt.length?`<div class="alert warn">${L(`${esc(nm(hurt[0]))} est ${fe(hurt[0],'blessé','blessée')} et titulaire.`,`${esc(nm(hurt[0]))} is injured and starting.`)} <button class="btn small" data-a="goto" data-t="lineup">${L('Tactique','Tactics')} →</button></div>`:'';
 function trainPickHTML(){
 const u=U(),opp=UI.tr.opp!=null?G.teams[UI.tr.opp]:null,hurt=hurtStarters(u),ok=!!opp&&!hurt.length;
 const list=G.teams.filter(t=>t.id!==u.id).map(t=>`<button class="trop" aria-pressed="${t.id===UI.tr.opp}" data-a="trpick" data-id="${t.id}">${badge(t)}<span class="nm">${esc(t.name)}</span><span class="mono muted">${Math.round(teamPower(t))}</span></button>`).join('');
@@ -4561,20 +4926,68 @@ let right='';
 if(opp){
 right=`<div class="vs"><div class="side">${badge(u,true)}<span class="nm">${esc(u.name)}</span></div><div class="mid">VS</div><div class="side">${badge(opp,true)}<span class="nm">${esc(opp.name)}</span></div></div>${cmpFused(u,opp)}`;
 }
-const warn=hurt.length?`<div class="alert warn">${L(`${esc(nm(hurt[0]))} est ${fe(hurt[0],'blessé','blessée')} et titulaire.`,`${esc(nm(hurt[0]))} is injured and starting.`)} <button class="btn small" data-a="goto" data-t="lineup">${L('Tactique','Tactics')} →</button></div>`:'';
+const warn=hurtWarn(hurt);
 return `<div class="grid2 trpick"><section class="panel stack"><h3 id="trh">${L('Adversaire','Opponent')}</h3><div class="trlist" role="group" aria-labelledby="trh">${list}</div></section>
   <section class="panel stack"><h3>${L('Match d’entraînement','Training match')}</h3>${right}${warn}
   <div class="row acts"><button class="btn primary" data-a="trstart" data-v="live"${ok?'':' disabled'}>${L(`Coup d'envoi en direct`,'Live kick-off')}</button><button class="btn" data-a="trstart" data-v="sim"${ok?'':' disabled'}>${L('Simuler','Simulate')}</button></div></section></div>`;
 }
-function trainSummaryHTML(Lv){
-const M=Lv.M,res=Lv.res,H=M.h.team,A=M.a.team,won=res.winner==='h',ts=res.ts;
-const how=howOf(M,res);
-return `<section class="panel stack"><h3>${L('Coup de sifflet final','Final whistle')}</h3>
+function finalHTML(Lv){
+const M=Lv.M,res=Lv.res,H=M.h.team,A=M.a.team,won=res.winner===Lv.userSide,ts=res.ts;
+return `<h3>${L('Coup de sifflet final','Final whistle')}</h3>
   <div class="scoreboard"><div class="tm">${badge(H,true)}<span class="tn">${esc(H.name)}</span></div><div class="score">${res.hs} – ${res.as}</div><div class="tm r"><span class="tn">${esc(A.name)}</span>${badge(A,true)}</div></div>
-  <h2 style="text-align:center">${won?L('Victoire','Victory'):L('Défaite','Defeat')} ${how}</h2>
+  <h2 style="text-align:center">${won?L('Victoire','Victory'):L('Défaite','Defeat')} ${howOf(M,res)}</h2>
   ${res.mvp?`<p class="muted" style="text-align:center">${'MVP'} : <b style="color:var(--ink)">${esc(res.mvp.name)}</b> (${res.mvp.rating.toFixed(1)})</p>`:''}
-  <div class="stack tight">${MSTAT().map(([l,k])=>cmpRow(l,ts.h[k],ts.a[k])).join('')}</div>
+  <div class="stack tight">${MSTAT().map(([l,k])=>cmpRow(l,ts.h[k],ts.a[k])).join('')}</div>`;
+}
+function trainSummaryHTML(Lv){
+return `<section class="panel stack">${finalHTML(Lv)}
   <div class="row acts"><button class="btn primary" data-a="trredo">${L('Rejouer','Play again')}</button><button class="btn" data-a="trchg">${L('Changer d’adversaire','Change opponent')}</button><button class="btn" data-a="trback">${L('Retour','Back')}</button></div></section>`;
+}
+const DEFI_T=[['Duel','Duel'],['Équipe prêtée','Loaned team'],['Contrainte','Constraint']],DEFI_L=[['Facile','Easy'],['Moyen','Medium'],['Difficile','Hard'],['Expert','Expert']];
+const defiRule=x=>x<0?'':[L('Sans remplacement','No substitutions'),L(`Départ à ${Math.round(DEFI_HP*100)} % de HP`,`Start at ${Math.round(DEFI_HP*100)}% HP`),L('Menés 0-2 au coup d’envoi','Down 0-2 at kick-off'),L(`Formation ${DEFI_FORM} imposée`,`${DEFI_FORM} formation imposed`)][x];
+const defiBadge=(d,big)=>badge({id:200+d.id,short:d.code,color:d.color,emblem:d.crest},big);
+function defiListHTML(){
+const A=defiList(G),S=defiStats(G);
+const card=d=>`<button class="trop dfc" data-a="df" data-v="pick" data-id="${d.id}">${defiBadge(d)}<span class="nm"><b>${esc(d.name)}</b><br><span class="muted">${P(DEFI_L[d.l])}${d.n?` · ${d.done?'✓ ':''}${L('record','best')} ${d.b>0?'+':''}${d.b} × ${d.w}`:''}</span></span><span class="mono${d.done?' muted':''}">${d.done?'✓ ':'+'}${fmt(d.rew)}</span></button>`;
+return `<p class="muted">${S.done}/${DEFI_N} ${L('terminés','done')} · ${L('série','streak')} ${S.s} · ${fmt(S.room)} gils ${L('versables cette saison','payable this season')}${S.due?` · ${L('solde reporté','carried over')} ${fmt(S.due)}`:''}</p>`
++DEFI_T.map((t,k)=>`<section class="panel stack"><h3>${P(t)}</h3><div class="dfg">${A.filter(d=>d.t===k).map(card).join('')}</div></section>`).join('');
+}
+function defiDetailHTML(id){
+const d=defiList(G)[id],S=defiStats(G),u=U(),loan=d.t===1,me=loan?defiTeam(id,1):u,opp=defiTeam(id,0),hurt=loan||d.x===3?[]:hurtStarters(u);
+const pl=loan?me.lineup.map(i=>me.players.find(p=>p.id===i)):[];
+const rew=d.done?L('Déjà obtenu · rejeu sans gils, pour le record','Already earned · replay for the record, no gils'):`+${fmt(d.rew)} gils${S.room<d.rew?` · ${L('versables cette saison','payable this season')} : ${fmt(S.room)} (${L('le reste est reporté','rest carried over')})`:''}`;
+return `<section class="panel stack"><h3>${esc(d.name)} · ${P(DEFI_T[d.t])} · ${P(DEFI_L[d.l])}</h3>
+  <div class="vs"><div class="side">${badge(me,true)}<span class="nm">${esc(me.name)}</span></div><div class="mid">VS</div><div class="side">${defiBadge(d,true)}<span class="nm">${esc(d.name)}</span></div></div>
+  <p class="muted">${L('Force','Strength')} ${Math.round(teamPower(me))} – ${Math.round(teamPower(opp))}</p>
+  ${d.x>=0?`<p><b>${L('Règle','Rule')}</b> : ${defiRule(d.x)}</p>`:''}
+  ${loan?`<div class="stack tight"><b>${L('Composition fixée','Fixed lineup')}</b>${pl.map(p=>`<div class="frow"><span>${posTag(p)} ${esc(p.name)}</span><b class="mono">${ovr(p)}</b></div>`).join('')}</div>`:''}
+  <p><b>${L('Récompense','Reward')}</b> : ${rew}</p>
+  ${d.n?`<p class="muted">${L('Record','Best')} ${d.b>0?'+':''}${d.b} · ${d.w}/${d.n} ${L('victoires','wins')}</p>`:''}${hurtWarn(hurt)}
+  <div class="row acts"><button class="btn primary" data-a="df" data-v="go"${hurt.length?' disabled':''}>${L('Lancer','Start')}</button><button class="btn" data-a="df" data-v="back">${L('Retour','Back')}</button></div></section>`;
+}
+function startDefi(id){
+if(UI.scr!=='game'||UI.mode!=='defi'||!defiList(G)[id])return;
+const d=defiList(G)[id];
+if(d.t!==1&&d.x!==3&&hurtStarters(U()).length){toast(L('Un titulaire est blessé : change la composition.','A starter is injured: change the lineup.'),true);return;}
+const M=newDefi(G,id);if(!M)return;
+stopTimer();if(UI.fs)closeFS(true);
+UI.df=id;UI.live=trLive(M);UI.live.defi=true;UI.tab='tmatch';render();window.scrollTo(0,0);
+}
+function defiSummaryHTML(Lv){
+const r=Lv.dr,left=r.gain-r.paid;
+const msg=!r.won?L('Défaite · pas de récompense','Defeat · no reward'):r.gain?`${r.paid?`+${fmt(r.paid)} gils`:L('Aucun gil versé','No gils paid')}${left>0?` · ${L('plafond de saison atteint, solde reporté','season cap reached, balance carried over')} : ${fmt(r.due)}`:''}`:L('Déjà obtenu · 0 gil','Already earned · 0 gils');
+return `<section class="panel stack">${finalHTML(Lv)}<div class="alert">${msg}</div>
+  <div class="row acts"><button class="btn primary" data-a="df" data-v="redo">${L('Rejouer','Play again')}</button><button class="btn" data-a="df" data-v="list">${L('Retour','Back')}</button></div></section>`;
+}
+function defiAct(v,id){
+if(UI.scr!=='game'||UI.mode!=='defi')return;
+if(v==='pick'&&!UI.live&&defiList(G)[+id])UI.df=+id;
+else if(v==='back'&&!UI.live)UI.df=null;
+else if(v==='go'&&!UI.live&&UI.df!=null){startDefi(UI.df);return;}
+else if(v==='redo'&&UI.live&&UI.live.done){startDefi(UI.live.M.defi.id);return;}
+else if(v==='list'&&UI.live&&UI.live.done){UI.live=null;UI.df=null;}
+else return;
+render();window.scrollTo(0,0);
 }
 function setBell(on){
 UI.bell=!!on;
@@ -4758,6 +5171,7 @@ case 'resday':{const cur=UI.resDay==null?Math.max(0,G.results.length-1):UI.resDa
 case 'play':startLive();break;
 case 'mode':setMode(d.v);break;
 case 'trpick':if(UI.mode==='training'&&!UI.live&&G.teams[+d.id]&&+d.id!==G.userId){UI.tr.opp=+d.id;render();const b=app.querySelector(`[data-a=trpick][data-id="${+d.id}"]`);if(b)b.focus();}break;
+case 'df':defiAct(d.v,d.id);break;
 case 'trstart':startTraining(d.v==='sim'?'sim':'live');break;
 case 'trquit':trainStage('pick');break;
 case 'trredo':startTraining(UI.tr.how);break;
@@ -4765,6 +5179,13 @@ case 'trchg':trainStage('pick');break;
 case 'trback':act('tab',{t:UI.last.jouer||'match'});break;
 case 'bell':toggleBell();break;
 case 'sim':quickSim();break;
+case 'trnreg':{const r=trnReg(G,TRN_KINDS.find(k=>trnWindow(G,k)));if(r.ok){save();toast(L(`Inscrit : −${fmt(r.fee)} gils`,`Entered: −${fmt(r.fee)} gil`));}else toast(trnWhyTxt(r.why),true);render();break;}
+case 'trnunreg':{const r=trnUnreg(G);if(r.ok){save();toast(L(`Inscription annulée : +${fmt(r.refund)} gils`,`Entry cancelled: +${fmt(r.refund)} gil`));}render();break;}
+case 'trngo':{const r=trnGo(G);if(!r.ok)break;if(r.run)UI.tab='match';else{trnEnded(r);UI.tab='trn';UI.trnView=r.k;}save();render();window.scrollTo(0,0);break;}
+case 'trnplay':trnPlay('live');break;
+case 'trnsim':trnPlay('sim');break;
+case 'trncont':trnCont();break;
+case 'trnview':UI.trnView=d.v==='f'?'f':'m';render();break;
 case 'sndtest':SND.g=true;sndFx('goal',0,true);break;
 case 'pause':{
 const Lv=UI.live,M=Lv.M;
