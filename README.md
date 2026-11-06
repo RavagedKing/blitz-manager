@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.19
+VERSION ACTUELLE : V0.20
 
 -----
 
@@ -28,4 +28,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.19
+ACTUAL VERSION : V0.20
