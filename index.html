@@ -381,10 +381,19 @@ td,th{white-space:normal}
 .st.mid.t4{color:var(--good-t);font-weight:700}.st.mid.t0{color:var(--bad-t);font-weight:700}
 .st.low{color:var(--muted)}   /* UI-78 : atténué par la couleur, plus par l'opacité (2,6:1 → ≥ 4,5:1) */
 .nn{font:700 14px var(--font-mono);text-align:center}
-.pg{display:inline-grid;place-items:center;width:24px;height:22px;border-radius:5px;font:700 12px var(--font-mono);border:1px solid var(--line);color:var(--muted)}
-.pg-S{background:var(--ball);color:var(--ball-ink);border-color:transparent}
-.pg-A{background:var(--good);color:var(--on-good);border-color:transparent}
-.pg-B{background:var(--water);color:var(--on-water);border-color:transparent}
+.pg{display:inline-grid;place-items:center;position:relative;isolation:isolate;width:24px;height:22px;border-radius:5px;font:700 12px var(--font-mono);border:1px solid var(--line-ctl);background:#fff;color:#0A2830}   /* CON-11 (Q2, D177) : fond fixe par grade (E blanc par défaut), lettre toujours visible ≥ 4,5:1, cadre ≥ 3:1 (--line-ctl, ou --ink pour S/S+) */
+.pg-D,.pg-C,.pg-B{color:#fff}
+.pg-D{background:#1B7A45}
+.pg-C{background:#1F5FBF}
+.pg-B{background:#7A3FC4}
+.pg-A{background:#CC4A0A;color:#fff;border-color:transparent}   /* A : carré plat orange, sans cadre ni effet (distinct de l'or de S+) ; fond ≥ 3:1 sur les deux thèmes */
+.pg-S,.pg-Sp{border-color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),inset 0 -6px 8px -4px rgba(0,0,0,.28)}   /* S / S+ : petit cadre simple, fond métallisé ('S+' → classe pg-Sp) */
+.pg-S{background:linear-gradient(135deg,#F4F6F8,#9AA5AD 45%,#E6EAED 55%,#8F9AA3);color:#14212A}
+.pg-Sp{background:linear-gradient(135deg,#FFF3B0,#C9971C 45%,#FBE58A 55%,#B8860B);color:#1F1400}
+.pg-X{border:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 21 15'%3E%3Cpath d='M4 0h13l4 4v7l-4 4H4l-4-4V4z' fill='%23DDF3FF'/%3E%3Cpath d='M4 0h6.5L8 6 0 4z' fill='%23fff' fill-opacity='.9'/%3E%3Cpath d='M10.5 2 15 7.5 10.5 13 6 7.5z' fill='%239ADCF5' fill-opacity='.75'/%3E%3Cpath d='M17 0l4 4v7l-6-3.5z' fill='%237FC4EA' fill-opacity='.8'/%3E%3Cpath d='M4 15l4-7 2.5 5z' fill='%23B7E4FA'/%3E%3Cpath d='M6 1 15 14' stroke='%23fff' stroke-opacity='.6' stroke-width='.6'/%3E%3Cpath d='M4.4.6h12.2l3.8 3.8v6.2l-3.8 3.8H4.4L.6 10.6V4.4z' fill='none' stroke='%235E7380' stroke-width='1.2'/%3E%3C/svg%3E") center/21px 15px no-repeat;color:transparent;overflow:visible}   /* X : cadre octogonal cristal (facettes + liseré SVG ≥ 3:1 sur les deux thèmes) ; la lettre (::after, plus grande, par-dessus) porte seule l'effet de foudre ; le texte réel reste dans le DOM */
+.pg-X::after{content:"X";content:"X"/"";position:absolute;inset:0;display:grid;place-items:center;font:800 25px/22px var(--font-mono);color:#031A33;text-shadow:0 0 1px #fff,0 0 2px #22D3EE;filter:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='1' seed='3' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='2'/%3E%3C/filter%3E%3C/svg%3E#f")}
+@media (prefers-reduced-motion:no-preference){.pg-X::after{animation:pgz 2.6s steps(1) infinite}}
+@keyframes pgz{0%,100%{text-shadow:0 0 1px #fff,0 0 2px #22D3EE}46%{text-shadow:0 0 1px #fff,0 0 3px #fff,0 0 5px #22D3EE}52%{text-shadow:0 0 1px #fff,0 0 1px #22D3EE}}
 .av{display:inline-grid;place-items:center;min-width:34px;height:22px;border-radius:5px;font:700 12px var(--font-mono);color:var(--muted)}
 .av.r-hi{background:color-mix(in srgb,var(--good) 30%,transparent);color:var(--ink)}
 .av.r-ok{background:color-mix(in srgb,var(--water) 22%,transparent);color:var(--ink)}
@@ -1395,18 +1404,19 @@ function histClub(G,h){G=gg(G);const t=h.i!==undefined&&G&&G.teams&&G.teams.find
 const oneSec=(pos,s)=>{if(pos==='MF'&&s.DF&&s.FW){if(s.FW==='A'&&s.DF!=='A')delete s.DF;else delete s.FW;}return s;};
 function genSec(pos){const s={};(SECOPT[pos]||[]).forEach(([k,pr])=>{if(rnd()<pr)s[k]=rnd()<.4?'A':'B';});return oneSec(pos,s);}
 const eff=(p,slot,sd,f)=>ovrAt(p,slot)*bonusOf(p,f)*fitTier(p,slot,sd).eff*(.75+.25*hpPct(p));
-function capOf(p,s){const mp=Math.max(...Object.values(PROFILE[p.pos]));return clamp(p.pot-(mp-PROFILE[p.pos][s])+4+raceMod(p,s)+(RACE_CAP[p.race]||0),20,96);}
+function capOf(p,s){const mp=Math.max(...Object.values(PROFILE[p.pos]));return clamp(p.pot-(mp-PROFILE[p.pos][s])+4+raceMod(p,s)+(RACE_CAP[p.race]||0),20,STAT_MAX);}
 function valueOf(p){const o=ovr(p);const m=p.age<=23?1.25:p.age<=28?1:p.age<=31?.75:.5;const pb=1+Math.max(0,p.pot-maxStat(p))/120;return Math.round(7e-5*Math.pow(o,4.5)*m*pb/100)*100;}
 const gg=g=>g||(typeof G!=='undefined'?G:0),kOf=g=>{g=gg(g);return g&&g.schedule&&g.schedule.length?14/g.schedule.length:1;},rvOf=g=>{g=gg(g);return g&&g.wd?DIV_REV[g.wd.d]:1;},lvOf=g=>{g=gg(g);return g&&g.wd?DIV_LV[g.wd.d]:0;};
 const wmin=k=>Math.round(15*k)*10,wageOf=(p,k=kOf())=>Math.max(wmin(k),Math.round(valueOf(p)*.055*k/10)*10);
-const gradeOf=p=>p.pot>=88?'S':p.pot>=80?'A':p.pot>=72?'B':'C';
+const STAT_MAX=96,POT_MAX=95,potC=v=>v>92?92+Math.round((v-92)*3/4):v;
+const gradeOf=p=>p.pot>=100?'X':p.pot>=96?'S+':p.pot>=90?'S':p.pot>=80?'A':p.pot>=72?'B':p.pot>=64?'C':p.pot>=56?'D':'E';
 const xpNeed=l=>100+40*l;
 const MAXLVL=40;
 function makePlayer(G,pos,level,age,mates,o){
 const stats={},race=o&&o.r||pickRace(),rm=RACES[race].m;
-STATS.forEach(s=>stats[s]=clamp(Math.round(level+PROFILE[pos][s]+(rm[s]||0)+ri(-5,5)),20,95));
+STATS.forEach(s=>stats[s]=clamp(Math.round(level+PROFILE[pos][s]+(rm[s]||0)+ri(-5,5)),20,STAT_MAX));
 const mx=Math.max(...Object.values(stats));
-const pot=age>=29?mx:clamp(Math.max(mx,level+ri(10,26)+(age<=22?5:0)),mx,96);
+const pot=Math.min(POT_MAX,age>=29?mx:Math.max(mx,potC(level+ri(10,26)+(age<=22?5:0))));
 const id=G.nid++,sex=o&&o.s||sexOfId(id);
 const p={id,sex,name:pick(sex==='F'?FIRST_F:FIRST_M)+' '+pickLast(mates),age,pos,race,side:wpick(SIDES,k=>k==='C'?24:38),train:null,cg:0,ca:0,capps:0,sec:genSec(pos),traits:genTraits(pos),hist:[{k:'free',s:G.season}],w:0,sw:0,cw:0,mvp:0,comps:{},posn:{},stats,pot,hp:0,lvl:1,xp:0,pts:0,inj:0,wage:0,g:0,a:0,apps:0,rs:0,newInj:false,m:null};
 p.hp=maxHP(p);
@@ -1415,20 +1425,21 @@ p.xp=ri(0,Math.floor(xpNeed(p.lvl)*.6));
 p.wage=wageOf(p,kOf(G));
 return p;
 }
-function autoAlloc(p,focus){
+const POSK={GK:['ar'],DF:['in','at','ph','hp'],MF:['ps','vt','hp'],FW:['ti','vt']};
+function autoAlloc(p){
 while(p.pts>0){
 const c=STATS.filter(s=>p.stats[s]<capOf(p,s));
 if(!c.length)break;
-const s=wpick(c,k=>(POSW[p.pos][k]||.03)*(k===focus?2.2:1));
-p.stats[s]++;p.pts--;
+const k=c.filter(s=>POSK[p.pos].includes(s));
+p.stats[wpick(k.length?k:c,x=>POSW[p.pos][x]||.03)]++;p.pts--;
 }
 if(p.pts>0&&STATS.every(s=>p.stats[s]>=capOf(p,s)))p.pts=0;
 }
-function addXP(p,xp,auto,focus){
+function addXP(p,xp,auto){
 const l0=p.lvl;p.xp+=xp;
 while(p.lvl<MAXLVL&&p.xp>=xpNeed(p.lvl)){p.xp-=xpNeed(p.lvl);p.lvl++;p.pts+=p.age<=23?3:2;}
 if(p.lvl>=MAXLVL)p.xp=0;
-if(auto&&p.pts>0)autoAlloc(p,focus);
+if(auto&&p.pts>0)autoAlloc(p);
 return p.lvl-l0;
 }
 const raceXP=p=>RACE_XP[p.race]||1;
@@ -1447,8 +1458,7 @@ const k=kOf(G)*(team.id===G.userId?XP_USER_K:1);
 return team.players.map(p=>{
 const prog=progOf(G,team,p),indiv=team.id===G.userId&&!!p.train,ait=IA_ON&2&&team.id!==G.userId&&!!p.train;
 const t0=(prog!=='repos'&&!p.inj)?Math.round(trainXP(p)*(indiv?1.5:ait?AIT_XP:1)):0;
-const focus=STATS.includes(prog)?prog:undefined;
-const x0=xpFor(p,won),xp=Math.round(x0*k),tx=Math.round((x0+t0)*k)-xp,ups=addXP(p,xp+tx,auto,focus);
+const x0=xpFor(p,won),xp=Math.round(x0*k),tx=Math.round((x0+t0)*k)-xp,ups=addXP(p,xp+tx,auto);
 return{p,xp,tx,ups,prog,indiv};
 });
 }
@@ -1572,6 +1582,7 @@ if(U&&!p.race)p.race='humain';
 if(U&&p.sex!=='F'&&p.sex!=='M')p.sex=sexOfName(p.name,p.id);
 if(U&&!p.side)p.side=wpick(SIDES,k=>k==='C'?24:38);
 if(p.train===undefined)p.train=null;
+if(U&&p.pot>POT_MAX)p.pot=POT_MAX;
 p.cg=p.cg||p.g||0;p.ca=p.ca||p.a||0;p.capps=p.capps||p.apps||0;
 if(U&&!p.sec)p.sec=genSec(p.pos);
 if(p.sec)oneSec(p.pos,p.sec);
@@ -1933,7 +1944,7 @@ if(!ix.length)return;
 uniqSet(G,out[ix[hmix(h,2)%ix.length]],e,0);
 }
 function uniqSet(G,p,e,b){
-Object.assign(p,{uid:e.uid,name:e.name,pos:e.pos,sex:e.sex,age:e.age,race:e.race,side:e.side,sec:{},traits:e.traits.slice(),stats:Object.fromEntries(STATS.map(k=>[k,clamp(e.stats[k]+b,20,95)])),pot:e.pot,xp:0});
+Object.assign(p,{uid:e.uid,name:e.name,pos:e.pos,sex:e.sex,age:e.age,race:e.race,side:e.side,sec:{},traits:e.traits.slice(),stats:Object.fromEntries(STATS.map(k=>[k,clamp(e.stats[k]+b,20,STAT_MAX)])),pot:e.pot,xp:0});
 p.hp=maxHP(p);p.lvl=clamp(Math.round((ovr(p)-30)/2.2),1,30);p.wage=wageOf(p,kOf(G));
 }
 function genMarket(G,n,pl,nu){
@@ -2256,9 +2267,9 @@ if(G.wd)wdDay(G);
 function ageDecline(p){
 if(p.age>=30)STATS.forEach(s=>{
 let d=-ri(0,2);if((s==='vt'||s==='hp')&&p.age>=32)d-=1;
-p.stats[s]=clamp(p.stats[s]+d,20,95);
+p.stats[s]=clamp(p.stats[s]+d,20,STAT_MAX);
 });
-p.pot=Math.max(p.pot,maxStat(p));
+p.pot=Math.max(p.pot,Math.min(POT_MAX,maxStat(p)));
 }
 let IA_ON=7,REC_ON=3,AIR_K=3,AIR_LV=-1,AIT_N=2,AIT_XP=1.25,AIS_KEEP=1,MERC_MID_N=9,MERC_MID_PRICE=1.1;
 let DIF_LV=[-1,0,1],DIF_REV=[1.1,1,.9],DIF_OFR=[-.1,0,.15],DIF_PROT=[-1,0,1];
@@ -2846,12 +2857,12 @@ const sndGesture=()=>{if(SND.g)return;SND.g=true;if(PREFS.snd.fx||PREFS.snd.mus)
 try{['pointerdown','pointerup','keydown','touchend'].forEach(e=>window.addEventListener(e,sndGesture,{capture:true,passive:true}));
 document.addEventListener('visibilitychange',()=>{try{const c=SND.c;if(!c)return;sndP(document.hidden?c.suspend():c.resume());}catch(e){}});}catch(e){}
 const DN=()=>DIV_NAME.map((n,i)=>i?n:L('Élite','Elite'));
-const VERSION='v0.19';
+const VERSION='v0.20';
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 const TITLE_NEWS=[
 {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-{v:VERSION,t:['Nouveautés v0.19','What\'s new in v0.19'],b:['v0.19 — Mise à niveau : ton club progresse plus vite (2,5 à 3 niveaux par saison), les milieux n’ont plus qu’une ligne secondaire, les Guado sont moins forts. Nouveau : tutoriels pop-up à la première visite de chaque page, désactivables.','v0.19 — Level-up: your club progresses faster (2.5 to 3 levels a season), midfielders get a single secondary line, Guado are less strong. New: pop-up tutorials the first time you visit each page, which can be turned off.']}
+{v:VERSION,t:['Nouveautés v0.20','What\'s new in v0.20'],b:['v0.20 — Nouvelle échelle de potentiel : E, D, C, B, A, S, puis S+ et X pour des joueurs spéciaux, avec de nouveaux badges. La répartition automatique des points vise d’abord les stats clés du poste. Plafonds ordinaires : potentiel 95, stats 96.','v0.20 — New potential scale: E, D, C, B, A, S, then S+ and X for special players, with new badges. Automatic point spending now targets the role’s key stats first. Ordinary ceilings: potential 95, stats 96.']}
 ];
 const TUTO={
 squad:[['Ton effectif','Your squad'],['Tes joueurs et leurs stats. Ouvre une fiche pour voir le radar et l’historique, et dépenser les points de talent gagnés à chaque niveau.','Your players and their stats. Open a sheet to see the radar and history, and to spend the talent points earned at each level.']],
@@ -3094,7 +3105,7 @@ const stCell=(p,s)=>{const c=roleCls(p,s),v=p.stats[s],tm=traitMod(p,s);return `
 const avgR=p=>p.apps>=3?p.rs/p.apps:null;
 const avgCls=r=>r==null?'':r>=7.2?'r-hi':r>=6.5?'r-ok':r>=5.8?'r-lo':'r-bad';
 const avgCell=p=>p.apps===0?'<span class="av">–</span>':p.apps<3?`<span class="av">${(p.rs/p.apps).toFixed(1)}</span>`:`<span class="av ${avgCls(avgR(p))}">${avgR(p).toFixed(1)}</span>`;
-const potCell=p=>`<span class="pg pg-${gradeOf(p)}">${gradeOf(p)}</span>`;
+const potCell=p=>{const g=gradeOf(p);return `<span class="pg pg-${g==='S+'?'Sp':g}">${g}</span>`;};
 const keyStat=p=>{const ks=STATS.filter(s=>roleCls(p,s)==='key').sort((a,b)=>p.stats[b]-p.stats[a]);return ks.length?`${SL[ks[0]]} ${p.stats[ks[0]]}`:'';};
 const secList=p=>Object.entries(p.sec||{}).map(([k,q])=>({pos:k,q,e:Math.round(ovrAt(p,k)*(1+FIT_SEC))}));
 const RD={W:420,H:306,CX:210,CY:153,R:78,LH:17};
@@ -4200,9 +4211,9 @@ body=`<div class="grid2"><section class="panel prose"><h3>${L('La fiche d’un j
     <div class="lg"><b>${L('Stat clé du poste','Key stat for the role')}</b>${smp(4,72,L('excellent (72+)','excellent (72+)'))}${smp(3,62,L('bon (62–71)','good (62–71)'))}${smp(2,50,L('correct (50–61)','fair (50–61)'))}${smp(1,40,L('faible (40–49)','weak (40–49)'))}${smp(0,30,L('très faible (< 40)','very weak (< 40)'))}</div>
     <div class="lg"><b>${L('Autres stats','Other stats')}</b><span><span class="st mid t4" style="width:34px">80</span>${L('colorée seulement aux extrêmes','coloured only at the extremes')}</span><span><span class="st low" style="width:34px">45</span>${L('grisée : compte peu pour ce poste','greyed: matters little for this role')}</span></div>
     <div class="lg"><b>${L('Trait','Trait')}</b><span><span class="st key t3 tm-up" style="width:34px">64</span>${L('trait bonus sur cette stat','bonus trait on this stat')}</span><span><span class="st key t2 tm-dn" style="width:34px">52</span>${L('trait malus','penalty trait')}</span></div>
-    <div class="lg"><b>${L('Potentiel','Potential')}</b><span><span class="pg pg-S">S</span>≥ 88</span><span><span class="pg pg-A">A</span>80–87</span><span><span class="pg pg-B">B</span>72–79</span><span><span class="pg">C</span>&lt; 72</span></div>
+    <div class="lg"><b>${L('Potentiel','Potential')}</b><span><span class="pg pg-X">X</span>100</span><span><span class="pg pg-Sp">S+</span>96–99</span><span><span class="pg pg-S">S</span>90–95</span><span><span class="pg pg-A">A</span>≥ 80</span><span><span class="pg pg-B">B</span>≥ 72</span><span><span class="pg pg-C">C</span>≥ 64</span><span><span class="pg pg-D">D</span>≥ 56</span><span><span class="pg pg-E">E</span>&lt; 56</span></div>
     <div class="lg"><b>${L('Note moyenne','Average rating')}</b><span><span class="av r-hi">7.4</span>≥ 7,2</span><span><span class="av r-ok">6.8</span>≥ 6,5</span><span><span class="av r-lo">6.0</span>≥ 5,8</span><span><span class="av r-bad">5.2</span>&lt; 5,8</span><span><span class="av">6.1</span>${L('neutre avant 3 matchs','neutral before 3 matches')}</span></div>
-    <p>${L('La note du joueur est la moyenne de ses stats pondérée par le poste (poids ci-dessous) ; une stat est « clé » quand son poids atteint au moins 60 % du plus fort du poste. Le potentiel fixe le plafond de chaque stat.','A player’s rating is the position-weighted average of their stats (weights below); a stat is “key” when its weight reaches at least 60% of the role’s highest. Potential sets each stat’s ceiling.')}</p></section></div>
+    <p>${L('La note du joueur est la moyenne de ses stats pondérée par le poste (poids ci-dessous) ; une stat est « clé » quand son poids atteint au moins 60 % du plus fort du poste. Le potentiel fixe le plafond de chaque stat. S+ et X sont réservés à des joueurs spéciaux.','A player’s rating is the position-weighted average of their stats (weights below); a stat is “key” when its weight reaches at least 60% of the role’s highest. Potential sets each stat’s ceiling. S+ and X are reserved for special players.')}</p></section></div>
     <section class="panel prose"><h3>${L('Les huit caractéristiques et leur poids par poste (%)','The eight stats and their weight by position (%)')}</h3>${tb([[L('Stat','Stat')],[L('Rôle','Role')],['GK','num'],['DF','num'],['MF','num'],['FW','num']],wrows)}</section>`;
 }else if(t==='races'){
 const wsum=Object.keys(RACES).reduce((a,k)=>a+RACES[k].w,0);
@@ -5500,8 +5511,8 @@ case 'sortdir':{if(d.w==='m')UI.mdir=-UI.mdir;else UI.sdir=-UI.sdir;render();bre
 case 'upfac':{const r=upgradeFac(G,d.k);if(r==='ok'){news(B(`Stade : ${P(FACD[d.k].n)} niveau ${G.stadium.lv[d.k]}.`,`Stadium: ${P(FACD[d.k].n)} level ${G.stadium.lv[d.k]}.`),'club');checkBadges(G,{});save();render();toast(L('Installation améliorée.','Facility upgraded.'));}else toast(r==='cash'?L('Budget insuffisant.','Not enough budget.'):L('Niveau maximum.','Maximum level.'),true);break;}
 case 'scust':{const cu=G.stadium.cu;cu[d.k]=d.k==='fx'?+d.v:d.v;save();render();break;}
 case 'spend':{const p=u.players.find(x=>x.id===+d.id),s=d.s;if(p&&p.pts>0&&p.stats[s]<capOf(p,s)){p.stats[s]++;p.pts--;save();render();}break;}
-case 'alloc':{const p=u.players.find(x=>x.id===+d.id);autoAlloc(p,p.train||G.training);save();render();break;}
-case 'allocall':u.players.forEach(p=>autoAlloc(p,p.train||G.training));save();render();toast(L('Points répartis.','Points spent.'));break;
+case 'alloc':{const p=u.players.find(x=>x.id===+d.id);autoAlloc(p);save();render();break;}
+case 'allocall':u.players.forEach(p=>autoAlloc(p));save();render();toast(L('Points répartis.','Points spent.'));break;
 case 'spc':{const r=spChoose(G,d.id);if(r.ok){save();render();}else toast(r.why==='locked'?L('Offre verrouillée : un match est joué.','Offer locked: a match has been played.'):L('Offre indisponible.','Offer unavailable.'),true);break;}
 case 'release':{
 const p=u.players.find(x=>x.id===+d.id);
