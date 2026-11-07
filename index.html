@@ -381,19 +381,20 @@ td,th{white-space:normal}
 .st.mid.t4{color:var(--good-t);font-weight:700}.st.mid.t0{color:var(--bad-t);font-weight:700}
 .st.low{color:var(--muted)}   /* UI-78 : atténué par la couleur, plus par l'opacité (2,6:1 → ≥ 4,5:1) */
 .nn{font:700 14px var(--font-mono);text-align:center}
-.pg{display:inline-grid;place-items:center;position:relative;isolation:isolate;width:24px;height:22px;border-radius:5px;font:700 12px var(--font-mono);border:1px solid var(--line-ctl);background:#fff;color:#0A2830}   /* CON-11 (Q2, D177) : fond fixe par grade (E blanc par défaut), lettre toujours visible ≥ 4,5:1, cadre ≥ 3:1 (--line-ctl, ou --ink pour S/S+) */
+.pg{--pg-edge:color-mix(in srgb,var(--ink) 88%,var(--surface));display:inline-grid;place-items:center;position:relative;isolation:isolate;width:24px;height:22px;border-radius:5px;font:700 12px var(--font-mono);border:1px solid var(--pg-edge);background:#fff;color:#0A2830}   /* CON-11 (D177) + UI-109 (D179) : fond fixe par grade (E blanc par défaut), lettre ≥ 4,5:1 ; LISERÉ --pg-edge (encre mêlée à la ligne, suit le thème) ≥ 3:1 contre la ligne en clair, en sombre et en Alt ; 1 px (E à A), 2 px (S, S+, X). Lettre en deux couches : fond / contenu (color) + contour (text-shadow, X : drop-shadow), jamais d'un seul trait */
 .pg-D,.pg-C,.pg-B{color:#fff}
 .pg-D{background:#1B7A45}
 .pg-C{background:#1F5FBF}
 .pg-B{background:#7A3FC4}
-.pg-A{background:#CC4A0A;color:#fff;border-color:transparent}   /* A : carré plat orange, sans cadre ni effet (distinct de l'or de S+) ; fond ≥ 3:1 sur les deux thèmes */
-.pg-S,.pg-Sp{border-color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),inset 0 -6px 8px -4px rgba(0,0,0,.28)}   /* S / S+ : petit cadre simple, fond métallisé ('S+' → classe pg-Sp) */
+.pg-A{background:#CC4A0A;color:#fff}   /* A : carré plat orange (couleur D177 inchangée), liseré 1 px comme E à B */
+.pg-S,.pg-Sp{border-width:2px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),inset 0 -6px 8px -4px rgba(0,0,0,.28)}   /* S / S+ : liseré 2 px, fond métallisé ('S+' → classe pg-Sp) */
 .pg-S{background:linear-gradient(135deg,#F4F6F8,#9AA5AD 45%,#E6EAED 55%,#8F9AA3);color:#14212A}
 .pg-Sp{background:linear-gradient(135deg,#FFF3B0,#C9971C 45%,#FBE58A 55%,#B8860B);color:#1F1400}
-.pg-X{border:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 21 15'%3E%3Cpath d='M4 0h13l4 4v7l-4 4H4l-4-4V4z' fill='%23DDF3FF'/%3E%3Cpath d='M4 0h6.5L8 6 0 4z' fill='%23fff' fill-opacity='.9'/%3E%3Cpath d='M10.5 2 15 7.5 10.5 13 6 7.5z' fill='%239ADCF5' fill-opacity='.75'/%3E%3Cpath d='M17 0l4 4v7l-6-3.5z' fill='%237FC4EA' fill-opacity='.8'/%3E%3Cpath d='M4 15l4-7 2.5 5z' fill='%23B7E4FA'/%3E%3Cpath d='M6 1 15 14' stroke='%23fff' stroke-opacity='.6' stroke-width='.6'/%3E%3Cpath d='M4.4.6h12.2l3.8 3.8v6.2l-3.8 3.8H4.4L.6 10.6V4.4z' fill='none' stroke='%235E7380' stroke-width='1.2'/%3E%3C/svg%3E") center/21px 15px no-repeat;color:transparent;overflow:visible}   /* X : cadre octogonal cristal (facettes + liseré SVG ≥ 3:1 sur les deux thèmes) ; la lettre (::after, plus grande, par-dessus) porte seule l'effet de foudre ; le texte réel reste dans le DOM */
-.pg-X::after{content:"X";content:"X"/"";position:absolute;inset:0;display:grid;place-items:center;font:800 25px/22px var(--font-mono);color:#031A33;text-shadow:0 0 1px #fff,0 0 2px #22D3EE;filter:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='1' seed='3' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='2'/%3E%3C/filter%3E%3C/svg%3E#f")}
+.pg-X{--pg-jag:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='1' seed='3' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='2'/%3E%3C/filter%3E%3C/svg%3E#f");--pg-edge:color-mix(in srgb,var(--ink) 64%,var(--surface));border:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 21 15'%3E%3Cpath d='M4 0h13l4 4v7l-4 4H4l-4-4V4z' fill='%23DDF3FF'/%3E%3Cpath d='M4 0h6.5L8 6 0 4z' fill='%23fff' fill-opacity='.9'/%3E%3Cpath d='M10.5 2 15 7.5 10.5 13 6 7.5z' fill='%239ADCF5' fill-opacity='.75'/%3E%3Cpath d='M17 0l4 4v7l-6-3.5z' fill='%237FC4EA' fill-opacity='.8'/%3E%3Cpath d='M4 15l4-7 2.5 5z' fill='%23B7E4FA'/%3E%3Cpath d='M6 1 15 14' stroke='%23fff' stroke-opacity='.6' stroke-width='.6'/%3E%3C/svg%3E") center/21px 15.5px no-repeat;font:800 23px/22px var(--font-mono);text-shadow:0 0 1px #fff,0 0 2px #22D3EE;color:transparent;overflow:visible}   /* X : cristal (fond du bloc inchangé, trait gris du cadre retiré) ; le liseré de 2 px est l'anneau ::before, dans un ton moyen (L ≈ 0,16 en clair, 0,37 en sombre) qui reste ≥ 3:1 contre la ligne ET ≥ 3:1 contre la lettre dans les deux thèmes ; le texte réel reste dans le DOM : transparent, il ne porte que le CONTOUR de la lettre (halo blanc + cyan, text-shadow, comme avant) */
+.pg-X::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--pg-edge);clip-path:path(evenodd,'M5 1.5H19L24 6.5V15.5L19 20.5H5L0 15.5V6.5ZM5.8 3.5L2 7.3V14.7L5.8 18.5H18.2L22 14.7V7.3L18.2 3.5Z')}   /* anneau octogonal 24×19 px, épaisseur 2 px, creusé sur le cristal */
+.pg-X::after{content:"X";content:"X"/"";position:absolute;inset:0;display:grid;place-items:center;font:inherit;text-shadow:none;color:transparent;background:linear-gradient(100deg,#031A33 0%,#1A0A70 30%,#031A33 55%,#1A0A70 80%,#031A33 100%) 0 0/220% 100%;-webkit-background-clip:text;background-clip:text;filter:var(--pg-jag)}   /* lettre X : fond / contenu = énergie foudroyante (dégradé indigo qui défile par à-coups, luminance ≤ 0,017 : ≥ 3:1 contre le liseré et les facettes), déformé par la turbulence SVG ; le contour est le halo du texte réel (sous cette couche) */
 @media (prefers-reduced-motion:no-preference){.pg-X::after{animation:pgz 2.6s steps(1) infinite}}
-@keyframes pgz{0%,100%{text-shadow:0 0 1px #fff,0 0 2px #22D3EE}46%{text-shadow:0 0 1px #fff,0 0 3px #fff,0 0 5px #22D3EE}52%{text-shadow:0 0 1px #fff,0 0 1px #22D3EE}}
+@keyframes pgz{0%,100%{background-position:0 0}46%{background-position:60% 0}52%{background-position:100% 0}}
 .av{display:inline-grid;place-items:center;min-width:34px;height:22px;border-radius:5px;font:700 12px var(--font-mono);color:var(--muted)}
 .av.r-hi{background:color-mix(in srgb,var(--good) 30%,transparent);color:var(--ink)}
 .av.r-ok{background:color-mix(in srgb,var(--water) 22%,transparent);color:var(--ink)}
@@ -1443,14 +1444,21 @@ if(auto&&p.pts>0)autoAlloc(p);
 return p.lvl-l0;
 }
 const raceXP=p=>RACE_XP[p.race]||1;
-const ageXP=p=>p.age<=22?1.3:p.age<=26?1.1:p.age<=30?1:.8;
+const PROF_STOP=[26,29,32,35],PROF_MIX=[15,60,90],PRF_M=[1.3,1.05,.9,.7],PRF_W=2,PRF_FL=.9;
+function profIdx(p){
+let h=Math.imul((p.id|0)^0x9e3779b9,0x85ebca6b);h^=h>>>13;h=Math.imul(h,0xc2b2ae35);h^=h>>>16;
+const r=(h>>>0)%100;return r<PROF_MIX[0]?0:r<PROF_MIX[1]?1:r<PROF_MIX[2]?2:3;
+}
+const profOf=p=>{const id=profIdx(p);return{id,stop:PROF_STOP[id]};};
+const prfK=p=>{const i=profIdx(p),e=PROF_STOP[i],m=PRF_M[i];return p.age<e?m:Math.min(m,PRF_FL)+Math.max(0,m-PRF_FL)*Math.max(0,1-(p.age-e+1)/PRF_W);};
+const ageXP=p=>(p.age<=22?1.3:p.age<=26?1.1:p.age<=30?1:.8)*prfK(p);
 function xpFor(p,won){
 const m=p.m;if(!m)return 0;
-if(!m.played)return Math.round(8*raceXP(p));
+if(!m.played)return Math.round(8*prfK(p)*raceXP(p));
 const x=(30+m.g*30+m.a*18+m.sv*7+m.tw*9+m.ic*9+m.pa*3+(m.rating-6)*14+(won?20:0))*ageXP(p);
 return Math.round(Math.max(10,Math.round(x))*raceXP(p));
 }
-const trainXP=p=>Math.round(25*(p.age<=22?1.4:p.age<=26?1.15:p.age<=30?1:.7)*raceXP(p));
+const trainXP=p=>Math.round(25*(p.age<=22?1.4:p.age<=26?1.15:p.age<=30?1:.7)*prfK(p)*raceXP(p));
 const TRAIN_FEE=400,MAX_INDIV=4;
 const progOf=(G,team,p)=>team.id===G.userId?(p.train||G.training):IA_ON&2&&p.train||'ai';
 function awardTeam(G,team,won,auto){
@@ -2728,7 +2736,7 @@ const app=document.getElementById('app');
 let G=null;
 const UI={prev:null,sect:'accueil',tab:'home',last:lastDef(),ptab:'ov',rtab:'game',csel:null,ctab:'ov',bdur:0,sort:'pos',sdir:1,msort:'ovr',mdir:-1,sel:null,msel:null,confirm:null,cedit:false,cpick:false,live:null,timer:null,resDay:null,toastT:null,scr:'title',step:1,draft:{coach:''},saved:null,dlg:null,fs:null,fl:{s:{},m:{}},newsI:0,jf:'all',jn:30,warn:false,xmsg:null,xpend:null,xtxt:null,xpaste:false,xptxt:'',mode:'season',px:{t:0,c:1,s:0,k:0,d:0},cl:'bg',tr:{opp:null,how:'live'},bell:false,ltxt:null,lconf:false};
 const KEY='blitz-manager-v2',PKEY='blitz-manager-prefs';
-const PREFS={lang:'fr',theme:'auto',nav:'bar',hideWelcome:false,log:true,alt:false,simple:false,altAnim:true,snd:{fx:true,mus:false,vol:5},tuto:{off:false,seen:[]}};
+const PREFS={lang:'fr',theme:'dark',nav:'bar',hideWelcome:false,log:true,alt:false,simple:false,altAnim:true,snd:{fx:true,mus:false,vol:5},tuto:{off:false,seen:[]}};
 let LOGC=null,LOGDEAD=false,LOGBOUND=false;
 const RMQ=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
 const altAnimOn=()=>!PREFS.simple&&PREFS.altAnim&&!RMQ.matches;
@@ -2857,12 +2865,12 @@ const sndGesture=()=>{if(SND.g)return;SND.g=true;if(PREFS.snd.fx||PREFS.snd.mus)
 try{['pointerdown','pointerup','keydown','touchend'].forEach(e=>window.addEventListener(e,sndGesture,{capture:true,passive:true}));
 document.addEventListener('visibilitychange',()=>{try{const c=SND.c;if(!c)return;sndP(document.hidden?c.suspend():c.resume());}catch(e){}});}catch(e){}
 const DN=()=>DIV_NAME.map((n,i)=>i?n:L('Élite','Elite'));
-const VERSION='v0.20';
+const VERSION='v0.21';
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 const TITLE_NEWS=[
 {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-{v:VERSION,t:['Nouveautés v0.20','What\'s new in v0.20'],b:['v0.20 — Nouvelle échelle de potentiel : E, D, C, B, A, S, puis S+ et X pour des joueurs spéciaux, avec de nouveaux badges. La répartition automatique des points vise d’abord les stats clés du poste. Plafonds ordinaires : potentiel 95, stats 96.','v0.20 — New potential scale: E, D, C, B, A, S, then S+ and X for special players, with new badges. Automatic point spending now targets the role’s key stats first. Ordinary ceilings: potential 95, stats 96.']}
+{v:VERSION,t:['Nouveautés v0.21','What\'s new in v0.21'],b:['v0.21 — Profils de progression : chaque joueur a son propre rythme (rapide, régulier, lent ou tardif), sans changer la progression moyenne ; leur affichage viendra ensuite. Badges de potentiel mieux contrastés grâce à de nouveaux liserés. Le thème sombre devient le thème par défaut (le clair reste au choix dans Paramètres).','v0.21 — Progression profiles: every player now develops at their own pace (fast, steady, slow or late), without changing the average progression; they will be displayed later. Potential badges are easier to read thanks to new outlines. Dark is now the default theme (light stays available in Settings).']}
 ];
 const TUTO={
 squad:[['Ton effectif','Your squad'],['Tes joueurs et leurs stats. Ouvre une fiche pour voir le radar et l’historique, et dépenser les points de talent gagnés à chaque niveau.','Your players and their stats. Open a sheet to see the radar and history, and to spend the talent points earned at each level.']],
