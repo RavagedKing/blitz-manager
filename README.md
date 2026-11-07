@@ -11,11 +11,28 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.22
+VERSION ACTUELLE : V0.23
 
 NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
+
+v0.23 : Départ plus bas, thème Sombre seul
+
+Mécanique :
+- Le monde démarre un peu plus bas : niveau de base 53 au lieu de 55 (D3 53, D2 57, D1 61, Élite 65).
+- Potentiels tirés plus bas à la création des joueurs ; la valeur des joueurs et le niveau du Marché sont ajustés en conséquence.
+- Public de départ ajusté au nouveau niveau.
+- Défis : l'équipe prêtée suit mieux l'adversaire.
+- Plafond de revenu par rang relevé à 3 600 pour le critère de sponsor.
+
+Interface :
+- Un seul thème : le Sombre. Le sélecteur de thème disparaît de l'écran titre et des Options.
+- Options regroupées en menus déroulants : Général, Affichage, Son, Sauvegarde et journal, Partie.
+- Affichage : interrupteurs « Fond animé » et « Effets glass » (remplacent l'ancien mode Simplifiée ; une ancienne sauvegarde reste compatible).
+
+Correctifs :
+- Le thème est posé avant le premier affichage, sans flash au chargement.
 
 v0.22 - Onglet Potentiel
 - Interface : nouvel onglet « Potentiel » dans la fiche joueur : grade et valeur du potentiel, marge restante, plafond par caractéristique, profil de progression (âge où il ralentit, repères 30 et 35 ans), courbe de niveau par saison, caractéristiques clés du poste repérées par une étoile.
@@ -161,4 +178,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.22
+ACTUAL VERSION : V0.23
