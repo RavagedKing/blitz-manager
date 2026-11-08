@@ -11,11 +11,36 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.24
+VERSION ACTUELLE : V0.25
+
+
 
 NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
+
+
+v0.25 : Semi-Pro
+
+Mécanique
+- Nouveau parcours Semi-Pro : tu pars du dernier niveau d'une pyramide à 7 divisions (104 clubs) et tu montes jusqu'à l'Élite.
+- Licence professionnelle : pour accéder aux divisions pro, il faut une trésorerie d'au moins 20 000 gils, une confiance d'au moins 60 et une installation au niveau 1. Une fois obtenue, elle est acquise pour toute la partie.
+- Recettes, staff, entretien et installations sont indexés sur la division ; budgets de départ de Semi-Pro ajustés (37 500 / 29 000 / 18 000 gils).
+- Les Uniques du Marché suivent le niveau de la division en Semi-Pro.
+- GAMOSIC est verrouillé en Semi-Pro.
+- Les anciennes sauvegardes (versions 11 et 12) ne sont plus acceptées : commence une nouvelle partie.
+
+Interface
+- Nouvelle étape « Parcours » (Semi-Pro / Pro) à la création de la partie.
+- Carte de la licence professionnelle avec ses trois conditions et messages d'avancement.
+- L'actualité du titre et le message « sous réserve de la licence » sont corrigés.
+
+Contenu
+- Plafonds de salaire et réputation de départ étendus aux 7 niveaux.
+
+Correctifs
+- Hauteur de l'Accueil à 390 px alignée sur la nouvelle cible.
+- Les tests de vérification complets sont désormais intégrés à la suite de tests.
 
 v0.24 : Légendes et GAMOSIC en 5 échelons
 
@@ -197,4 +222,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.24
+ACTUAL VERSION : V0.25
