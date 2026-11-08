@@ -11,11 +11,30 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.23
+VERSION ACTUELLE : V0.24
 
 NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
+
+v0.24 : Légendes et GAMOSIC en 5 échelons
+
+Mécanique
+- Le catalogue passe à 11 Uniques, dont Daymon Sky ; tous ont un potentiel de 93.
+- Les Légendes (potentiel 98) existent dans GAMOSIC seulement : jamais dans un effectif, non vendables.
+- Plafond de salaire par division pour les Uniques (Élite 2 430, D1 900, D2 690, D3 530 par journée).
+- Les anciennes sauvegardes sont migrées automatiquement : les Uniques supprimés deviennent des joueurs ordinaires.
+
+Interface
+- GAMOSIC : menu d'échelon (Division 3 à Ultime), 11 Légendes consultables en lecture seule, plus haut échelon battu marqué ✓.
+- Options : seul le groupe « Général » est ouvert à l'arrivée.
+
+Contenu
+- GAMOSIC compte 11 joueurs ; OG Loska est remplaçant.
+- La récompense de 800 gils n'est versée que si l'échelon joué est au moins celui de ta division ; en dessous, match libre.
+
+Correctifs
+- Le Marché et l'équilibrage des Uniques sont remesurés (cliquet du potentiel, salaires).
 
 v0.23 : Départ plus bas, thème Sombre seul
 
@@ -178,4 +197,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.23
+ACTUAL VERSION : V0.24
