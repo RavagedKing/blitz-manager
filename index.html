@@ -878,7 +878,6 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
 .ibtn:focus-visible{outline:2px solid var(--water);outline-offset:2px}
 /* UI-20b : portrait de l'entraîneur ; l'icône « changer » ouvre la grille des 8 portraits (UI-D) */
 .cport{position:relative;flex:none}
-.cpchg{position:absolute;right:-8px;bottom:-8px;width:28px;height:28px;background:var(--surface)}
 .cpick{display:flex;flex-wrap:wrap;gap:8px}
 .cpb{display:block;padding:0;border:0;background:none;border-radius:6px;cursor:pointer;font:inherit}
 .cpb[aria-checked="true"] .pframe{box-shadow:0 0 0 3px var(--water)}
@@ -1211,7 +1210,6 @@ th,td,h3,.ph button,.cgroup h4,.mh,.cmp .lab,.rtag,.legend,.bellmenu,.bcnt,.tag,
 /* v0.14 (UI C) : distinctions (étoile de blason, titre, cadre du portrait) et coupes du palmarès */
 
 .ctt{font:600 12px var(--font-body);color:var(--p-gk)}
-.cport.fr1,.cport.fr2{margin:5px}.cport.fr1 .pframe{box-shadow:0 0 0 2px var(--surface),0 0 0 5px #8E9AA3}.cport.fr2 .pframe{box-shadow:0 0 0 2px var(--surface),0 0 0 5px #E0A31A}
 @media (max-width:700px){.trc{gap:10px}.trc .bhd{margin-bottom:0}.trc .acts{gap:4px}.td{padding:6px 0}}   /* QA14-03 : carte Tournoi de l'Accueil plus compacte (UI-32) */
 .palh{margin:14px 0 0;font:600 13px var(--font-body);color:var(--muted)}
 .pcup{display:inline-block;vertical-align:-4px;margin-right:5px}.pcup svg{width:18px;height:18px}
@@ -1245,7 +1243,7 @@ th,td,h3,.ph button,.cgroup h4,.mh,.cmp .lab,.rtag,.legend,.bellmenu,.bcnt,.tag,
 .dmk{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px 6px;max-width:100%;line-height:1;font-size:11px}
 .mkg{display:inline-flex;align-items:center;gap:1px}.mkg i,.mkr{font-style:normal;font-weight:700;color:var(--muted)}.mkg i{margin-left:2px}
 .dmk svg{width:16px;height:16px;flex:none}.dmk svg [fill]{stroke:color-mix(in srgb,var(--ink) 72%,transparent);stroke-width:1;paint-order:stroke}
-.cport.fr3,.cport.fr4{margin:5px}.cport.fr3 .pframe{--c:#3FA9FF;--b:8px;box-shadow:0 0 0 2px var(--surface),0 0 0 5px var(--c),0 0 var(--b) 2px #3FA9FF8C}.cport.fr4 .pframe{box-shadow:0 0 0 2px var(--surface),0 0 0 4px #FFC531,0 0 0 5px #FF7A1A,0 0 6px 1px #FF7A1A66}
+.cport.fr3,.cport.fr4,.cport.fr5,.cport.fr6,.cport.fr7{margin:5px}.cport.fr3 .pframe{--c:#3FA9FF;--b:8px;box-shadow:0 0 0 2px var(--surface),0 0 0 5px var(--c),0 0 var(--b) 2px #3FA9FF8C}.cport.fr4 .pframe{box-shadow:0 0 0 2px var(--surface),0 0 0 4px #FFC531,0 0 0 5px #FF7A1A,0 0 6px 1px #FF7A1A66}
 /* v0.26 · pack UI-B : cadres 3 et 4 animés (CSS seul, portrait de l'entraîneur seulement) ; reduced-motion : cadre fixe ci-dessus. Couronne diamant */
 @media (prefers-reduced-motion:no-preference){
 .cport.fr3 .pframe{animation:thz 2.6s steps(1) infinite}.cport.fr4 .pframe{animation:fiz 1.7s ease-in-out infinite alternate}
@@ -1268,6 +1266,18 @@ th,td,h3,.ph button,.cgroup h4,.mh,.cmp .lab,.rtag,.legend,.bellmenu,.bcnt,.tag,
 .hall .cups{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}.hall .cupc{min-width:0;padding:8px 6px;gap:2px}.hall .cupc svg{width:30px;height:30px}.hall .cupc b{font-size:12px}
 @media (max-width:480px){.hall{gap:12px}.hall .panel{padding:12px}.hall .hon td{padding-block:3px}.hall .hon th{padding-block:5px}.hall .palh{margin-top:8px}.hall .awr{padding:2px 0;font-size:12.5px;gap:0 8px;grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) auto}.hall .awr>span:nth-child(2){grid-column:auto;grid-row:auto}.hall .awr>b{grid-column:auto;grid-row:auto}.hall .awt{font-size:12.5px;padding:3px 0}.hall .stack{gap:12px}}
 @media (max-width:480px){.hall .hon td{padding-block:2px;font-size:12.5px}.hall .hon th{padding-block:4px}.hall .hon .pcup svg{width:16px;height:16px}.hall .awt{padding:2px 0}}
+/* v0.27 · UI-115 : profil en un bloc (panneau d'édition en ligne), Titres à code (effets CSS seuls, fixes sous reduced-motion), cadres 5 à 7, liste des Distinctions */
+.cptop{align-items:flex-start;gap:8px}.cptop>.who{flex:1 1 auto;min-width:0}
+.cedit{border-top:1px solid var(--line);padding-top:12px}.ced{display:grid;gap:6px}.ced .lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dst{width:100%;background:none;border:0;border-bottom:1px dashed var(--line);color:inherit;font:inherit;font-size:13.5px;text-align:left;cursor:pointer;align-items:baseline}.dst:last-child{border-bottom:0}.dst:hover{color:var(--water)}.dst:focus-visible{outline:2px solid var(--water);outline-offset:2px}
+.ttl-cr{color:#F5D27A;letter-spacing:.04em;text-shadow:0 0 6px #C2891F99}.ttl-tt{color:#BFE3FF;text-shadow:0 0 6px #3FA9FF}.ttl-tf{color:#FFC27A;text-shadow:0 0 6px #FF7A1A}.ttl-ta{color:#8FE9F0;text-shadow:0 0 6px #1E9BD7}.ttl-tl{color:#FFF1B0;text-shadow:0 0 6px #FFD84D}.ttl-td{color:#D2B8FF;text-shadow:0 0 6px #7B3FA8,0 1px 0 #000}
+.cport.fr5 .pframe{box-shadow:0 0 0 2px var(--surface),0 0 0 5px #2FB6D6,0 0 8px 2px #2FB6D699}.cport.fr6 .pframe{box-shadow:0 0 0 2px var(--surface),0 0 0 5px #FFE48A,0 0 9px 2px #FFE48AAA}.cport.fr7 .pframe{box-shadow:0 0 0 2px var(--surface),0 0 0 4px #1A0F2B,0 0 0 5px #9B6BD6,0 0 8px 2px #7B3FA899}
+@media (prefers-reduced-motion:no-preference){
+.ttl-tt{animation:ttt 2.6s steps(1) infinite}.ttl-tf{animation:ttf 1.7s ease-in-out infinite alternate}.ttl-ta{animation:tta 3.4s ease-in-out infinite alternate}.ttl-tl{animation:ttl 3s ease-in-out infinite alternate}.ttl-td{animation:ttd 3.6s ease-in-out infinite alternate}
+@keyframes ttt{6%,41%,73%{text-shadow:0 0 10px #9AD4FF}9%,44%,76%{text-shadow:0 0 6px #3FA9FF}}@keyframes ttf{to{text-shadow:0 0 9px #FF962A}}@keyframes tta{to{text-shadow:0 0 9px #4CC8F0}}@keyframes ttl{to{text-shadow:0 0 10px #FFE070}}@keyframes ttd{to{text-shadow:0 0 9px #A56BE0,0 1px 0 #000}}
+.cport.fr5 .pframe{animation:aqz 3s ease-in-out infinite alternate}.cport.fr6 .pframe{animation:liz 2.6s ease-in-out infinite alternate}.cport.fr7 .pframe{animation:daz 3.4s ease-in-out infinite alternate}
+@keyframes aqz{to{box-shadow:0 0 0 2px var(--surface),0 0 0 5px #6FE0F0,0 0 13px 4px #2FB6D6AA}}@keyframes liz{to{box-shadow:0 0 0 2px var(--surface),0 0 0 5px #FFF6C8,0 0 14px 4px #FFE48AAA}}@keyframes daz{to{box-shadow:0 0 0 2px var(--surface),0 0 0 4px #1A0F2B,0 0 0 5px #B68CF0,0 0 12px 4px #7B3FA8CC}}
+}
 </style>
 
 
@@ -2812,16 +2822,18 @@ A.t.forEach(x=>{if(x.tid===u){mine.push(13);if(fresh)h.push([A.s,13,x.p.name,x.v
 aw.h=h.length>AW_H?h.slice(-AW_H):h;
 return{mine};
 }
-const TITLES=[['cr','Le Créateur','The Creator'],['tr','Triplé','Treble'],['c0','Champion d’Élite','Elite champion'],['db','Doublé des tournois','Tournament double'],['bd','Briseur de défis','Challenge breaker'],['c1','Champion de D1','D1 champion'],['c2','Champion de D2','D2 champion'],['c3','Champion de D3','D3 champion'],['c4','Champion de Semi-Pro 1','Semi-Pro 1 champion'],['c5','Champion de Semi-Pro 2','Semi-Pro 2 champion'],['c6','Champion de Semi-Pro 3','Semi-Pro 3 champion'],['vf','Vainqueur de fin de saison','End-of-season winner'],['vm','Vainqueur de mi-saison','Mid-season winner']];
-const FRAMES_T={th:['Cadre foudroyant','Lightning frame'],fi:['Cadre enflammé','Flame frame']};
-const CODES={CREATOR:{k:'t',id:'cr'},THUNDERFRAME:{k:'f',id:'th'},FIREFRAME:{k:'f',id:'fi'}};
+const TITLES=[['cr','Le Créateur','The Creator'],['tt','Éclair d’orage','Storm bolt'],['tf','Flamme vive','Living flame'],['ta','Marée haute','High tide'],['tl','Aube radieuse','Radiant dawn'],['td','Ombre profonde','Deep shadow'],['tr','Triplé','Treble'],['c0','Champion d’Élite','Elite champion'],['db','Doublé des tournois','Tournament double'],['bd','Briseur de défis','Challenge breaker'],['c1','Champion de D1','D1 champion'],['c2','Champion de D2','D2 champion'],['c3','Champion de D3','D3 champion'],['c4','Champion de Semi-Pro 1','Semi-Pro 1 champion'],['c5','Champion de Semi-Pro 2','Semi-Pro 2 champion'],['c6','Champion de Semi-Pro 3','Semi-Pro 3 champion'],['vf','Vainqueur de fin de saison','End-of-season winner'],['vm','Vainqueur de mi-saison','Mid-season winner']];
+const FRAMES_T={th:['Cadre foudroyant','Lightning frame'],fi:['Cadre enflammé','Flame frame'],aq:['Cadre aquatique','Water frame'],li:['Cadre lumineux','Light frame'],da:['Cadre ténébreux','Dark frame']};
+const CODES={CREATOR:{k:'t',id:'cr'},THUNDERFRAME:{k:'f',id:'th'},FIREFRAME:{k:'f',id:'fi'},THUNDERTITLE:{k:'t',id:'tt'},FIRETITLE:{k:'t',id:'tf'},AQUAFRAME:{k:'f',id:'aq'},AQUATITLE:{k:'t',id:'ta'},LIGHTFRAME:{k:'f',id:'li'},LIGHTTITLE:{k:'t',id:'tl'},DARKFRAME:{k:'f',id:'da'},DARKTITLE:{k:'t',id:'td'},ULTIMATEST:{k:'a'}};
+const cdIds=ks=>Object.values(CODES).filter(e=>ks.includes(e.k)).map(e=>e.id);
 const MK=[['c','d'],['s','g'],['s','a'],['s','b'],['t','g'],['t','a'],['t','b']];
 function markersOf(G){const n=MK.map(()=>0);(G.honors||[]).forEach(h=>{if(h.rank===1&&Number.isInteger(h.d)&&h.d>=0&&h.d<MK.length)n[h.d]++;});return n.map((c,d)=>c?{d,n:c,sh:MK[d][0],t:MK[d][1]}:null).filter(Boolean);}
 function titlesOf(G){
 const H=G.honors||[],ch=new Set(H.filter(h=>h.rank===1&&Number.isInteger(h.d)).map(h=>h.d)),W=(G.pal&&G.pal.t||[]).filter(x=>x.r>=Math.log2(trnSize(x.k))),
 fs=W.filter(x=>x.k==='f').map(x=>x.s),ms=W.filter(x=>x.k==='m').map(x=>x.s),dbl=ms.filter(s=>fs.includes(s)),
-on={cr:(G.cd||[]).includes('cr'),tr:H.some(h=>h.rank===1&&dbl.includes(h.s)),db:dbl.length>0,bd:defiStats(G).done>=defiList(G).length,vf:fs.length>0,vm:ms.length>0};
+on={tr:H.some(h=>h.rank===1&&dbl.includes(h.s)),db:dbl.length>0,bd:defiStats(G).done>=defiList(G).length,vf:fs.length>0,vm:ms.length>0};
 for(let d=0;d<MK.length;d++)on['c'+d]=ch.has(d);
+cdIds('t').forEach(i=>{on[i]=(G.cd||[]).includes(i);});
 return TITLES.map(([id,fr,en])=>({id,fr,en,on:!!on[id]}));
 }
 function titleAct(G){const L=titlesOf(G),ta=G.coach&&G.coach.ta,t=L.find(x=>x.on&&x.id===ta)||L.find(x=>x.on);return t?t.id:null;}
@@ -2831,35 +2843,36 @@ if(id==null||id===''){delete G.coach.ta;return true;}
 if(!titlesOf(G).some(x=>x.on&&x.id===id))return false;
 G.coach.ta=id;return true;
 }
+function framesOf(G){const cd=G.cd||[];return Object.keys(FRAMES_T).map((id,i)=>({id,fr:FRAMES_T[id][0],en:FRAMES_T[id][1],n:i+3,on:cd.includes(id)}));}
 function frameOf(G){
-const fa=G.coach&&G.coach.fa,cd=G.cd||[];
-if(fa==='th'&&cd.includes('th'))return 3;if(fa==='fi'&&cd.includes('fi'))return 4;
+const fa=G.coach&&G.coach.fa,cd=G.cd||[],i=Object.keys(FRAMES_T).indexOf(fa),ct=cdIds('t');
+if(i>=0&&cd.includes(fa))return i+3;
 const L=titlesOf(G),has=id=>L.some(x=>x.on&&x.id===id);
-return has('tr')||has('db')||has('c0')?2:L.some(x=>x.on&&x.id!=='cr')?1:0;
+return has('tr')||has('db')||has('c0')?2:L.some(x=>x.on&&!ct.includes(x.id))?1:0;
 }
 function frameSet(G,id){
 if(!G||!G.coach)return false;
 if(id==null||id===''){delete G.coach.fa;return true;}
-if((id!=='th'&&id!=='fi')||!(G.cd||[]).includes(id))return false;
+if(!Object.keys(FRAMES_T).includes(id)||!(G.cd||[]).includes(id))return false;
 G.coach.fa=id;return true;
 }
 function redeem(G,txt){
 if(!G||G.userId==null||!G.started)return{ok:false,why:'nogame'};
 const c=String(txt==null?'':txt).replace(/\s+/g,'').toUpperCase(),e=Object.prototype.hasOwnProperty.call(CODES,c)?CODES[c]:null;
-if(!e||e.k!=='t'&&e.k!=='f')return{ok:false,why:'unknown'};
-const cd=G.cd||[];
-if(cd.includes(e.id))return{ok:false,why:'used'};
-const n=e.k==='t'?TITLES.find(t=>t[0]===e.id).slice(1):FRAMES_T[e.id];
-G.cd=cd.concat(e.id);
+if(!e||e.k!=='t'&&e.k!=='f'&&e.k!=='a')return{ok:false,why:'unknown'};
+const cd=G.cd||[],all=e.k==='a',ids=(all?cdIds('tf'):[e.id]).filter(x=>!cd.includes(x));
+if(!ids.length)return{ok:false,why:'used'};
+const n=all?['tous les cosmétiques','all cosmetics']:e.k==='t'?TITLES.find(t=>t[0]===e.id).slice(1):FRAMES_T[e.id];
+G.cd=cd.concat(ids);
 if(G.news){G.news.unshift({d:G.day+1,s:B(`Code accepté : ${n[0]}.`,`Code accepted: ${n[1]}.`),sn:G.season,k:'club'});G.news.length=Math.min(G.news.length,100);}
-return{ok:true,r:{k:e.k,id:e.id,fr:n[0],en:n[1]}};
+return{ok:true,r:all?{k:'a',n:ids.length,fr:n[0],en:n[1]}:{k:e.k,id:e.id,fr:n[0],en:n[1]}};
 }
 const AW_B=7000,okAwS=x=>typeof x==='string'&&x.length<=40,
 okAw=A=>A===undefined||isO(A)&&(A.l===undefined||isO(A.l)&&okI(A.l.s,1,9999)&&okI(A.l.d,0,DIV_NAME.length-1)&&Array.isArray(A.l.a)&&A.l.a.length<=15&&A.l.a.every(r=>Array.isArray(r)&&r.length===5&&okI(r[0],0,15)&&okAwS(r[1])&&okI(r[2],0,999)&&okI(r[3],0,3)&&okI(r[4],0,99999))
 &&Array.isArray(A.l.t)&&A.l.t.length<=8&&A.l.t.every(r=>Array.isArray(r)&&r.length===4&&okAwS(r[0])&&okI(r[1],0,999)&&okI(r[2],0,3)&&okI(r[3],0,99999)))
 &&(A.h===undefined||Array.isArray(A.h)&&A.h.length<=AW_H&&A.h.every(r=>Array.isArray(r)&&r.length===4&&okI(r[0],1,9999)&&okI(r[1],0,15)&&okAwS(r[2])&&okI(r[3],0,99999)))&&Object.keys(A).every(k=>k==='l'||k==='h')&&JSON.stringify(A).length<=AW_B,
 okCd=C=>C===undefined||Array.isArray(C)&&C.length<=40&&new Set(C).size===C.length&&C.every(x=>okI(x,0,99)||typeof x==='string'&&x.length===2),
-okL2=g=>okAw(g.aw)&&okCd(g.cd)&&(!isO(g.coach)||(g.coach.ta===undefined||TITLES.some(t=>t[0]===g.coach.ta))&&(g.coach.fa===undefined||g.coach.fa==='th'||g.coach.fa==='fi'));
+okL2=g=>okAw(g.aw)&&okCd(g.cd)&&(!isO(g.coach)||(g.coach.ta===undefined||TITLES.some(t=>t[0]===g.coach.ta))&&(g.coach.fa===undefined||Object.keys(FRAMES_T).includes(g.coach.fa)));
 const LOG_V=1,LOG_MAX=131072,LOG_ERR_MAX=20;
 function logMatch(M,G){
 if(!M||!M.over)return null;
@@ -2914,7 +2927,7 @@ return out;
 // ==UI START==
 const app=document.getElementById('app');
 let G=null;
-const UI={og:{},prev:null,sect:'accueil',tab:'home',last:lastDef(),ptab:'ov',rtab:'game',csel:null,ctab:'ov',bdur:0,sort:'pos',sdir:1,msort:'ovr',mdir:-1,sel:null,msel:null,confirm:null,cedit:false,cpick:false,live:null,timer:null,resDay:null,toastT:null,scr:'title',step:1,draft:{coach:''},saved:null,dlg:null,fs:null,fl:{s:{},m:{}},newsI:0,jf:'all',jn:30,warn:false,xmsg:null,xpend:null,xtxt:null,xpaste:false,xptxt:'',mode:'season',px:{t:0,c:1,s:0,k:0,d:0},cl:'bg',tr:{opp:null,how:'live'},bell:false,ltxt:null,lconf:false};
+const UI={og:{},prev:null,sect:'accueil',tab:'home',last:lastDef(),ptab:'ov',rtab:'game',csel:null,ctab:'ov',bdur:0,sort:'pos',sdir:1,msort:'ovr',mdir:-1,sel:null,msel:null,confirm:null,cedit:false,live:null,timer:null,resDay:null,toastT:null,scr:'title',step:1,draft:{coach:''},saved:null,dlg:null,fs:null,fl:{s:{},m:{}},newsI:0,jf:'all',jn:30,warn:false,xmsg:null,xpend:null,xtxt:null,xpaste:false,xptxt:'',mode:'season',px:{t:0,c:1,s:0,k:0,d:0},cl:'bg',tr:{opp:null,how:'live'},bell:false,ltxt:null,lconf:false};
 const KEY='blitz-manager-v2',PKEY='blitz-manager-prefs';
 const PREFS={lang:'fr',theme:'dark',nav:'bar',hideWelcome:false,log:true,alt:false,glass:true,altAnim:true,snd:{fx:true,mus:false,vol:5},tuto:{off:false,seen:[]}};
 let LOGC=null,LOGDEAD=false,LOGBOUND=false;
@@ -3046,12 +3059,12 @@ try{['pointerdown','pointerup','keydown','touchend'].forEach(e=>window.addEventL
 document.addEventListener('visibilitychange',()=>{try{const c=SND.c;if(!c)return;sndP(document.hidden?c.suspend():c.resume());}catch(e){}});}catch(e){}
 const DN=()=>DIV_NAME.slice(0,DIV_SIZE.length).map((n,i)=>i?n:L('Élite','Elite'));
 const DNS=()=>DN().map(n=>n.replace(/^Semi-Pro /,'SP'));
-const VERSION='v0.26';
+const VERSION='v0.27';
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 const TITLE_NEWS=[
 {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-{v:VERSION,t:['Nouveautés v0.26','What\'s new in v0.26'],b:['v0.26 — Récompenses de fin de saison (meilleur joueur, meilleur de chaque poste, meilleur espoir, équipe type) et page Palmarès. Marqueurs de division (couronne diamant, étoiles, triangles), titres d’entraîneur, cadres animés et page Codes. Tout est honorifique, sans effet sur le jeu.','v0.26 — End-of-season awards (best player, best at each position, best young player, Team of the Division) and an Honours page. Division markers (diamond crown, stars, triangles), coach titles, animated frames and a Codes page. All honorary, with no effect on the game.']}
+{v:VERSION,t:['Nouveautés v0.27','What\'s new in v0.27'],b:['Profil d’entraîneur modifiable (nom, portrait, cadre, titre), nouveaux cadres et titres à débloquer par code, Distinctions en liste.','Editable coach profile (name, portrait, frame, title), new frames and titles unlocked by code, Distinctions shown as a short list.']}
 ];
 const TUTO={
 squad:[['Ton effectif','Your squad'],['Tes joueurs et leurs stats. Ouvre une fiche pour voir le radar et l’historique, et dépenser les points de talent gagnés à chaque niveau.','Your players and their stats. Open a sheet to see the radar and history, and to spend the talent points earned at each level.']],
@@ -3106,7 +3119,7 @@ const TX={
 'x.ok.exp':['Sauvegarde exportée.','Save exported.'],'x.ok.imp':['Sauvegarde importée. Tu peux continuer.','Save imported. You can continue.'],
 'x.err.json':['Ce fichier n’est pas lisible : ce n’est pas un JSON valide.','This file can’t be read: it isn’t valid JSON.'],
 'x.err.format':['Ce fichier n’est pas une sauvegarde de Blitz Manager.','This file isn’t a Blitz Manager save.'],
-'x.err.version':['Cette sauvegarde date d’une version précédente du jeu (G.v 11 ou 12) ou d’une version inconnue : seules les sauvegardes de la v0.25 (G.v 13) s’importent.','This save comes from an earlier version of the game (G.v 11 or 12) or an unknown one: only v0.25 saves (G.v 13) can be imported.'],
+'x.err.version':['Cette sauvegarde est trop ancienne ou d’une version inconnue : elle ne peut pas être importée.','This save is too old or from an unknown version: it can’t be imported.'],
 'x.err.invalid':['Cette sauvegarde est incomplète ou abîmée : elle ne peut pas être importée.','This save is incomplete or damaged: it can’t be imported.'],
 'x.err.read':['Impossible de lire ce fichier.','Couldn’t read this file.'],
 'x.err.exp':['Export impossible dans ce navigateur.','Export isn’t possible in this browser.'],
@@ -3581,7 +3594,7 @@ app.innerHTML=st===1?coachStepHTML():st===2?pickHTML():`<div class="wrap main" s
 if(G.en&&G.en.f){app.innerHTML=careerHTML();return;}
 ensureLineup(U());
 if(!G.off&&!UI.live&&UI.mode==='season'&&offOpen(G,'m').ok)save();
-UI.tab=tabId(UI.tab);UI.sect=sectOf(UI.tab);if(UI.tab!=='coach')UI.cedit=UI.cpick=false;
+UI.tab=tabId(UI.tab);UI.sect=sectOf(UI.tab);if(UI.tab!=='coach')UI.cedit=false;
 if(UI.tab!=='tmatch'&&UI.mode!=='season')leaveTraining();
 const pages={home:homeHTML,coach:coachHTML,finance:financeHTML,contrats:contratsHTML,club:()=>clubHTML(false),hall:hallHTML,cust:custPageHTML,journal:journalHTML,squad:squadHTML,train:trainHTML,market:marketHTML,match:matchHTML,tmatch:tmatchHTML,lineup:lineupHTML,calendar:calendarHTML,table:tableHTML,trn:trnHTML,settings:settingsHTML,rules:rulesHTML,codes:codesHTML,about:aboutHTML};
 const HELP={lineup:'tactics',train:'train',coach:'train',finance:'stade',club:'stade',cust:'stade'};
@@ -3770,7 +3783,7 @@ const PORD={GK:0,DF:1,MF:2,FW:3};
 const previewList=t=>t.players.slice().sort((a,b)=>PORD[a.pos]-PORD[b.pos]||ovr(b)-ovr(a));
 function resetUI(){
 stopTimer();
-UI.sect='accueil';UI.tab='home';UI.last=lastDef();UI.csel=UI.cdiv=null;UI.ptab='ov';UI.live=null;UI.confirm=null;UI.sel=null;UI.msel=null;UI.resDay=null;UI.prev=null;UI.dlg=null;UI.fl={s:{},m:{}};UI.cedit=UI.cpick=false;UI.hall={};UI.mode='season';UI.tr={opp:null,how:'live'};UI.bell=false;UI.bil=null;UI.planLast=null;LOGBOUND=false;if(UI.fs)closeFS(true);
+UI.sect='accueil';UI.tab='home';UI.last=lastDef();UI.csel=UI.cdiv=null;UI.ptab='ov';UI.live=null;UI.confirm=null;UI.sel=null;UI.msel=null;UI.resDay=null;UI.prev=null;UI.dlg=null;UI.fl={s:{},m:{}};UI.cedit=false;UI.hall={};UI.mode='season';UI.tr={opp:null,how:'live'};UI.bell=false;UI.bil=null;UI.planLast=null;LOGBOUND=false;if(UI.fs)closeFS(true);
 }
 function startNew(){
 stopTimer();G=null;
@@ -4130,7 +4143,7 @@ function careerHTML(){
 const E=G.en,H=G.honors,ds=H.filter(h=>h.d!=null).map(h=>h.d);
 return `<div class="wrap main" style="padding-top:12px">${prefBar()}<section class="panel stack"><h3>${esc(U().name)}</h3><h2>${L('Fin de carrière','Career over')}</h2>
   <p>${E.f.w?L('Relégation : le propriétaire met fin à ton contrat.','Relegation: the owner ends your contract.'):L('Sursis échoué : l’objectif de classement n’a pas été atteint.','Probation failed: the table goal was not reached.')}</p>
-  <div class="kpis">${kpi(G.coach.seasons,L('Saisons dirigées','Seasons managed'))}${kpi(ds.length?DN()[Math.min(...ds)]:'–',L('Meilleure division','Best division'))}${kpi(H.filter(h=>h.rank===1).length,L('Titres','Titles'))}${kpi(palWins().length,L('Tournois gagnés','Tournaments won'))}</div>
+  <div class="kpis">${kpi(G.coach.seasons,L('Saisons dirigées','Seasons managed'))}${kpi(ds.length?DN()[Math.min(...ds)]:'–',L('Meilleure division','Best division'))}${kpi(H.filter(h=>h.rank===1).length,L('Championnats gagnés','Leagues won'))}${kpi(palWins().length,L('Tournois gagnés','Tournaments won'))}</div>
   <div class="own"><div class="ownl">${ownLine({c:E.c,zone:E.c>=OWN_OK?'ok':E.c>=OWN_WARN?'warn':'risk'})}</div></div>${ownCurve(E.h)}
   <div class="row" id="oacts"><button class="btn primary" data-a="onew">${L('Nouvelle partie','New game')}</button><button class="btn" data-a="exp">${L('Exporter la sauvegarde','Export the save')}</button></div></section></div>`;
 }
@@ -4160,7 +4173,7 @@ const spec=C.spec&&SPECS[C.spec]?P(SPECS[C.spec].n):cl.lvl>=SPEC_MIN?L('à chois
 const pc0=winPct(C),dm=pc0===null?'—':null,ttl=G.honors.filter(h=>h.rank===1).length;
 const cr=(l,v)=>`<div class="frow"><span class="muted">${l}</span><b class="mono">${v}</b></div>`;
 const cc=`<section class="panel hb5">${blockHd(L('Entraîneur','Coach'),'coach')}<div class="stack tight">${coachBar()}${ownCard()}<div><div class="frow"><span class="muted">${L('Spécialité','Specialty')}</span><b>${spec}</b></div>
-  ${cr(L('Bilan','Record'),`${C.w} ${L('V','W')} · ${C.l} ${L('D','L')}`)}${cr(L('Taux de victoire','Win rate'),dm||pc0+'%')}${cr(L('Série · record','Streak · best'),`${C.streak} · ${C.best}`)}${cr(L('BP · BC / m','GF · GA / m'),dm||`${(C.gf/C.m).toFixed(1)} · ${(C.ga/C.m).toFixed(1)}`)}${cr(L('Saisons · titres','Seasons · titles'),`${C.seasons} · ${ttl}`)}${palWins().length?cr(L('Coupes','Cups'),palWins().length):''}</div></div></section>`;
+  ${cr(L('Bilan','Record'),`${C.w} ${L('V','W')} · ${C.l} ${L('D','L')}`)}${cr(L('Taux de victoire','Win rate'),dm||pc0+'%')}${cr(L('Série · record','Streak · best'),`${C.streak} · ${C.best}`)}${cr(L('BP · BC / m','GF · GA / m'),dm||`${(C.gf/C.m).toFixed(1)} · ${(C.ga/C.m).toFixed(1)}`)}${cr(L('Saisons · championnats','Seasons · leagues won'),`${C.seasons} · ${ttl}`)}${palWins().length?cr(L('Coupes','Cups'),palWins().length):''}</div></div></section>`;
 const tbl=`<section class="panel hb3">${blockHd(L('Classement','League table')+(G.wd?` · ${DN()[G.wd.d]} · ${rankTxt(me5+1)}`:''),'table')}<div class="tbl"><table><thead><tr><th class="num">#</th><th>Club</th><th class="num hx">${L('J','P')}</th><th class="num hx">+/−</th><th class="num">Pts</th></tr></thead><tbody>${mini}</tbody></table></div></section>`;
 const jrn=homeJrn();
 const hm=`<div class="hm"><div class="hcA">${todoBlock()}${pd?'':trnCardHTML('hb1')}${next}</div><div class="hcB"><div class="hpr">${tbl}${cc}</div>${jrn}${fin}</div>${helpRow('game')}</div>`,bl=bilanHTML();
@@ -4255,13 +4268,12 @@ const cupSvg=col=>`<svg viewBox="0 0 36 36" aria-hidden="true"><path d="M10 5h16
 const CUPCOL={gold:'#E0A31A',silver:'#8E9AA3',bronze:'#B0693A'};
 const palClub=w=>w>=100||!G.wd?trnClub(w):divClub(G,w),palT=k=>(G.pal&&G.pal.t||[]).filter(x=>!k||x.k===k),palTier=x=>{const n=trnN(x.k);return x.r>=n?0:x.r===n-1?1:x.r===n-2?2:3;};
 const palWins=()=>palT().filter(x=>palTier(x)===0),palCup=t=>cupSvg(CUPCOL[['gold','silver','bronze'][t]]);
-const ttlName=id=>{const t=titlesOf(G).find(x=>x.id===id);return t?L(t.fr,t.en):'';},coachTitle=()=>{const id=titleAct(G);return id?ttlName(id):'';};
 const MKC={d:'#BFEFFF',g:CUPCOL.gold,a:CUPCOL.silver,b:CUPCOL.bronze},MKP={s:'M8 1.3l2 4.3 4.7.6-3.4 3.2.9 4.6L8 11.6l-4.2 2.4.9-4.6L1.3 6.2 6 5.6z',t:'M8 2l6.5 11.5h-13z',c:'M1.5 12.5V5l3.5 3L8 3l3 5 3.5-3v7.5z'},MK_TYPES=4;
 const mkSvg=(sh,t)=>`<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${MKP[sh]}" fill="${MKC[t]}"/>${t==='d'?'<path d="M8 6l1.3 1.8L8 9.6 6.7 7.8z" fill="#fff"/>':''}</svg>`;
 function crestMarks(){
 const M=markersOf(G).filter(m=>m.d<DNS().length);if(!M.length)return '';
 const t=M.map(m=>`${DNS()[m.d]} × ${m.n}`).join(', '),sh=M.slice(0,MK_TYPES),rest=M.length-sh.length;
-return `<span class="dmk" role="img" aria-label="${L('Titres de division','Division titles')} : ${t}" title="${t}">${sh.map(m=>`<span class="mkg">${m.n>=4?mkSvg(m.sh,m.t)+`<i>×${m.n}</i>`:mkSvg(m.sh,m.t).repeat(m.n)}</span>`).join('')}${rest?`<i class="mkr">+${rest}</i>`:''}</span>`;
+return `<span class="dmk" role="img" aria-label="${L('Distinctions de division','Division distinctions')} : ${t}" title="${t}">${sh.map(m=>`<span class="mkg">${m.n>=4?mkSvg(m.sh,m.t)+`<i>×${m.n}</i>`:mkSvg(m.sh,m.t).repeat(m.n)}</span>`).join('')}${rest?`<i class="mkr">+${rest}</i>`:''}</span>`;
 }
 const hallOn=k=>!!(UI.hall&&UI.hall[k]),hn=()=>narrow()?6:8,hlim=(a,k,n=hn())=>hallOn(k)?a:a.slice(0,n),hmore=(k,len,n=hn())=>len>n?`<div class="row" style="margin-top:8px"><button class="btn small" data-a="hall" data-v="${k}" aria-expanded="${hallOn(k)}">${hallOn(k)?L('Réduire','Show less'):`${L('Tout afficher','Show all')} (${len})`}</button></div>`:'';
 function palTbl(k){
@@ -4301,49 +4313,63 @@ const H=(G.aw&&G.aw.h||[]).slice().reverse(),ss=[...new Set(H.map(r=>r[0]))],kee
 return `<section class="panel"><h3>${L('Lauréats du club','Club honours')}</h3>${rows.length?`<div style="margin-top:8px">${rows.map(([s,k,nm,v])=>`<div class="awr"><span>${L('Saison','Season')} ${s} · ${awN(k)}</span><span>${esc(nm)}</span><b class="mono">${awFmt(k,v)}</b></div>`).join('')}</div>${hmore('c',H.length,col.length)}`:`<p class="hint" style="margin-top:8px">${L('Aucun lauréat pour le moment.','No honour yet.')}</p>`}</section>`;
 }
 function hallHTML(){
-const u=U(),ct=coachTitle(),M=markersOf(G).filter(m=>m.d<DNS().length),fn=[L('Aucun','None'),L('Argenté','Silver'),L('Doré','Gold'),L('Foudroyant','Lightning'),L('Enflammé','Flame')][frameOf(G)];
+const u=U(),M=markersOf(G).filter(m=>m.d<DNS().length),fc=frameCur();
 return `<div class="stack"><h2>${L('Palmarès','Honours')}</h2><div class="hall">
-  <section class="panel stack ha"><div class="who"><span class="bst">${badge(u,true)}${crestMarks()}</span><div class="grow"><div style="font:600 17px var(--font-display)">${esc(u.name)}</div>${ct?`<div class="ctt">${esc(ct)}</div>`:''}<span class="muted">${L('Cadre du portrait','Portrait frame')} : ${fn}</span></div></div>
-  ${M.length?`<p class="hint">${L('Titres','Titles')} : ${M.map(m=>`${DNS()[m.d]} ${m.n}`).join(' · ')}</p>`:''}<div class="cups">${trophyCards()}</div></section>
-  <div class="stack hr">${awardsHTML()}${clubAwardsHTML()}</div>
+  <section class="panel stack ha"><div class="who"><span class="bst">${badge(u,true)}${crestMarks()}</span><div class="grow">${ttlHTML()}<div style="font:600 17px var(--font-display)">${esc(coachName())}</div><span class="muted">${esc(u.name)}${fc?` · ${L('Cadre','Frame')} : ${esc(L(fc.fr,fc.en))}`:''}</span></div></div>
+  ${M.length?`<p class="hint">${L('Distinctions','Distinctions')} : ${M.map(m=>`${DNS()[m.d]} ${m.n}`).join(' · ')}</p>`:''}<div class="cups">${trophyCards()}</div></section>
+  <div class="stack hr">${distHallHTML()}${awardsHTML()}${clubAwardsHTML()}</div>
   <section class="panel hd"><h3>${L('Palmarès','Honours')}</h3>${leagueTbl()}${wdTbl()}${palTbl('m')}${palTbl('f')}</section></div></div>`;
 }
 const PENCIL='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M13 7l4 4" stroke="currentColor" stroke-width="2"/></svg>';
-function coachNameHTML(){
-if(UI.cedit)return `<input type="text" id="coach-name" data-c="coachname" maxlength="${COACH_MAX}" value="${esc(G.coach.name)}" placeholder="${L('Entraîneur','Coach')}" aria-label="${L('Nom de l’entraîneur','Coach name')}" autocomplete="off" spellcheck="false">`;
-const t=L('Renommer l’entraîneur','Rename the coach');
-return `<span class="cn">${esc(coachName())}</span><button type="button" class="ibtn" data-a="cedit" aria-label="${t}" title="${t}">${PENCIL}</button>`;
-}
-const SWAPIC='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 9h13l-3-3M20 15H7l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const cpi=()=>{const v=G.coach.portrait;return Number.isInteger(v)&&v>=0&&v<8?v:0;};
-function coachPortraitHTML(){
-const t=L('Changer le portrait','Change portrait');
-return `<div class="cport${frameOf(G)?' fr'+frameOf(G):''}">${pFrame(COACHF[cpi()],U(),L('Portrait de l’entraîneur','Coach portrait'),3)}<button type="button" class="ibtn cpchg" data-a="cpick" aria-expanded="${!!UI.cpick}" aria-label="${t}" title="${t}">${SWAPIC}</button></div>`;
-}
+const codeTitles=()=>titlesOf(G).filter(x=>x.on&&cdIds('t').includes(x.id)),codeFrames=()=>framesOf(G).filter(x=>x.on),
+titleCur=()=>codeTitles().find(x=>x.id===G.coach.ta)||null,frameCur=()=>codeFrames().find(x=>x.id===G.coach.fa)||null;
+const ttlHTML=()=>{const t=titleCur();return t?`<div class="ctt ttl-${t.id}">${esc(L(t.fr,t.en))}</div>`:'';};
+function coachPortraitHTML(){const f=frameCur();return `<div class="cport${f?' fr'+f.n:''}">${pFrame(COACHF[cpi()],U(),L('Portrait de l’entraîneur','Coach portrait'),3)}</div>`;}
 const coachPickHTML=()=>`<div class="cpick" role="radiogroup" aria-label="${L('Portrait de l’entraîneur','Coach portrait')}">${COACHF.map((f,i)=>`<button type="button" class="cpb" role="radio" aria-checked="${i===cpi()}" data-a="cport" data-v="${i}" aria-label="${L('Portrait','Portrait')} ${i+1}">${pFrame(f,U(),'',2)}</button>`).join('')}</div>`;
-function endCoachEdit(){UI.cedit=false;const n=document.getElementById('cname');if(n)n.innerHTML=coachNameHTML();}
-function titlesSect(){
-const T=titlesOf(G).filter(x=>x.on),ta=titleAct(G),cd=G.cd||[],has=['th','fi'].filter(x=>cd.includes(x)),cur=G.coach.fa&&cd.includes(G.coach.fa)?G.coach.fa:'',
-fn=[L('Aucun','None'),L('Argenté','Silver'),L('Doré','Gold'),L('Foudroyant','Lightning'),L('Enflammé','Flame')],fo=frameOf(G);
-return `<section class="panel"><h3>${L('Titres','Titles')}</h3><div style="margin-top:8px">${T.length?T.map(t=>`<div class="frow"><span>${esc(L(t.fr,t.en))}</span>${t.id===ta?`<b class="mono">${L('Actif','Active')}</b>`:`<button type="button" class="btn small" data-a="tset" data-v="${t.id}">${L('Afficher','Show')}</button>`}</div>`).join(''):`<p class="hint">${L('Aucun titre pour le moment.','No title yet.')}</p>`}${G.coach.ta?`<div class="row" style="margin-top:8px"><button type="button" class="btn small" data-a="tset" data-v="">${L('Titre automatique','Automatic title')}</button></div>`:''}
-  <div class="frow"><span class="muted">${L('Cadre du portrait','Portrait frame')}</span><b class="mono">${fn[fo]}</b></div>${has.length?`<div class="seg" role="group" aria-label="${L('Cadre du portrait','Portrait frame')}" style="margin-top:8px">${[['',L('Auto','Auto')],['th',L('Foudroyant','Lightning')],['fi',L('Enflammé','Flame')]].filter(x=>!x[0]||has.includes(x[0])).map(([v,n])=>`<button type="button" class="chip" data-a="fset" data-v="${v}" aria-pressed="${cur===v}">${n}</button>`).join('')}</div>`:''}</div></section>`;
+const cedSeg=(a,lab,items,cur)=>`<div class="ced"><b class="lbl" id="ced-${a}">${lab}</b><div class="seg" role="group" aria-labelledby="ced-${a}">${[['',L('Aucun','None')]].concat(items).map(([v,n])=>`<button type="button" class="chip" data-a="${a}" data-v="${v}" aria-pressed="${cur===v}">${esc(n)}</button>`).join('')}</div></div>`;
+function coachEditHTML(){
+const F=codeFrames(),T=codeTitles(),fc=frameCur(),tc=titleCur();
+return `<div class="cedit stack" id="cedit" role="group" aria-label="${L('Modifier le profil','Edit profile')}"><label class="f">${L('Nom de l’entraîneur','Coach name')}<input type="text" id="coach-name" data-c="coachname" maxlength="${COACH_MAX}" value="${esc(G.coach.name)}" placeholder="${L('Entraîneur','Coach')}" autocomplete="off" spellcheck="false"></label>
+  <div class="ced"><b class="lbl">${L('Portrait','Portrait')}</b>${coachPickHTML()}</div>${F.length?cedSeg('fset',L('Cadre','Frame'),F.map(x=>[x.id,L(x.fr,x.en)]),fc?fc.id:''):''}${T.length?cedSeg('tset',L('Titre','Title'),T.map(x=>[x.id,L(x.fr,x.en)]),tc?tc.id:''):''}
+  <div class="row"><button type="button" class="btn small" data-a="cedit">${L('Terminé','Done')}</button></div></div>`;
+}
+function distOf(){
+const H=G.honors||[],W=palWins(),ss=k=>W.filter(x=>x.k===k).map(x=>x.s),f=ss('f'),m=ss('m'),dbl=m.filter(s=>f.includes(s)),out=[],ct=cdIds('t'),
+S={tr:H.filter(h=>h.rank===1&&dbl.includes(h.s)).map(h=>h.s),db:dbl,vf:f,vm:m};
+titlesOf(G).forEach(t=>{
+if(!t.on||ct.includes(t.id))return;
+const s=/^c\d$/.test(t.id)?H.filter(h=>h.rank===1&&h.d===+t.id[1]).map(h=>h.s):S[t.id]||[];
+out.push({k:t.id,nm:L(t.fr,t.en),s,n:s.length||1});
+});
+const by={};((G.aw&&G.aw.h)||[]).forEach(r=>{(by[r[1]]=by[r[1]]||[]).push(r);});
+Object.keys(by).map(Number).sort((a,b)=>a-b).forEach(k=>out.push({k:'a'+k,nm:awN(k),a:1,s:[],n:by[k].length}));
+return out;
+}
+function distSect(){
+const D=distOf();
+return `<section class="panel">${blockHd('Distinctions','hall')}<div style="margin-top:8px">${D.length?D.map(d=>`<button type="button" class="frow dst" data-a="goto" data-t="hall"><span>${esc(d.nm)}</span><b class="mono">×${d.n}</b></button>`).join(''):`<p class="hint">${L('Aucune Distinction pour le moment.','No Distinction yet.')}</p>`}</div></section>`;
+}
+function distHallHTML(){
+const D=distOf().filter(d=>!d.a);
+return D.length?`<section class="panel"><h3>Distinctions</h3><div style="margin-top:8px">${D.map(d=>`<div class="awr"><span>${esc(d.nm)}</span><span>${d.s.length?`${L('Saison','Season')} ${d.s.join(', ')} · `:''}${esc(coachName())}</span><b class="mono">×${d.n}</b></div>`).join('')}</div></section>`:'';
 }
 function coachHTML(){
-const C=G.coach,u=U(),pct=winPct(C)??0,S=defiStats(G),DL=defiList(G),ct=coachTitle();
+const C=G.coach,u=U(),pct=winPct(C)??0,S=defiStats(G),DL=defiList(G);
 const comps=Object.entries(C.comps).map(([k,v])=>{const [f,s,pr]=k.split('|');return{f,s,pr:+pr,...v};}).sort((a,b)=>b.p-a.p||b.w-a.w);
 const best=comps.filter(c=>c.p>=3).sort((a,b)=>b.w/b.p-a.w/a.p||(b.gf-b.ga)-(a.gf-a.ga))[0];
 const crow=comps.map(c=>{const r=Math.round(c.w/c.p*100);return `<tr class="${best===c?'me':''}"><td class="mono"><b>${c.f}</b></td><td>${nN(c.s)}</td><td class="x">${pN(c.pr)}</td><td class="num">${c.p}</td><td><div class="wbar">${barH(r)}<span class="mono">${r}%</span></div></td><td class="num x">${(c.gf/c.p).toFixed(1)}</td><td class="num x">${(c.ga/c.p).toFixed(1)}</td></tr>`;}).join('');
 const bd=BADGES.map(b=>{const g=C.badges[b.id];return `<div class="bdg ${g?'':'lock'}">${medal(!!g)}<div><b>${P(b.n)}</b><small>${P(b.d)}</small><small>${g?L(`Obtenu saison ${g.s}, journée ${g.d}`,`Earned season ${g.s}, matchday ${g.d}`):L('À débloquer','Locked')}</small></div></div>`;}).join('');
 return `<div class="stack"><h2>${L(`Profil d'entraîneur`,'Coach profile')}</h2>
-  <section class="panel stack"><div class="row between"><div class="who">${coachPortraitHTML()}<span class="bst">${badge(u,true)}${crestMarks()}</span><div class="grow"><div id="cname" class="cname">${coachNameHTML()}</div><span class="muted">${esc(u.name)} · ${L('Saison','Season')} ${G.season}</span>${ct?`<div class="ctt">${esc(ct)}</div>`:''}</div></div></div>
-  ${UI.cpick?coachPickHTML():''}${coachBar()}${specPanel()}<div class="kpis k5">${kpi(C.m,L('Matchs','Matches'))}${kpi(C.w,L('Victoires','Wins'))}${kpi(C.l,L('Défaites','Losses'))}${kpi(pct+'%',L('Taux de victoire','Win rate'))}${kpi(C.gf,L('Buts marqués','Goals for'))}${kpi(C.ga,L('Buts encaissés','Goals against'))}${kpi(C.cs,L('Matchs sans encaisser','Clean sheets'))}${kpi(C.best,L('Meilleure série','Best streak'))}${kpi(C.ow,L('Victoires en prolongation','Overtime wins'))}${kpi(Object.keys(C.badges).length+'/'+BADGES.length,'Badges')}</div></section>
+  <section class="panel stack"><div class="row between cptop"><div class="who">${coachPortraitHTML()}<span class="bst">${badge(u,true)}${crestMarks()}</span><div class="grow">${ttlHTML()}<div class="cname"><span class="cn" id="cdisp">${esc(coachName())}</span></div><span class="muted">${esc(u.name)} · ${L('Saison','Season')} ${G.season}</span></div></div><button type="button" class="ibtn" data-a="cedit" aria-expanded="${!!UI.cedit}" aria-controls="cedit" aria-label="${L('Modifier le profil','Edit profile')}" title="${L('Modifier le profil','Edit profile')}">${PENCIL}</button></div>
+  ${UI.cedit?coachEditHTML():''}${coachBar()}${specPanel()}<div class="kpis k5">${kpi(C.m,L('Matchs','Matches'))}${kpi(C.w,L('Victoires','Wins'))}${kpi(C.l,L('Défaites','Losses'))}${kpi(pct+'%',L('Taux de victoire','Win rate'))}${kpi(C.gf,L('Buts marqués','Goals for'))}${kpi(C.ga,L('Buts encaissés','Goals against'))}${kpi(C.cs,L('Matchs sans encaisser','Clean sheets'))}${kpi(C.best,L('Meilleure série','Best streak'))}${kpi(C.ow,L('Victoires en prolongation','Overtime wins'))}${kpi(Object.keys(C.badges).length+'/'+BADGES.length,'Badges')}</div></section>
   ${ownSect()}${licSect()}
   <section class="panel"><h3>${L('Compositions jouées','Line-ups used')}</h3>
   ${comps.length?`<div class="tbl" style="margin-top:12px"><table><thead><tr><th>${L('Formation','Formation')}</th><th>${L('Style','Style')}</th><th class="x">${L('Pressing','Pressing')}</th><th class="num">${L('Joués','Played')}</th><th>${L('Victoires','Win rate')}</th><th class="num x">${L('BP/m','GF/m')}</th><th class="num x">${L('BC/m','GA/m')}</th></tr></thead><tbody>${crow}</tbody></table></div>
   <p class="hint" style="margin-top:8px">${best?L(`Meilleure composition (au moins 3 matchs) : ${best.f}, ${nN(best.s).toLowerCase()}, pressing ${pN(best.pr).toLowerCase()} — ${Math.round(best.w/best.p*100)} % de victoires.`,`Best set-up (at least 3 matches): ${best.f}, ${nN(best.s).toLowerCase()}, ${pN(best.pr).toLowerCase()} pressing — ${Math.round(best.w/best.p*100)}% wins.`):L('Joue au moins 3 matchs avec une même composition pour désigner la meilleure.','Play at least 3 matches with the same set-up to name the best one.')}</p>`:`<p class="hint" style="margin-top:8px">${L('Aucun match joué pour le moment.','No match played yet.')}</p>`}</section>
   <section class="panel"><h3>${L('Défis','Challenges')}</h3><div class="kpis k5" style="margin-top:12px">${kpi(S.done+'/'+DL.length,L('Défis terminés','Challenges done'))}${kpi(S.sm,L('Meilleure série','Best streak'))}${kpi(fmt(S.g),L('Gils gagnés','Gil earned'))}</div>
   <div class="cups" style="margin-top:12px">${[0,1,2,3].map(l=>{const a=DL.filter(d=>d.l===l),n=a.filter(d=>d.done).length,on=n===a.length;return `<div class="cupc ${on?'':'lock'}">${medal(on)}<b>${P(DEFI_L[l])}</b><span>${n}/${a.length}</span></div>`;}).join('')}</div></section>
-  ${titlesSect()}
+  ${distSect()}
   <section class="panel"><h3>Badges</h3><div class="badges" style="margin-top:12px">${bd}</div></section></div>`;
 }
 function setCrest(u,k,f,v){
@@ -4431,7 +4457,7 @@ return `<div class="stack"><h2>${L('Fiche du club','Club sheet')}</h2>
   <section class="panel stack"><div class="row between"><div class="who"><span class="bst">${badge(u,true)}${crestMarks()}</span><div><div style="font:600 17px var(--font-display)">${esc(u.name)}</div><span class="muted">${L('Entraîneur','Coach')} : ${esc(coachName())} · ${L('Saison','Season')} ${G.season}</span></div></div>
   </div>
   <div class="kpis">${kpi(titles,L('Titres de champion','League titles'))}${kpi(podiums,L('Podiums','Podiums'))}${kpi(bestRank?rankTxt(bestRank):'–',L('Meilleur classement','Best finish'))}${kpi(H.length,L('Saisons terminées','Seasons completed'))}${kpi(fmt(G.cash),L('Budget (gils)','Budget (gil)'))}${kpi(fmt(G.fans),L('Public moyen','Average crowd'))}${(r=>kpi(r.r,L('Réputation','Reputation')+' · '+L(REP_LAB[r.lab][0],REP_LAB[r.lab][1])))(repOf(G))}${kpi(fmt(val),L('Valeur de l’effectif','Squad value'))}${kpi(fmt(wag),L('Salaires / journée','Wages / matchday'))}${kpi(age.toFixed(1),L('Âge moyen','Average age'))}</div></section>
-  <section class="panel"><div class="row between"><p>${L('Palmarès','Honours')} : <b>${titles}</b> ${titles>1?L('titres','titles'):L('titre','title')}${markersOf(G).filter(m=>m.d<DNS().length).map(m=>` · ${DNS()[m.d]} ${m.n}`).join('')}</p>${goLink('hall',L('Voir le Palmarès','See the Honours'))}</div></section>
+  <section class="panel"><div class="row between"><p>${L('Palmarès','Honours')} : <b>${titles}</b> ${titles>1?L('championnats gagnés','leagues won'):L('championnat gagné','league won')}${markersOf(G).filter(m=>m.d<DNS().length).map(m=>` · ${DNS()[m.d]} ${m.n}`).join('')}</p>${goLink('hall',L('Voir le Palmarès','See the Honours'))}</div></section>
   <div class="grid2">${leg('cg',L('Légendes · buts en carrière','Legends · career goals'))}${leg('ca',L('Légendes · passes en carrière','Legends · career assists'))}${leg('capps',L('Légendes · matchs en carrière','Legends · career appearances'))}</div>
   ${clubSeasonHTML()}
   <p class="hint">${L(`Bilan de l’ère ${esc(coachName())} : ${C.w} victoires, ${C.l} défaites, ${C.gf} buts marqués.`,`Under ${esc(coachName())}: ${C.w} wins, ${C.l} losses, ${C.gf} goals scored.`)}</p></div>`;
@@ -4540,10 +4566,10 @@ L(`Uniques : ${UNIQUES.length} identités au catalogue, tirées au Marché (nom 
 L('Un défi se joue sur des copies : aucun effet sur l’effectif, la journée, la fatigue, l’XP ni les statistiques.','A challenge is played on copies: no effect on your squad, the matchday, fatigue, XP or stats.'),
 L(`Les gils d’un défi sont versés une seule fois, à la première victoire, dans la limite de ${fmt(DEFI_CAP)} par saison ; le solde est reporté à la saison suivante. Total versable : ${fmt(dt)} gils. Rejouable sans limite pour le record et la série.`,`A challenge’s gils are paid once, on the first win, up to ${fmt(DEFI_CAP)} a season; the rest carries over to the next season. Total payable: ${fmt(dt)} gils. Replay without limit for the record and streak.`)]))}
     ${sec('Barème','Rewards',tb([[L('Épreuve','Event')],[L('Inscription','Entry'),'num'],[L('Gils','Gil')]],[[trnTitle('m'),fmt(trnFee(dG(D3),'m')),pz('m')],[trnTitle('f'),fmt(trnFee(dG(D3),'f')),pz('f')],[L('Défi','Challenge'),L('gratuit','free'),DEFI_REW.map(fmt).join(' / ')]])+`<p class="hint">${L('Tournois : vainqueur / finaliste / demi-finaliste (/ quart en fin de saison). Défi : Facile / Moyen / Difficile / Expert. Valeurs de D3 ; inscription et gils suivent le coefficient de la division.','Tournaments: winner / runner-up / semi-finalist (/ quarter-finalist at season end). Challenge: Easy / Medium / Hard / Expert. D3 values; entry and gil follow the division coefficient.')}</p>`)}
-    ${sec('Distinctions','Distinctions',li([L('Esthétiques, sans effet de jeu : coupes or, argent et bronze (vainqueur, finaliste, demi-finaliste), marqueurs de division à côté du blason, titre d’entraîneur, cadre du portrait et une médaille par niveau de défi terminé.','Cosmetic, no effect on the game: gold, silver and bronze cups (winner, runner-up, semi-finalist), division markers next to the crest, coach title, portrait frame and a medal per completed challenge level.'),
-L(`Récompenses de fin de saison : meilleur joueur, meilleur de chaque poste, meilleur espoir (${AW_YOUNG} ans ou moins), titres de statistique (clean sheets, arrêts, buts, passes décisives, passes, tacles, interceptions, récupérations) et équipe type de la division, parmi les joueurs de ta division ayant disputé au moins ${Math.round(AW_K*100)} % des matchs. Honorifiques, sans effet sur le jeu.`,`End-of-season awards: best player, best at each position, best young player (${AW_YOUNG} or under), statistic titles (clean sheets, saves, goals, assists, passes, tackles, interceptions, recoveries) and the Team of the Division, among the players of your division who played at least ${Math.round(AW_K*100)}% of the matches. Honorary, no effect on the game.`),
-L(`Titres, par priorité : Triplé (champion de ta division et vainqueur des deux tournois la même saison), Champion d’Élite, Doublé des tournois (les deux tournois gagnés la même saison), Briseur de défis (les ${dn} défis terminés), Champion de division, Vainqueur de fin de saison, Vainqueur de mi-saison. Cadre doré pour Triplé, Doublé ou titre d’Élite, argenté pour un autre titre.`,`Titles, by priority: Treble (division champion and winner of both tournaments in the same season), Elite champion, Tournament double (both tournaments won in the same season), Challenge breaker (all ${dn} challenges done), division champion, End-of-season winner, Mid-season winner. Gold frame for Treble, double or Elite title, silver for any other title.`),
-L('Marqueurs de division : couronne (Élite), étoiles (D1 à D3) et triangles (Semi-Pro 1 à 3), bronze, argent et or. Les codes de Options › Codes débloquent des titres et des cadres, sans effet sur le jeu.','Division markers: crown (Elite), stars (D1 to D3) and triangles (Semi-Pro 1 to 3), bronze, silver and gold. Codes in Options › Codes unlock titles and frames, with no effect on the game.')]))}</div>`;
+    ${sec('Distinctions','Distinctions',li([L('Elles se gagnent en jouant, sans effet de jeu : coupes or, argent et bronze (vainqueur, finaliste, demi-finaliste), marqueurs de division à côté du blason et une médaille par niveau de défi terminé.','They are earned by playing, with no effect on the game: gold, silver and bronze cups (winner, runner-up, semi-finalist), division markers next to the crest and a medal per completed challenge level.'),
+L(`Récompenses de fin de saison : meilleur joueur, meilleur de chaque poste, meilleur espoir (${AW_YOUNG} ans ou moins), distinctions de statistique (clean sheets, arrêts, buts, passes décisives, passes, tacles, interceptions, récupérations) et équipe type de la division, parmi les joueurs de ta division ayant disputé au moins ${Math.round(AW_K*100)} % des matchs. Honorifiques, sans effet sur le jeu.`,`End-of-season awards: best player, best at each position, best young player (${AW_YOUNG} or under), statistic distinctions (clean sheets, saves, goals, assists, passes, tackles, interceptions, recoveries) and the Team of the Division, among the players of your division who played at least ${Math.round(AW_K*100)}% of the matches. Honorary, no effect on the game.`),
+L(`Distinctions de l’entraîneur, par priorité : Triplé (champion de ta division et vainqueur des deux tournois la même saison), Champion d’Élite, Doublé des tournois (les deux tournois gagnés la même saison), Briseur de défis (les ${dn} défis terminés), Champion de division, Vainqueur de fin de saison, Vainqueur de mi-saison. Chacune apparaît dans le profil de l’entraîneur après sa première obtention, avec ×n ; le détail est dans le Palmarès.`,`Coach distinctions, by priority: Treble (division champion and winner of both tournaments in the same season), Elite champion, Tournament double (both tournaments won in the same season), Challenge breaker (all ${dn} challenges done), division champion, End-of-season winner, Mid-season winner. Each one appears in the coach profile after it is first earned, with ×n; the detail is in the Honours page.`),
+L('Marqueurs de division : couronne (Élite), étoiles (D1 à D3) et triangles (Semi-Pro 1 à 3), bronze, argent et or. Titres et cadres sont des cosmétiques à débloquer par code (Options › Codes), sans effet sur le jeu : un Titre s’affiche au-dessus du nom de l’entraîneur. Le crayon du profil (Entraîneur) permet de choisir le nom, le portrait, le cadre et le Titre.','Division markers: crown (Elite), stars (D1 to D3) and triangles (Semi-Pro 1 to 3), bronze, silver and gold. Titles and frames are cosmetics unlocked by code (Options › Codes), with no effect on the game: a Title is shown above the coach name. The pencil on the coach profile lets you pick the name, portrait, frame and Title.')]))}</div>`;
 }else{
 const c=x=>Math.round(x*100),frows=FAC.map(k=>[`<b>${P(FACD[k].n)}</b>`,P(FACD[k].d),`<span class="mono">${FACD[k].cost.map(fmt).join(' · ')}</span>`]);
 body=`${sec('Installations','Facilities',tb([[L('Installation','Facility')],[L('Effet','Effect')],[L('Coût des niveaux 1 à 5 (gils)','Cost of levels 1 to 5 (gil)')]],frows)+`<p>${L(`Chaque niveau d’installation coûte ${UPKEEP} gils d’entretien par match en Élite (× k ailleurs). Les panneaux sponsors rapportent, en plus de l’offre de sponsor, +900, +700, +600, +500 puis +400 gils par match aux niveaux 1 à 5. La personnalisation (Club › Personnalisation : eau, ballon, marqueurs, bandeau de but) est purement visuelle.`,`Each facility level costs ${UPKEEP} gil upkeep per match in Elite (× k elsewhere). Sponsor boards bring, on top of the sponsor offer, +900, +700, +600, +500 then +400 gil per match at levels 1 to 5. Customisation (Club › Customisation: water, ball, markers, goal banner) is purely cosmetic.`)}</p>`)}
@@ -5805,12 +5831,11 @@ case 'ptab':UI.ptab=d.v;render();break;
 case 'redeem':{if(!G||!G.started||G.userId==null)break;const el=app.querySelector('#codein'),r=redeem(G,el?el.value:'');
 UI.cmsg=r.ok?{w:'ok',fr:r.r.fr,en:r.r.en}:{w:r.why};if(r.ok){save();toast(L(`Code accepté : ${r.r.fr}.`,`Code accepted: ${r.r.en}.`));}
 render();const i=app.querySelector('#codein');if(i)i.focus({preventScroll:true});break;}
-case 'tset':{if(titleSet(G,d.v||null)){save();render();}break;}
+case 'tset':{if(titleSet(G,d.v||null)){save();render();}const b=app.querySelector('[data-a="tset"][aria-pressed="true"]');if(b)b.focus({preventScroll:true});break;}
 case 'fset':{if(frameSet(G,d.v||null)){save();render();}const b=app.querySelector('[data-a="fset"][aria-pressed="true"]');if(b)b.focus({preventScroll:true});break;}
 case 'hall':{UI.hall=UI.hall||{};UI.hall[d.v]=!UI.hall[d.v];render();const b=app.querySelector('[data-a="hall"][data-v="'+d.v+'"]');if(b)b.focus({preventScroll:true});break;}
-case 'cpick':{UI.cpick=!UI.cpick;render();const b=app.querySelector(UI.cpick?'.cpb[aria-checked="true"]':'.cpchg');if(b)b.focus({preventScroll:true});break;}
-case 'cport':{const v=+d.v;if(Number.isInteger(v)&&v>=0&&v<8){G.coach.portrait=v;save();}UI.cpick=false;render();const b=app.querySelector('.cpchg');if(b)b.focus({preventScroll:true});break;}
-case 'cedit':{UI.cedit=true;const n=document.getElementById('cname');if(n){n.innerHTML=coachNameHTML();const i=document.getElementById('coach-name');if(i){i.focus();i.select();}}break;}
+case 'cport':{const v=+d.v;if(Number.isInteger(v)&&v>=0&&v<8){G.coach.portrait=v;save();}render();const b=app.querySelector('.cpb[aria-checked="true"]');if(b)b.focus({preventScroll:true});break;}
+case 'cedit':{UI.cedit=!UI.cedit;render();const i=UI.cedit?document.getElementById('coach-name'):app.querySelector('.cptop [data-a="cedit"]');if(i){i.focus({preventScroll:true});if(UI.cedit)i.select();}break;}
 case 'cspec':{const C=G.coach;if(coachLvl(C).lvl<SPEC_MIN||C.spec===d.v||!SPECS[d.v])break;const cost=C.spec?SPEC_COST:0;if(G.cash<cost){UI.confirm=null;toast(L('Budget insuffisant.','Not enough budget.'),true);render();break;}UI.confirm='spec:'+d.v;render();break;}
 case 'cspecno':UI.confirm=null;render();break;
 case 'cspecok':{const C=G.coach;if(UI.confirm!=='spec:'+d.v||coachLvl(C).lvl<SPEC_MIN||C.spec===d.v||!SPECS[d.v]){UI.confirm=null;render();break;}const cost=C.spec?SPEC_COST:0;if(G.cash<cost){UI.confirm=null;toast(L('Budget insuffisant.','Not enough budget.'),true);render();break;}G.cash-=cost;C.spec=d.v;UI.confirm=null;save();render();toast(L('Spécialité choisie.','Specialty chosen.'));break;}
@@ -5973,11 +5998,10 @@ if(e.key==='Enter'&&e.target.id==='coach-draft'){e.preventDefault();act('coachok
 if(e.key==='Enter'&&e.target.id==='plan-name'){e.preventDefault();const m=/^plan:ren:(\d)$/.exec(String(UI.confirm));if(m)act('plrenok',{i:m[1]});}
 if(e.target.id==='coach-name'&&UI.cedit){
 if(e.key==='Enter'){e.preventDefault();e.target.blur();}
-else if(e.key==='Escape'){e.preventDefault();e.target.value=G.coach.name;endCoachEdit();}
+else if(e.key==='Escape'){e.target.value=G.coach.name;}
 }
 });
-document.addEventListener('keydown',e=>{if(UI.fs){if(e.key==='Escape'){e.preventDefault();fsEsc();}else if(e.key==='Tab')fsTab(e);return;}if(e.key==='Escape'&&UI.confirm&&/^(spec|plan):/.test(String(UI.confirm))&&!UI.dlg){UI.confirm=null;render();}else if(e.key==='Escape'&&UI.cpick&&!UI.dlg){UI.cpick=false;render();const b=app.querySelector('.cpchg');if(b)b.focus({preventScroll:true});}});
-app.addEventListener('focusout',e=>{if(e.target.id==='coach-name'&&UI.cedit&&UI.scr!=='flow')endCoachEdit();});
+document.addEventListener('keydown',e=>{if(UI.fs){if(e.key==='Escape'){e.preventDefault();fsEsc();}else if(e.key==='Tab')fsTab(e);return;}if(e.key==='Escape'&&UI.confirm&&/^(spec|plan):/.test(String(UI.confirm))&&!UI.dlg){UI.confirm=null;render();}else if(e.key==='Escape'&&UI.cedit&&!UI.dlg){UI.cedit=false;render();const b=app.querySelector('.cptop [data-a="cedit"]');if(b)b.focus({preventScroll:true});}});
 document.addEventListener('keydown',dlgKeys);
 app.addEventListener('submit',e=>{if(e.target&&e.target.dataset&&e.target.dataset.f==='code'){e.preventDefault();act('redeem',{});}});
 app.addEventListener('input',e=>{const el=e.target;if(el&&el.dataset&&el.dataset.c==='sndvol')sndSetVol(el.value);});
@@ -5999,7 +6023,7 @@ case 'sortsel':{if(el.dataset.w==='m'){UI.msort=el.value;UI.mdir=defDir(el.value
 case 'sname':{G.stadium.name=el.value.trim().slice(0,30);save();render();break;}
 case 'coachname':{
 if(UI.scr==='flow'){UI.draft.coach=cleanCoachName(el.value);el.value=UI.draft.coach;break;}
-G.coach.name=cleanCoachName(el.value);save();if(el.id==='coach-name'){endCoachEdit();break;}render();break;}
+G.coach.name=cleanCoachName(el.value);save();if(el.id==='coach-name'){el.value=G.coach.name;const n=document.getElementById('cdisp');if(n)n.textContent=coachName();break;}render();break;}
 case 'impfile':{const f=el.files&&el.files[0];el.value='';if(f)readImport(f);break;}
 case 'xptxt':UI.xptxt=el.value;break;
 case 'pname':{const tm=u||G.teams[UI.prev];const p=tm&&tm.players.find(x=>x.id===+el.dataset.id),v=el.value.trim();if(p&&v)p.name=v.slice(0,22);if(G.started)save();if(UI.scr==='flow'){if(p)el.value=p.name;}else render();break;}
