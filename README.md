@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.25
+VERSION ACTUELLE : V0.26
 
 
 
@@ -19,6 +19,27 @@ NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
 
+v0.26 : Distinctions et Palmarès
+
+Mécanique
+- Récompenses de fin de saison pour toute la division : meilleur joueur, meilleur de chaque poste, meilleur espoir (23 ans ou moins), meilleurs buteur, passeur, passes, tacles, interceptions, récupérations, arrêts et clean sheets, et équipe type de la division. Il faut avoir joué au moins 60 % des matchs. Ces distinctions sont purement honorifiques.
+- Le « Meilleur joueur » est évalué par rapport à son poste, pour ne pas toujours revenir à un attaquant.
+- Nouvelles statistiques suivies pour tous les joueurs, par saison et en carrière : arrêts, clean sheets, tacles, interceptions et passes.
+- Nouveaux titres : « Doublé des tournois » (les deux tournois la même saison, remplace « Double couronné ») et « Triplé » (champion de sa division et vainqueur des deux tournois la même saison).
+- Défis ordinaires recalés en Semi-Pro : ils sont mieux équilibrés dans les trois divisions.
+
+Interface
+- Nouvelle page Club › Palmarès : vitrine, récompenses de la saison, équipe type, lauréats du club et palmarès.
+- Marqueurs de division à côté du blason : couronne à effet diamant (Élite), étoiles (D1 à D3) et triangles (Semi-Pro), en bronze, argent et or.
+- Tu choisis ton titre affiché et ton cadre de portrait dans l'Entraîneur.
+- Nouvelle page Options › Codes, avec les cadres de portrait animés Foudroyant et Enflammé.
+- Règles du jeu complétées.
+
+Contenu
+- Codes de test : CREATOR (titre « Le Créateur »), THUNDERFRAME (cadre foudroyant) et FIREFRAME (cadre enflammé).
+
+Correctifs
+- Tests de navigation plus fiables ; scripts de test anciens archivés.
 
 v0.25 : Semi-Pro
 
@@ -222,4 +243,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.25
+ACTUAL VERSION : V0.26
