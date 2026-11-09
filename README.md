@@ -11,13 +11,27 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.26
+VERSION ACTUELLE : V0.27
 
 
 
 NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
+
+v0.27 : Profil de l’entraîneur et codes
+
+Interface
+Le profil de l’entraîneur tient dans un seul bloc : portrait avec cadre, titre en petit au-dessus du nom, et un crayon pour modifier nom, portrait, cadre et titre.
+La liste des Distinctions est plus courte (« ×n »).
+Les sélecteurs de cadre et de titre restent masqués tant qu’aucun code n’a été entré.
+Contenu
+12 codes dans Options › Codes : CREATOR, un cadre et un titre pour la foudre, le feu, l’eau, la lumière et les ténèbres, ainsi que ULTIMATEST qui débloque tout.
+Les cadres et titres sont animés (fixes si les animations sont réduites dans le système).
+Correctifs
+Le message d’erreur d’import de sauvegarde ne cite plus de numéro de version.
+Le vocabulaire est unifié : « Distinctions » pour ce qu’on gagne, « Titres » pour ce qu’on affiche.
+Deux libellés de ce vocabulaire restent à corriger dans la prochaine version.
 
 v0.26 : Distinctions et Palmarès
 
@@ -243,4 +257,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.26
+ACTUAL VERSION : V0.27
