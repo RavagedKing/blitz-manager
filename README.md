@@ -11,13 +11,38 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.27
+VERSION ACTUELLE : V0.28
 
 
 
 NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
+
+v0.28 : Titres de jeu, cadres de division et fonds animés
+
+Mécanique
+
+Dix Titres de jeu à gagner en jouant (championnats, coupes, défis, séries…), avec des paliers.
+Les Titres évidents sont visibles, grisés, avec leur condition et leur progression. Les secrets n’apparaissent qu’une fois obtenus.
+Sept cadres de portrait selon la division remportée.
+Compteurs de carrière conservés d’une saison à l’autre.
+Le mode « Auto » du titre et du cadre disparaît : rien n’est affiché tant que tu ne l’as pas choisi.
+
+Interface
+
+Club › Entraîneur : catalogue des Titres, titre au-dessus du nom (reflet lent au palier Diamant).
+Cinq fonds animés dans Options › Affichage › Fond.
+Nouvelle catégorie « Divers » dans le Journal. Les déblocages sont groupés dans une seule notification.
+Vocabulaire harmonisé : « Championnats gagnés ».
+
+Contenu
+
+Cinq codes de fond : THUNDERBG, FIREBG, AQUABG, LIGHTBG, DARKBG. ULTIMATEST débloque désormais tous les cosmétiques à code.
+
+Correctifs
+
+Les deux libellés « titres de champion » restants sont corrigés.
 
 v0.27 : Profil de l’entraîneur et codes
 
@@ -257,4 +282,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.27
+ACTUAL VERSION : V0.28
