@@ -1278,6 +1278,40 @@ th,td,h3,.ph button,.cgroup h4,.mh,.cmp .lab,.rtag,.legend,.bellmenu,.bcnt,.tag,
 .cport.fr5 .pframe{animation:aqz 3s ease-in-out infinite alternate}.cport.fr6 .pframe{animation:liz 2.6s ease-in-out infinite alternate}.cport.fr7 .pframe{animation:daz 3.4s ease-in-out infinite alternate}
 @keyframes aqz{to{box-shadow:0 0 0 2px var(--surface),0 0 0 5px #6FE0F0,0 0 13px 4px #2FB6D6AA}}@keyframes liz{to{box-shadow:0 0 0 2px var(--surface),0 0 0 5px #FFF6C8,0 0 14px 4px #FFE48AAA}}@keyframes daz{to{box-shadow:0 0 0 2px var(--surface),0 0 0 4px #1A0F2B,0 0 0 5px #B68CF0,0 0 12px 4px #7B3FA8CC}}
 }
+/* v0.28 · UI-A (CON-23) : titres de jeu par palier (≥ 3:1 sur le Sombre, nom du palier écrit), catalogue des Titres, cadres de division (SVG 22 px au sommet du portrait, marge haute 14 px) */
+.tt-b{--tc:#C98A5A}.tt-a{--tc:#B8C4CC}.tt-g{--tc:#E8B53A}.tt-d{--tc:#BFEFFF}
+.ctt[class*=" tt-"]{display:inline-block;max-width:100%;color:var(--tc);border-bottom:1px solid var(--tc);padding-bottom:1px;overflow-wrap:anywhere}.ttr{font:600 10px var(--font-body);font-style:normal;letter-spacing:.06em;text-transform:uppercase;margin-left:6px;opacity:.85}
+.tn{font-weight:600}.tn.tt-b,.tn.tt-a,.tn.tt-g,.tn.tt-d{color:var(--tc)}
+.ttcat{display:grid;gap:0;margin-top:8px}.ttcat h4{margin:10px 0 2px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tcr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:0 10px;align-items:baseline;padding:5px 0;border-bottom:1px dashed var(--line);font-size:13.5px}.tcr:last-child{border-bottom:0}.tcr small{grid-column:1/-1;color:var(--muted);font-size:12px}
+.tcp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.tcr.off .tcn{color:var(--muted);font-weight:500}
+.cport.dfr{margin:14px 5px 5px}.cport.dfr .pframe{box-shadow:0 0 0 2px var(--surface),0 0 0 5px var(--mc)}
+.dfs{position:absolute;left:50%;top:-23px;width:22px;height:22px;margin-left:-11px;z-index:1;pointer-events:none;color:var(--ink)}
+@media (prefers-reduced-motion:no-preference){
+.tt-d{--sh:linear-gradient(100deg,var(--tc) 38%,#fff 50%,var(--tc) 62%)}
+.ctt.tt-d,.tn.tt-d{background:var(--sh) 150% 0/260% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:ttds 6s ease-in-out infinite}
+@keyframes ttds{0%,55%{background-position:150% 0}100%{background-position:-60% 0}}
+.dfs .dfc{animation:dmp 3.6s ease-in-out infinite}
+}
+/* v0.28 · UI-B (CON-23 §6.4-6.5) : 5 fonds débloqués par code, CSS seul, posés par data-bg sur <html> ; changent le ciel, la teinte du récif et les bulles (#altbg). Ciels sombres : le texte garde ≥ 4,5:1. Aucune animation sous reduced-motion. */
+:root[data-alt][data-theme][data-bg=b1]{--alt-sky-1:#10284A;--alt-sky-2:#0A1A33;--alt-sky-3:#060F20;--alt-bubble:rgba(200,220,255,.5);--alt-glow:rgba(170,200,255,.16);--alt-reef:rgba(150,185,255,.15)}
+:root[data-alt][data-theme][data-bg=b2]{--alt-sky-1:#2C1608;--alt-sky-2:#1B0D05;--alt-sky-3:#100603;--alt-bubble:rgba(255,150,60,.55);--alt-glow:rgba(255,140,50,.14);--alt-reef:rgba(255,130,40,.15)}
+:root[data-alt][data-theme][data-bg=b3]{--alt-sky-1:#04284A;--alt-sky-2:#031A33;--alt-sky-3:#020C1C;--alt-bubble:rgba(60,140,255,.38);--alt-glow:rgba(40,120,255,.16);--alt-reef:rgba(50,130,255,.15)}
+:root[data-alt][data-theme][data-bg=b4]{--alt-sky-1:#0E3C38;--alt-sky-2:#13233C;--alt-sky-3:#1A1030;--alt-bubble:rgba(255,170,220,.38);--alt-glow:rgba(120,255,190,.17);--alt-reef:rgba(255,160,210,.14)}
+:root[data-alt][data-theme][data-bg=b5]{--alt-sky-1:#0C0C16;--alt-sky-2:#07070F;--alt-sky-3:#030308;--alt-bubble:rgba(255,255,255,.7);--alt-glow:rgba(180,180,255,.06);--alt-reef:rgba(190,190,255,.1)}
+:root[data-bg=b1] #altbg i{border-radius:14%;rotate:45deg}
+:root[data-bg=b2] #altbg i{border-color:transparent;background:radial-gradient(circle,var(--alt-bubble),transparent 70%);animation-duration:calc(var(--d)*.7)}
+:root[data-bg=b3] #altbg i{animation-duration:calc(var(--d)*1.7)}
+:root[data-bg=b4] #altbg i{border-radius:50% 50% 50% 8%}
+:root[data-bg=b5] #altbg i{width:3px;height:3px;border:0;background:var(--alt-bubble);bottom:auto;top:calc(var(--s)*14);animation:altsc calc(var(--d)*.2) ease-in-out var(--w) infinite alternate}
+:root[data-bg=b5] #altbg i:nth-child(even){top:calc(100% - var(--x))}
+@keyframes altsc{from{opacity:.1}to{opacity:.9}}
+@media (prefers-reduced-motion:no-preference){
+:root[data-bg=b1] #altbg::before,:root[data-bg=b4] #altbg::before{content:"";position:absolute;inset:0}
+:root[data-bg=b1] #altbg::before{background:radial-gradient(ellipse at 70% 0,rgba(200,220,255,.5),transparent 60%);opacity:0;animation:altfl 9s steps(1) infinite}
+:root[data-bg=b4] #altbg::before{inset:-20% -30%;background:linear-gradient(105deg,transparent 20%,rgba(110,255,190,.14) 40%,rgba(255,150,210,.14) 60%,transparent 80%);animation:altvl 24s ease-in-out infinite alternate}
+}
+@keyframes altfl{0%,52%,61%,100%{opacity:0}53%,60%{opacity:.5}56%{opacity:.15}}@keyframes altvl{to{transform:translateX(18%)}}
 </style>
 
 
@@ -2822,33 +2856,64 @@ A.t.forEach(x=>{if(x.tid===u){mine.push(13);if(fresh)h.push([A.s,13,x.p.name,x.v
 aw.h=h.length>AW_H?h.slice(-AW_H):h;
 return{mine};
 }
-const TITLES=[['cr','Le Créateur','The Creator'],['tt','Éclair d’orage','Storm bolt'],['tf','Flamme vive','Living flame'],['ta','Marée haute','High tide'],['tl','Aube radieuse','Radiant dawn'],['td','Ombre profonde','Deep shadow'],['tr','Triplé','Treble'],['c0','Champion d’Élite','Elite champion'],['db','Doublé des tournois','Tournament double'],['bd','Briseur de défis','Challenge breaker'],['c1','Champion de D1','D1 champion'],['c2','Champion de D2','D2 champion'],['c3','Champion de D3','D3 champion'],['c4','Champion de Semi-Pro 1','Semi-Pro 1 champion'],['c5','Champion de Semi-Pro 2','Semi-Pro 2 champion'],['c6','Champion de Semi-Pro 3','Semi-Pro 3 champion'],['vf','Vainqueur de fin de saison','End-of-season winner'],['vm','Vainqueur de mi-saison','Mid-season winner']];
+const DIST=[['tr','Triplé','Treble'],['c0','Champion d’Élite','Elite champion'],['db','Doublé des tournois','Tournament double'],['bd','Briseur de défis','Challenge breaker'],['c1','Champion de D1','D1 champion'],['c2','Champion de D2','D2 champion'],['c3','Champion de D3','D3 champion'],['c4','Champion de Semi-Pro 1','Semi-Pro 1 champion'],['c5','Champion de Semi-Pro 2','Semi-Pro 2 champion'],['c6','Champion de Semi-Pro 3','Semi-Pro 3 champion'],['vf','Vainqueur de fin de saison','End-of-season winner'],['vm','Vainqueur de mi-saison','Mid-season winner']];
+const TITLES=[['cr','Le Créateur','The Creator','c','','s'],['tt','Éclair d’orage','Storm bolt','c','','s'],['tf','Flamme vive','Living flame','c','','s'],['ta','Marée haute','High tide','c','','s'],['tl','Aube radieuse','Radiant dawn','c','','s'],['td','Ombre profonde','Deep shadow','c','','s'],
+['el','Seigneur de l’Élite','Elite Lord','j','d','s'],['tc','Triple couronne','Triple Crown','j','g','s'],['gc','Coach d’or','Golden Coach','j','g','s'],['md','Maître des défis','Challenge Master','j','g','s'],['dy','Dynastie','Dynasty','j','a','e'],['mc','Maître des coupes','Cup Master','j','a','e'],['sc','Super Coach','Super Coach','j','a','e'],['qa','Trio d’as','Ace Trio','j','a','e'],['cm','Collectionneur','Collector','j','a','e'],['cv','Coach en vue','Coach to Watch','j','b','e']];
+let CV_N=4,SC_N=5,QA_N=3,GC_N=5,DY_N=3,MC_N=4,CM_N=11;
+const CM_SET=[0,1,2,3,4,5,6,7,8,9,10,11,12,14],popc=n=>{let c=0;for(;n;n&=n-1)c++;return c;};
 const FRAMES_T={th:['Cadre foudroyant','Lightning frame'],fi:['Cadre enflammé','Flame frame'],aq:['Cadre aquatique','Water frame'],li:['Cadre lumineux','Light frame'],da:['Cadre ténébreux','Dark frame']};
-const CODES={CREATOR:{k:'t',id:'cr'},THUNDERFRAME:{k:'f',id:'th'},FIREFRAME:{k:'f',id:'fi'},THUNDERTITLE:{k:'t',id:'tt'},FIRETITLE:{k:'t',id:'tf'},AQUAFRAME:{k:'f',id:'aq'},AQUATITLE:{k:'t',id:'ta'},LIGHTFRAME:{k:'f',id:'li'},LIGHTTITLE:{k:'t',id:'tl'},DARKFRAME:{k:'f',id:'da'},DARKTITLE:{k:'t',id:'td'},ULTIMATEST:{k:'a'}};
+DIV_NAME.forEach((n,d)=>{FRAMES_T['v'+d]=['Cadre · '+n,'Frame · '+(n==='Élite'?'Elite':n)];});
+const BGS_T=[['b1','Orage','Storm'],['b2','Braises','Embers'],['b3','Abysses','Abyss'],['b4','Aurore','Dawn'],['b5','Nuit noire','Dark Night']];
+const CODES={CREATOR:{k:'t',id:'cr'},THUNDERFRAME:{k:'f',id:'th'},FIREFRAME:{k:'f',id:'fi'},THUNDERTITLE:{k:'t',id:'tt'},FIRETITLE:{k:'t',id:'tf'},AQUAFRAME:{k:'f',id:'aq'},AQUATITLE:{k:'t',id:'ta'},LIGHTFRAME:{k:'f',id:'li'},LIGHTTITLE:{k:'t',id:'tl'},DARKFRAME:{k:'f',id:'da'},DARKTITLE:{k:'t',id:'td'},THUNDERBG:{k:'b',id:'b1'},FIREBG:{k:'b',id:'b2'},AQUABG:{k:'b',id:'b3'},LIGHTBG:{k:'b',id:'b4'},DARKBG:{k:'b',id:'b5'},ULTIMATEST:{k:'a'}};
 const cdIds=ks=>Object.values(CODES).filter(e=>ks.includes(e.k)).map(e=>e.id);
 const MK=[['c','d'],['s','g'],['s','a'],['s','b'],['t','g'],['t','a'],['t','b']];
 function markersOf(G){const n=MK.map(()=>0);(G.honors||[]).forEach(h=>{if(h.rank===1&&Number.isInteger(h.d)&&h.d>=0&&h.d<MK.length)n[h.d]++;});return n.map((c,d)=>c?{d,n:c,sh:MK[d][0],t:MK[d][1]}:null).filter(Boolean);}
-function titlesOf(G){
+function distOn(G){
 const H=G.honors||[],ch=new Set(H.filter(h=>h.rank===1&&Number.isInteger(h.d)).map(h=>h.d)),W=(G.pal&&G.pal.t||[]).filter(x=>x.r>=Math.log2(trnSize(x.k))),
 fs=W.filter(x=>x.k==='f').map(x=>x.s),ms=W.filter(x=>x.k==='m').map(x=>x.s),dbl=ms.filter(s=>fs.includes(s)),
 on={tr:H.some(h=>h.rank===1&&dbl.includes(h.s)),db:dbl.length>0,bd:defiStats(G).done>=defiList(G).length,vf:fs.length>0,vm:ms.length>0};
 for(let d=0;d<MK.length;d++)on['c'+d]=ch.has(d);
-cdIds('t').forEach(i=>{on[i]=(G.cd||[]).includes(i);});
-return TITLES.map(([id,fr,en])=>({id,fr,en,on:!!on[id]}));
+return on;
 }
-function titleAct(G){const L=titlesOf(G),ta=G.coach&&G.coach.ta,t=L.find(x=>x.on&&x.id===ta)||L.find(x=>x.on);return t?t.id:null;}
+function distOf(G){const on=distOn(G);return DIST.map(([id,fr,en])=>({id,fr,en,on:!!on[id]}));}
+function dcOf(G){
+const a=G.aw&&G.aw.h||[],ch=new Set((G.honors||[]).filter(h=>h.rank===1).map(h=>h.s)),S={},o=Array.isArray(G.dc)&&G.dc.length===5?G.dc:[0,0,0,0,0];
+let mp=0,mc=0,mq=0,km=0;
+a.forEach(r=>{const e=S[r[0]]||(S[r[0]]={n:new Set(),q:0}),i=CM_SET.indexOf(r[1]);if(r[1]<=14)e.n.add(r[2]);if(r[1]>=1&&r[1]<=4)e.q++;if(i>=0)km|=1<<i;});
+Object.keys(S).forEach(k=>{const e=S[k];mp=Math.max(mp,e.n.size);if(ch.has(+k))mc=Math.max(mc,e.n.size);mq=Math.max(mq,e.q);});
+const tw=(G.pal&&G.pal.t||[]).filter(x=>x.r>=Math.log2(trnSize(x.k))).length;
+return[Math.max(o[0],mp),Math.max(o[1],mc),Math.max(o[2],mq),o[3]|km,Math.max(o[4],tw)];
+}
+function tVals(G,dc){const ch=(G.honors||[]).filter(h=>h.rank===1&&Number.isInteger(h.d)).length;return{cv:[dc[0],CV_N],sc:[dc[0],SC_N],qa:[dc[2],QA_N],gc:[dc[1],GC_N],cm:[popc(dc[3]),CM_N],dy:[ch,DY_N],mc:[dc[4],MC_N]};}
+function tMet(G,dc){const D=distOn(G),V=tVals(G,dc),o={el:D.c0,tc:D.tr,md:D.bd};Object.keys(V).forEach(k=>{o[k]=V[k][0]>=V[k][1];});return o;}
+const tCond=()=>({cv:[`${CV_N} joueurs de ton club récompensés la même saison.`,`${CV_N} players from your club honoured in the same season.`],sc:[`${SC_N} joueurs de ton club récompensés la même saison.`,`${SC_N} players from your club honoured in the same season.`],
+qa:[`${QA_N} des 4 meilleurs de poste dans ton club la même saison.`,`${QA_N} of the 4 position bests in your club in the same season.`],gc:[`Champion de ta division avec ${GC_N} joueurs récompensés la même saison.`,`Division champion with ${GC_N} honoured players in the same season.`],
+cm:[`${CM_N} types de récompenses différents sur 14.`,`${CM_N} different award types out of 14.`],dy:[`${DY_N} titres de champion de division.`,`${DY_N} division championships.`],mc:[`${MC_N} tournois gagnés.`,`${MC_N} tournaments won.`],
+tc:['Être champion et vainqueur des deux tournois la même saison.','Win the league and both tournaments in the same season.'],el:['Être champion de l’Élite.','Win the Elite division.'],md:['Terminer tous les défis.','Complete all challenges.']});
+function titlesOf(G){
+const cd=G.cd||[],V=tVals(G,dcOf(G)),C=tCond();
+return TITLES.map(([id,fr,en,src,tier,vis])=>{const on=cd.includes(id);return{id,fr,en,src,tier,on,vis:on||src==='j'&&vis==='e',cond:C[id]||['',''],pg:src==='j'&&vis==='e'&&V[id]?[Math.min(V[id][0],V[id][1]),V[id][1]]:null};});
+}
+function titleAct(G){const ta=G.coach&&G.coach.ta;return TITLES.some(t=>t[0]===ta)&&(G.cd||[]).includes(ta)?ta:null;}
 function titleSet(G,id){
 if(!G||!G.coach)return false;
 if(id==null||id===''){delete G.coach.ta;return true;}
-if(!titlesOf(G).some(x=>x.on&&x.id===id))return false;
+if(!TITLES.some(t=>t[0]===id)||!(G.cd||[]).includes(id))return false;
 G.coach.ta=id;return true;
 }
-function framesOf(G){const cd=G.cd||[];return Object.keys(FRAMES_T).map((id,i)=>({id,fr:FRAMES_T[id][0],en:FRAMES_T[id][1],n:i+3,on:cd.includes(id)}));}
+function titlesEnd(G){
+if(!G||G.userId==null||!G.teams||!G.teams[G.userId])return null;
+const dc=G.dc=dcOf(G),cd=G.cd||[],M=tMet(G,dc),ch=new Set((G.honors||[]).filter(h=>h.rank===1&&Number.isInteger(h.d)).map(h=>h.d)),nw=[];
+TITLES.forEach(t=>{if(t[3]==='j'&&M[t[0]]&&!cd.includes(t[0]))nw.push({k:'t',id:t[0],fr:t[1],en:t[2]});});
+DIV_NAME.forEach((n,d)=>{const id='v'+d;if(ch.has(d)&&!cd.includes(id))nw.push({k:'f',id,fr:FRAMES_T[id][0],en:FRAMES_T[id][1]});});
+if(nw.length){G.cd=cd.concat(nw.map(x=>x.id));nw.forEach(x=>cdNews(G,x.k==='t'?`Titre débloqué : ${x.fr}.`:`Cadre débloqué : ${x.fr}.`,x.k==='t'?`Title unlocked: ${x.en}.`:`Frame unlocked: ${x.en}.`));}
+return{nw};
+}
+const cdNews=(G,fr,en)=>{if(G.news){G.news.unshift({d:G.day+1,s:B(fr,en),sn:G.season,k:'divers'});G.news.length=Math.min(G.news.length,100);}};
+function framesOf(G){const cd=G.cd||[];return Object.keys(FRAMES_T).map((id,i)=>({id,fr:FRAMES_T[id][0],en:FRAMES_T[id][1],src:id[0]==='v'?'j':'c',n:i+3,on:cd.includes(id),vis:cd.includes(id)}));}
 function frameOf(G){
-const fa=G.coach&&G.coach.fa,cd=G.cd||[],i=Object.keys(FRAMES_T).indexOf(fa),ct=cdIds('t');
-if(i>=0&&cd.includes(fa))return i+3;
-const L=titlesOf(G),has=id=>L.some(x=>x.on&&x.id===id);
-return has('tr')||has('db')||has('c0')?2:L.some(x=>x.on&&!ct.includes(x.id))?1:0;
+const fa=G.coach&&G.coach.fa,i=Object.keys(FRAMES_T).indexOf(fa);
+return i>=0&&(G.cd||[]).includes(fa)?i+3:0;
 }
 function frameSet(G,id){
 if(!G||!G.coach)return false;
@@ -2856,23 +2921,32 @@ if(id==null||id===''){delete G.coach.fa;return true;}
 if(!Object.keys(FRAMES_T).includes(id)||!(G.cd||[]).includes(id))return false;
 G.coach.fa=id;return true;
 }
+function bgsOf(G){const cd=G.cd||[];return BGS_T.map(([id,fr,en])=>({id,fr,en,on:cd.includes(id)}));}
+function bgSet(G,id){
+if(!G||!G.coach)return false;
+if(id==null||id===''){delete G.coach.bg;return true;}
+if(!BGS_T.some(b=>b[0]===id)||!(G.cd||[]).includes(id))return false;
+G.coach.bg=id;return true;
+}
+function bgOf(G){const bg=G.coach&&G.coach.bg;return BGS_T.some(b=>b[0]===bg)&&(G.cd||[]).includes(bg)?bg:null;}
 function redeem(G,txt){
 if(!G||G.userId==null||!G.started)return{ok:false,why:'nogame'};
 const c=String(txt==null?'':txt).replace(/\s+/g,'').toUpperCase(),e=Object.prototype.hasOwnProperty.call(CODES,c)?CODES[c]:null;
-if(!e||e.k!=='t'&&e.k!=='f'&&e.k!=='a')return{ok:false,why:'unknown'};
-const cd=G.cd||[],all=e.k==='a',ids=(all?cdIds('tf'):[e.id]).filter(x=>!cd.includes(x));
+if(!e||e.k!=='t'&&e.k!=='f'&&e.k!=='b'&&e.k!=='a')return{ok:false,why:'unknown'};
+const cd=G.cd||[],all=e.k==='a',ids=(all?cdIds('tfb'):[e.id]).filter(x=>!cd.includes(x));
 if(!ids.length)return{ok:false,why:'used'};
-const n=all?['tous les cosmétiques','all cosmetics']:e.k==='t'?TITLES.find(t=>t[0]===e.id).slice(1):FRAMES_T[e.id];
+const n=all?['tous les cosmétiques','all cosmetics']:e.k==='t'?TITLES.find(t=>t[0]===e.id).slice(1,3):e.k==='f'?FRAMES_T[e.id]:BGS_T.find(b=>b[0]===e.id).slice(1);
 G.cd=cd.concat(ids);
-if(G.news){G.news.unshift({d:G.day+1,s:B(`Code accepté : ${n[0]}.`,`Code accepted: ${n[1]}.`),sn:G.season,k:'club'});G.news.length=Math.min(G.news.length,100);}
+cdNews(G,`Code accepté : ${n[0]}.`,`Code accepted: ${n[1]}.`);
 return{ok:true,r:all?{k:'a',n:ids.length,fr:n[0],en:n[1]}:{k:e.k,id:e.id,fr:n[0],en:n[1]}};
 }
 const AW_B=7000,okAwS=x=>typeof x==='string'&&x.length<=40,
 okAw=A=>A===undefined||isO(A)&&(A.l===undefined||isO(A.l)&&okI(A.l.s,1,9999)&&okI(A.l.d,0,DIV_NAME.length-1)&&Array.isArray(A.l.a)&&A.l.a.length<=15&&A.l.a.every(r=>Array.isArray(r)&&r.length===5&&okI(r[0],0,15)&&okAwS(r[1])&&okI(r[2],0,999)&&okI(r[3],0,3)&&okI(r[4],0,99999))
 &&Array.isArray(A.l.t)&&A.l.t.length<=8&&A.l.t.every(r=>Array.isArray(r)&&r.length===4&&okAwS(r[0])&&okI(r[1],0,999)&&okI(r[2],0,3)&&okI(r[3],0,99999)))
 &&(A.h===undefined||Array.isArray(A.h)&&A.h.length<=AW_H&&A.h.every(r=>Array.isArray(r)&&r.length===4&&okI(r[0],1,9999)&&okI(r[1],0,15)&&okAwS(r[2])&&okI(r[3],0,99999)))&&Object.keys(A).every(k=>k==='l'||k==='h')&&JSON.stringify(A).length<=AW_B,
-okCd=C=>C===undefined||Array.isArray(C)&&C.length<=40&&new Set(C).size===C.length&&C.every(x=>okI(x,0,99)||typeof x==='string'&&x.length===2),
-okL2=g=>okAw(g.aw)&&okCd(g.cd)&&(!isO(g.coach)||(g.coach.ta===undefined||TITLES.some(t=>t[0]===g.coach.ta))&&(g.coach.fa===undefined||Object.keys(FRAMES_T).includes(g.coach.fa)));
+okDc=D=>D===undefined||Array.isArray(D)&&D.length===5&&okI(D[0],0,99)&&okI(D[1],0,99)&&okI(D[2],0,4)&&okI(D[3],0,1048576)&&okI(D[4],0,9999),
+okCd=C=>C===undefined||Array.isArray(C)&&C.length<=64&&new Set(C).size===C.length&&C.every(x=>okI(x,0,99)||typeof x==='string'&&x.length===2),
+okL2=g=>okAw(g.aw)&&okCd(g.cd)&&okDc(g.dc)&&(!isO(g.coach)||(g.coach.ta===undefined||typeof g.coach.ta==='string'&&g.coach.ta.length===2)&&(g.coach.fa===undefined||Object.keys(FRAMES_T).includes(g.coach.fa))&&(g.coach.bg===undefined||BGS_T.some(f=>f[0]===g.coach.bg)));
 const LOG_V=1,LOG_MAX=131072,LOG_ERR_MAX=20;
 function logMatch(M,G){
 if(!M||!M.over)return null;
@@ -2938,6 +3012,7 @@ function altSync(){const r=document.documentElement,o=document.getElementById('a
 if(!PREFS.glass){if(f)f.remove();}else if(!f){const e=document.createElement('div');e.id='altreef';e.setAttribute('aria-hidden','true');document.body.prepend(e);}
 if(!altAnimOn()){if(o)o.remove();return;}
 if(o)return;const d=document.createElement('div');d.id='altbg';d.setAttribute('aria-hidden','true');d.innerHTML=ALTB.map(([x,s,t,dx,w])=>`<i style="--x:${x}%;--s:${s}px;--d:${t}s;--dx:${dx}px;--w:${w}s"></i>`).join('');document.body.appendChild(d);}
+function bgSync(){const r=document.documentElement,b=G&&G.coach&&UI.scr==='game'?bgOf(G):null;if(b)r.setAttribute('data-bg',b);else r.removeAttribute('data-bg');}
 try{RMQ.addEventListener('change',()=>{altSync();if(G)render();});}catch(e){}
 const ICOS='<svg id="i-sprite" style="display:none" aria-hidden="true"><symbol id="i-m" viewBox="0 0 16 16"><circle cx="6.5" cy="9.5" r="3.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.2 6.8L13.6 2.4M9.6 2.4h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="i-f" viewBox="0 0 16 16"><circle cx="8" cy="5.5" r="3.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 9.2V14.5M5.4 12H10.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol><symbol id="i-uniq" viewBox="0 0 16 16"><path d="M8 1.5L13.5 8 8 14.5 2.5 8z" fill="currentColor"/></symbol><symbol id="i-up" viewBox="0 0 16 16"><path d="M8 14V2.5M3.5 7L8 2.5 12.5 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="i-dn" viewBox="0 0 16 16"><path d="M8 2V13.5M3.5 9L8 13.5 12.5 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>';
 function applyPrefs(){LANG=PREFS.lang;const r=document.documentElement;if(!document.getElementById('i-sprite'))document.body.insertAdjacentHTML('afterbegin',ICOS);r.lang=LANG;r.setAttribute('data-theme','dark');altSync();}
@@ -3059,12 +3134,12 @@ try{['pointerdown','pointerup','keydown','touchend'].forEach(e=>window.addEventL
 document.addEventListener('visibilitychange',()=>{try{const c=SND.c;if(!c)return;sndP(document.hidden?c.suspend():c.resume());}catch(e){}});}catch(e){}
 const DN=()=>DIV_NAME.slice(0,DIV_SIZE.length).map((n,i)=>i?n:L('Élite','Elite'));
 const DNS=()=>DN().map(n=>n.replace(/^Semi-Pro /,'SP'));
-const VERSION='v0.27';
+const VERSION='v0.28';
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 const TITLE_NEWS=[
 {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-{v:VERSION,t:['Nouveautés v0.27','What\'s new in v0.27'],b:['Profil d’entraîneur modifiable (nom, portrait, cadre, titre), nouveaux cadres et titres à débloquer par code, Distinctions en liste.','Editable coach profile (name, portrait, frame, title), new frames and titles unlocked by code, Distinctions shown as a short list.']}
+{v:VERSION,t:['Nouveautés v0.28','What\'s new in v0.28'],b:['Les Distinctions débloquent des Titres, à choisir dans le profil de l’entraîneur ; remporter une division débloque son cadre de portrait ; 5 fonds se débloquent par code (Options › Affichage). Le catalogue est dans Entraîneur › Titres.','Distinctions unlock Titles, which you pick in the coach profile; winning a division unlocks its portrait frame; 5 backgrounds are unlocked by code (Options › Display). The catalogue is in Coach › Titles.']}
 ];
 const TUTO={
 squad:[['Ton effectif','Your squad'],['Tes joueurs et leurs stats. Ouvre une fiche pour voir le radar et l’historique, et dépenser les points de talent gagnés à chaque niveau.','Your players and their stats. Open a sheet to see the radar and history, and to spend the talent points earned at each level.']],
@@ -3582,6 +3657,7 @@ if(sh)return {who,tabs:tabsH,main:info+body};
 return `<aside class="panel ppanel stack tight sticky" id="ppanel">${head}${body}</aside>`;
 }
 function render(){
+bgSync();
 sndLive();
 if(UI.fs&&(UI.scr!=='game'||!G||(UI.fs.k==='match'?(!mpage()||!UI.live||UI.live.done):UI.tab!=='lineup')))closeFS(true);
 if(UI.scr==='flow'&&UI.step===0){app.innerHTML=pathStepHTML();return;}
@@ -3754,7 +3830,7 @@ nm=id=>{const t=TITLES.find(x=>x[0]===id),f=FRAMES_T[id];return t?L(t[1],t[2]):f
 key=id=>Object.keys(CODES).find(k=>CODES[k].id===id)||'',
 tx=m?m.w==='ok'?L(`Code accepté : ${m.fr}.`,`Code accepted: ${m.en}.`):m.w==='used'?L('Code déjà utilisé dans cette partie.','Code already used in this game.'):L('Code inconnu.','Unknown code.'):'';
 return `<div class="stack"><h2>Codes</h2>
-  <section class="panel"><form class="optrow" data-f="code" autocomplete="off"><div><b>${L('Saisir un code','Enter a code')}</b><span class="hint">${live?L('Titres et cadres d’entraîneur, sans effet sur le jeu.','Coach titles and frames, no effect on the game.'):L('Démarre une partie pour saisir un code.','Start a game to enter a code.')}</span></div>
+  <section class="panel"><form class="optrow" data-f="code" autocomplete="off"><div><b>${L('Saisir un code','Enter a code')}</b><span class="hint">${live?L('Titres, cadres et fonds, sans effet sur le jeu.','Titles, frames and backgrounds, no effect on the game.'):L('Démarre une partie pour saisir un code.','Start a game to enter a code.')}</span></div>
   <div class="row" style="flex:1 1 220px;flex-wrap:nowrap"><input type="text" id="codein" aria-label="${L('Code','Code')}" maxlength="40" autocapitalize="characters" spellcheck="false"${m&&m.w!=='ok'?' aria-invalid="true"':''}${live?'':' disabled'}><button type="button" class="btn" data-a="redeem"${live?'':' disabled'}>${L('Valider','Submit')}</button></div></form>
   <p class="hint" role="status" aria-live="polite">${esc(tx)}</p></section>
   <section class="panel"><h3>${L('Codes utilisés','Codes used')}</h3>${cd.length?cd.map(id=>`<div class="frow"><span class="mono">${esc(key(id))}</span><span>${esc(nm(id))}</span></div>`).join(''):`<p class="hint">${L('Aucun code utilisé dans cette partie.','No code used in this game.')}</p>`}</section></div>`;
@@ -4322,23 +4398,30 @@ return `<div class="stack"><h2>${L('Palmarès','Honours')}</h2><div class="hall"
 }
 const PENCIL='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M13 7l4 4" stroke="currentColor" stroke-width="2"/></svg>';
 const cpi=()=>{const v=G.coach.portrait;return Number.isInteger(v)&&v>=0&&v<8?v:0;};
-const codeTitles=()=>titlesOf(G).filter(x=>x.on&&cdIds('t').includes(x.id)),codeFrames=()=>framesOf(G).filter(x=>x.on),
-titleCur=()=>codeTitles().find(x=>x.id===G.coach.ta)||null,frameCur=()=>codeFrames().find(x=>x.id===G.coach.fa)||null;
-const ttlHTML=()=>{const t=titleCur();return t?`<div class="ctt ttl-${t.id}">${esc(L(t.fr,t.en))}</div>`:'';};
-function coachPortraitHTML(){const f=frameCur();return `<div class="cport${f?' fr'+f.n:''}">${pFrame(COACHF[cpi()],U(),L('Portrait de l’entraîneur','Coach portrait'),3)}</div>`;}
+const ownTitles=()=>titlesOf(G).filter(x=>x.on),ownFrames=()=>framesOf(G).filter(x=>x.on),
+titleCur=()=>ownTitles().find(x=>x.id===titleAct(G))||null,frameCur=()=>ownFrames().find(x=>x.n===frameOf(G))||null;
+const TIER_N={b:['Bronze','Bronze'],a:['Argent','Silver'],g:['Or','Gold'],d:['Diamant','Diamond']},tierN=t=>P(TIER_N[t]);
+const ttlHTML=()=>{const t=titleCur();return t?`<div class="ctt ${t.src==='j'?'tt-'+t.tier:'ttl-'+t.id}">${esc(L(t.fr,t.en))}${t.src==='j'?`<i class="ttr">${tierN(t.tier)}</i>`:''}</div>`:'';};
+const dfSvg=d=>{
+const t=MK[d][1],c=MKC[t],ln='stroke="currentColor" stroke-opacity=".72" stroke-width="1"',w=(a,o)=>`<path d="${a}" fill="#fff" fill-opacity="${o}"/>`;
+if(!d)return `<svg class="dfs" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 4.2L15 10.2 8 16.2 1 10.2z" fill="${c}" fill-opacity=".22" stroke="${c}" stroke-width="1.4"/><path d="M8 6.8L12 10.2 8 13.6 4 10.2z" fill="${c}"/>${w('M8 8.4l.9 1.8-.9 1.8-.9-1.8z',.8)}<path class="dfc" d="M3.6 5V1.4l2.2 1.6L8 .5l2.2 2.5 2.2-1.6V5z" fill="${c}" ${ln}/></svg>`;
+const sh=d>3?'t':'s',lv=t==='g'?3:t==='a'?2:1,tip=sh==='t'?2:1.3;
+return `<svg class="dfs" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${MKP[sh]}" fill="${c}" ${ln}/>${lv>1?`<path d="${MKP[sh]}" transform="translate(8 9.2) scale(.55) translate(-8 -9.2)" fill="none" ${ln}/><path d="M2.4 11.5h1.6M12 11.5h1.6" ${ln}/>`:''}${lv>2?`${w('M8 5.4l1.4 3L8 10.8 6.6 8.4z',.55)}<circle cx="8" cy="${tip}" r=".9" fill="#fff"/>`:''}</svg>`;
+};
+function coachPortraitHTML(){const f=frameCur(),dv=f&&f.n>=8,d=dv?f.n-8:0;return `<div class="cport${f?' fr'+f.n:''}${dv?' dfr':''}"${dv?` style="--mc:${MKC[MK[d][1]]}"`:''}>${pFrame(COACHF[cpi()],U(),L('Portrait de l’entraîneur','Coach portrait'),3)}${dv?dfSvg(d):''}</div>`;}
 const coachPickHTML=()=>`<div class="cpick" role="radiogroup" aria-label="${L('Portrait de l’entraîneur','Coach portrait')}">${COACHF.map((f,i)=>`<button type="button" class="cpb" role="radio" aria-checked="${i===cpi()}" data-a="cport" data-v="${i}" aria-label="${L('Portrait','Portrait')} ${i+1}">${pFrame(f,U(),'',2)}</button>`).join('')}</div>`;
 const cedSeg=(a,lab,items,cur)=>`<div class="ced"><b class="lbl" id="ced-${a}">${lab}</b><div class="seg" role="group" aria-labelledby="ced-${a}">${[['',L('Aucun','None')]].concat(items).map(([v,n])=>`<button type="button" class="chip" data-a="${a}" data-v="${v}" aria-pressed="${cur===v}">${esc(n)}</button>`).join('')}</div></div>`;
 function coachEditHTML(){
-const F=codeFrames(),T=codeTitles(),fc=frameCur(),tc=titleCur();
+const F=ownFrames(),T=ownTitles(),fc=frameCur(),tc=titleCur();
 return `<div class="cedit stack" id="cedit" role="group" aria-label="${L('Modifier le profil','Edit profile')}"><label class="f">${L('Nom de l’entraîneur','Coach name')}<input type="text" id="coach-name" data-c="coachname" maxlength="${COACH_MAX}" value="${esc(G.coach.name)}" placeholder="${L('Entraîneur','Coach')}" autocomplete="off" spellcheck="false"></label>
   <div class="ced"><b class="lbl">${L('Portrait','Portrait')}</b>${coachPickHTML()}</div>${F.length?cedSeg('fset',L('Cadre','Frame'),F.map(x=>[x.id,L(x.fr,x.en)]),fc?fc.id:''):''}${T.length?cedSeg('tset',L('Titre','Title'),T.map(x=>[x.id,L(x.fr,x.en)]),tc?tc.id:''):''}
   <div class="row"><button type="button" class="btn small" data-a="cedit">${L('Terminé','Done')}</button></div></div>`;
 }
-function distOf(){
-const H=G.honors||[],W=palWins(),ss=k=>W.filter(x=>x.k===k).map(x=>x.s),f=ss('f'),m=ss('m'),dbl=m.filter(s=>f.includes(s)),out=[],ct=cdIds('t'),
+function distList(){
+const H=G.honors||[],W=palWins(),ss=k=>W.filter(x=>x.k===k).map(x=>x.s),f=ss('f'),m=ss('m'),dbl=m.filter(s=>f.includes(s)),out=[],
 S={tr:H.filter(h=>h.rank===1&&dbl.includes(h.s)).map(h=>h.s),db:dbl,vf:f,vm:m};
-titlesOf(G).forEach(t=>{
-if(!t.on||ct.includes(t.id))return;
+distOf(G).forEach(t=>{
+if(!t.on)return;
 const s=/^c\d$/.test(t.id)?H.filter(h=>h.rank===1&&h.d===+t.id[1]).map(h=>h.s):S[t.id]||[];
 out.push({k:t.id,nm:L(t.fr,t.en),s,n:s.length||1});
 });
@@ -4346,12 +4429,22 @@ const by={};((G.aw&&G.aw.h)||[]).forEach(r=>{(by[r[1]]=by[r[1]]||[]).push(r);});
 Object.keys(by).map(Number).sort((a,b)=>a-b).forEach(k=>out.push({k:'a'+k,nm:awN(k),a:1,s:[],n:by[k].length}));
 return out;
 }
+function titresSect(){
+const T=titlesOf(G).filter(x=>x.vis),F=framesOf(G).filter(x=>x.vis),J=T.filter(x=>x.src==='j'),C=T.filter(x=>x.src==='c'),n=T.length+F.length,open=!!UI.ttl,
+row=(nm,cls,tag,pg,sub)=>`<div class="tcr${cls?' '+cls:''}"><span class="tcn">${nm}</span>${tag?`<b class="tcp">${tag}</b>`:''}${pg?`<span class="mono tcg">${pg}</span>`:''}${sub?`<small>${esc(sub)}</small>`:''}</div>`,
+grp=(h,a)=>a.length?`<h4>${h}</h4>${a.join('')}`:'',
+jr=J.map(t=>{const nm=`<span class="tn tt-${t.tier}">${esc(L(t.fr,t.en))}</span>`,c=L(t.cond[0],t.cond[1]);return t.on?row(nm,'',tierN(t.tier),'',L('Obtenu : ','Unlocked: ')+c):row(nm,'off',tierN(t.tier),t.pg?t.pg[0]+' / '+t.pg[1]:'',c);}),
+cr=C.map(t=>row(`<span class="tn ttl-${t.id}">${esc(L(t.fr,t.en))}</span>`,'',L('Code','Code'),'','')),
+fr=F.map(f=>row(esc(L(f.fr,f.en)),'',f.src==='j'?L('Division','Division'):L('Code','Code'),'',''));
+return `<section class="panel"><div class="row between"><h3>${L('Titres','Titles')}</h3><button type="button" class="btn small" data-a="ttl" aria-expanded="${open}" aria-controls="ttcat">${open?L('Réduire','Show less'):`${L('Afficher le catalogue','Show catalogue')} (${n})`}</button></div>
+  ${open?`<div id="ttcat" class="ttcat">${n?grp(L('Titres de jeu','Game titles'),jr)+grp(L('Titres à code','Code titles'),cr)+grp(L('Cadres','Frames'),fr):`<p class="hint">${L('Aucun titre pour le moment.','No title yet.')}</p>`}</div>`:''}</section>`;
+}
 function distSect(){
-const D=distOf();
+const D=distList();
 return `<section class="panel">${blockHd('Distinctions','hall')}<div style="margin-top:8px">${D.length?D.map(d=>`<button type="button" class="frow dst" data-a="goto" data-t="hall"><span>${esc(d.nm)}</span><b class="mono">×${d.n}</b></button>`).join(''):`<p class="hint">${L('Aucune Distinction pour le moment.','No Distinction yet.')}</p>`}</div></section>`;
 }
 function distHallHTML(){
-const D=distOf().filter(d=>!d.a);
+const D=distList().filter(d=>!d.a);
 return D.length?`<section class="panel"><h3>Distinctions</h3><div style="margin-top:8px">${D.map(d=>`<div class="awr"><span>${esc(d.nm)}</span><span>${d.s.length?`${L('Saison','Season')} ${d.s.join(', ')} · `:''}${esc(coachName())}</span><b class="mono">×${d.n}</b></div>`).join('')}</div></section>`:'';
 }
 function coachHTML(){
@@ -4369,7 +4462,7 @@ return `<div class="stack"><h2>${L(`Profil d'entraîneur`,'Coach profile')}</h2>
   <p class="hint" style="margin-top:8px">${best?L(`Meilleure composition (au moins 3 matchs) : ${best.f}, ${nN(best.s).toLowerCase()}, pressing ${pN(best.pr).toLowerCase()} — ${Math.round(best.w/best.p*100)} % de victoires.`,`Best set-up (at least 3 matches): ${best.f}, ${nN(best.s).toLowerCase()}, ${pN(best.pr).toLowerCase()} pressing — ${Math.round(best.w/best.p*100)}% wins.`):L('Joue au moins 3 matchs avec une même composition pour désigner la meilleure.','Play at least 3 matches with the same set-up to name the best one.')}</p>`:`<p class="hint" style="margin-top:8px">${L('Aucun match joué pour le moment.','No match played yet.')}</p>`}</section>
   <section class="panel"><h3>${L('Défis','Challenges')}</h3><div class="kpis k5" style="margin-top:12px">${kpi(S.done+'/'+DL.length,L('Défis terminés','Challenges done'))}${kpi(S.sm,L('Meilleure série','Best streak'))}${kpi(fmt(S.g),L('Gils gagnés','Gil earned'))}</div>
   <div class="cups" style="margin-top:12px">${[0,1,2,3].map(l=>{const a=DL.filter(d=>d.l===l),n=a.filter(d=>d.done).length,on=n===a.length;return `<div class="cupc ${on?'':'lock'}">${medal(on)}<b>${P(DEFI_L[l])}</b><span>${n}/${a.length}</span></div>`;}).join('')}</div></section>
-  ${distSect()}
+  ${distSect()}${titresSect()}
   <section class="panel"><h3>Badges</h3><div class="badges" style="margin-top:12px">${bd}</div></section></div>`;
 }
 function setCrest(u,k,f,v){
@@ -4456,7 +4549,7 @@ const val=sum(u.players.map(valueOf)),wag=sum(u.players.map(p=>p.wage)),age=avg(
 return `<div class="stack"><h2>${L('Fiche du club','Club sheet')}</h2>
   <section class="panel stack"><div class="row between"><div class="who"><span class="bst">${badge(u,true)}${crestMarks()}</span><div><div style="font:600 17px var(--font-display)">${esc(u.name)}</div><span class="muted">${L('Entraîneur','Coach')} : ${esc(coachName())} · ${L('Saison','Season')} ${G.season}</span></div></div>
   </div>
-  <div class="kpis">${kpi(titles,L('Titres de champion','League titles'))}${kpi(podiums,L('Podiums','Podiums'))}${kpi(bestRank?rankTxt(bestRank):'–',L('Meilleur classement','Best finish'))}${kpi(H.length,L('Saisons terminées','Seasons completed'))}${kpi(fmt(G.cash),L('Budget (gils)','Budget (gil)'))}${kpi(fmt(G.fans),L('Public moyen','Average crowd'))}${(r=>kpi(r.r,L('Réputation','Reputation')+' · '+L(REP_LAB[r.lab][0],REP_LAB[r.lab][1])))(repOf(G))}${kpi(fmt(val),L('Valeur de l’effectif','Squad value'))}${kpi(fmt(wag),L('Salaires / journée','Wages / matchday'))}${kpi(age.toFixed(1),L('Âge moyen','Average age'))}</div></section>
+  <div class="kpis">${kpi(titles,L('Championnats gagnés','Championships won'))}${kpi(podiums,L('Podiums','Podiums'))}${kpi(bestRank?rankTxt(bestRank):'–',L('Meilleur classement','Best finish'))}${kpi(H.length,L('Saisons terminées','Seasons completed'))}${kpi(fmt(G.cash),L('Budget (gils)','Budget (gil)'))}${kpi(fmt(G.fans),L('Public moyen','Average crowd'))}${(r=>kpi(r.r,L('Réputation','Reputation')+' · '+L(REP_LAB[r.lab][0],REP_LAB[r.lab][1])))(repOf(G))}${kpi(fmt(val),L('Valeur de l’effectif','Squad value'))}${kpi(fmt(wag),L('Salaires / journée','Wages / matchday'))}${kpi(age.toFixed(1),L('Âge moyen','Average age'))}</div></section>
   <section class="panel"><div class="row between"><p>${L('Palmarès','Honours')} : <b>${titles}</b> ${titles>1?L('championnats gagnés','leagues won'):L('championnat gagné','league won')}${markersOf(G).filter(m=>m.d<DNS().length).map(m=>` · ${DNS()[m.d]} ${m.n}`).join('')}</p>${goLink('hall',L('Voir le Palmarès','See the Honours'))}</div></section>
   <div class="grid2">${leg('cg',L('Légendes · buts en carrière','Legends · career goals'))}${leg('ca',L('Légendes · passes en carrière','Legends · career assists'))}${leg('capps',L('Légendes · matchs en carrière','Legends · career appearances'))}</div>
   ${clubSeasonHTML()}
@@ -4474,6 +4567,7 @@ return `<div class="stack"><h2>${L('Paramètres','Settings')}</h2>
   <div class="optrow"><div><b>${L('Tutoriels','Tutorials')}</b><span class="hint">${L('Un pop-up à la première ouverture de chaque page.','A pop-up the first time you open each page.')}</span></div><div class="stack tight">${seg(yn,PREFS.tuto.off?'off':'on','tpref')}<button class="btn" data-a="treset">${L('Réafficher','Show again')}</button></div></div>
   <div class="optrow"><div><b>${T('s.welcome')}</b><span class="hint">${T('s.welcome.h')}</span></div>${seg(yn,PREFS.hideWelcome?'off':'on','wpref')}</div>`)}
   ${og('aff','Affichage','Display',`<div class="optrow"><div><b>${L('Fond animé','Animated background')}</b><span class="hint">${rm?L('Coupé : ton appareil demande moins d’animations.','Off: your device asks for reduced motion.'):!PREFS.glass?L('Demande les effets glass.','Needs the glass effects.'):L('Des bulles montent derrière les blocs.','Bubbles rise behind the panels.')}</span></div>${seg(yn,an&&PREFS.altAnim?'on':'off','altanim').replace(/<button /g,an?'<button ':'<button disabled ')}</div>
+  <div class="optrow"><div><b>${L('Fond','Background')}</b><span class="hint">${!live?L('Lance une partie pour choisir un fond débloqué.','Start a game to pick an unlocked background.'):!PREFS.glass?L('Demande les effets glass.','Needs the glass effects.'):!(an&&PREFS.altAnim)?L('Le fond choisi s’applique à la teinte du récif ; les bulles demandent Fond animé.','The chosen background tints the reef; the bubbles need Animated background.'):L('Les fonds se débloquent avec des codes (Options › Codes).','Backgrounds are unlocked with codes (Options › Codes).')}</span></div><select data-c="bgsel" aria-label="${L('Fond','Background')}"${live?'':' disabled'}><option value="">${L('Récif','Reef')}</option>${live?bgsOf(G).filter(b=>b.on).map(b=>`<option value="${b.id}"${bgOf(G)===b.id?' selected':''}>${esc(L(b.fr,b.en))}</option>`).join(''):''}</select></div>
   <div class="optrow"><div><b>${L('Effets glass','Glass effects')}</b><span class="hint">${L('Blocs en verre, ciel et récif. Non : interface sobre.','Glass panels, sky and reef. No: plain interface.')}</span></div>${seg(yn,PREFS.glass?'on':'off','glass')}</div>`)}
   ${og('son','Son','Sound',sndRowsHTML())}
   ${og('data','Sauvegarde et journal','Save and log',`<div class="optrow"><div><b>${T('x.title')}</b><span class="hint">${T('x.hint')}${live?'':' '+T('x.noexp')}</span></div><div class="stack tight xbtns"><div class="row"><button class="btn" data-a="exp"${live?'':' disabled'}>${T('x.exp')}</button><button class="btn" data-a="copysave"${live?'':' disabled'}>${T('x.copy')}</button></div><div class="row"><button class="btn" data-a="imp">${T('x.imp')}</button><button class="btn" data-a="pastesave" aria-expanded="${UI.xpaste}">${T('x.paste')}</button></div><input type="file" id="impfile" data-c="impfile" accept=".json,application/json" hidden></div></div>
@@ -4504,7 +4598,7 @@ body=`<div class="grid2">${sec('Saison','Season',li([L(`${DIV_SIZE.length} divis
     ${sec('Fatigue et blessures','Fatigue and injuries',li([L(`Porter le ballon, passer et tirer coûtent des HP ; un joueur qui ne participe pas à l’action en récupère un peu. Sous ${HP_LOW} HP, PS et TI sont divisés par 2.`,`Carrying, passing and shooting cost HP; a player not involved in the action recovers a little. Below ${HP_LOW} HP, PS and TI are halved.`),L('Après chaque journée, tout le monde récupère une partie de ses HP.','After every matchday everyone recovers part of their HP.'),L('Après chaque match, le risque de blessure augmente quand les HP sont bas ; absence de 1 à 3 journées ÷ k.','After each match, injury risk rises when HP is low; out for 1 to 3 matchdays ÷ k.')]))}
     ${sec('Navigation et alertes','Navigation and alerts',li([L('Cinq sections : Tableau de bord, Club, Effectif, Jouer, Options. Sur mobile, la barre du bas les garde sous le pouce, avec Jouer au centre en ambre ; le réglage Options › Paramètres › Navigation mobile la place en haut.','Five sections: Dashboard, Club, Squad, Play, Options. On mobile the bottom bar keeps them under your thumb, with Play in the middle in amber; Options › Settings › Mobile navigation moves it to the top.'),L(`Club : ${sn('club')}. Effectif : ${sn('effectif')}. Jouer : ${sn('jouer')}.`,`Club: ${sn('club')}. Squad: ${sn('effectif')}. Play: ${sn('jouer')}.`),L('L’onglet ▶ Jouer est le seul point d’entrée pour jouer : il devient « Prochain match » hors de la section, « Reprendre le match » pendant un direct, « Bilan du match » une fois le match fini et « Fin de saison » quand la dernière journée est jouée (en jaune plein : une action est attendue).','The ▶ Play tab is the single way in to play: it reads “Next match” from other sections, “Resume the match” during a live match, “Match report” once it is over and “Season over” after the last matchday (solid yellow: an action is expected).'),L(`La cloche en haut à droite liste ce qui reste à faire : titulaire blessé ou à ${pp(HP_TIRED)} de HP ou moins, budget négatif, points de talent à répartir, spécialité d’entraîneur à choisir. Rouge : un titulaire blessé ; ambre : le reste. Le chiffre donne le nombre de lignes.`,`The bell at the top right lists what is left to do: an injured starter or one at ${pp(HP_TIRED)} HP or less, a negative budget, talent points to spend, a coach specialty to pick. Red: an injured starter; amber: the rest. The number is the count of lines.`),L('Tableau de bord : « À faire avant le match » liste ces mêmes alertes, chacune avec son lien ; la fiche de l’adversaire donne son rang, sa forme, sa force par ligne et ses joueurs marquants.','Dashboard: “To do before the match” lists the same alerts, each with its link; the opponent card gives its rank, form, strength by line and standout players.'),L('Club › Journal : les 100 derniers événements, groupés par saison et journée ; les puces filtrent par catégorie (⚠ alertes, match, effectif, marché, club, finances).','Club › Journal: the last 100 events, grouped by season and matchday; the chips filter by category (⚠ alerts, match, squad, market, club, finances).'),L('Options › Paramètres › Simplifiée : l’ancienne interface, sans fond animé ni verre, appelée à disparaître. Par défaut, le fond à bulles est l’interface principale ; « Fond animé » (bulles) se coupe à part et s’arrête si ton appareil demande moins d’animations.','Options › Settings › Simple: the former interface, with no animated background or glass, due to be removed. By default the bubble background is the main interface; “Animated background” (bubbles) switches off separately and stops if your device asks for reduced motion.')]))}
     ${sec('Difficulté','Difficulty',li([L(`Trois niveaux, choisis à la création de la partie et définitifs : Facile, Normal, Difficile. Ils décalent d’un cran le niveau des clubs IA (${DIF_LV[0]} / 0 / +${DIF_LV[2]}), les recettes (sponsor et primes de victoire : ×${dnf(DIF_REV[0])} / ×1 / ×${dnf(DIF_REV[2])}) et les offres aux clubs (prix ×${dnf(OFR_MULT+DIF_OFR[0])} / ×${dnf(OFR_MULT)} / ×${dnf(OFR_MULT+DIF_OFR[2])}, ${OFR_PROT+DIF_PROT[0]} / ${OFR_PROT} / ${OFR_PROT+DIF_PROT[2]} joueurs protégés par club).`,`Three levels, chosen when the game is created and final: Easy, Normal, Hard. They shift by one step the AI clubs’ level (${DIF_LV[0]} / 0 / +${DIF_LV[2]}), income (sponsor and win bonuses: ×${dnf(DIF_REV[0])} / ×1 / ×${dnf(DIF_REV[2])}) and club offers (price ×${dnf(OFR_MULT+DIF_OFR[0])} / ×${dnf(OFR_MULT)} / ×${dnf(OFR_MULT+DIF_OFR[2])}, ${OFR_PROT+DIF_PROT[0]} / ${OFR_PROT} / ${OFR_PROT+DIF_PROT[2]} players protected per club).`)]))}
-    ${sec('Enjeux du propriétaire','Owner’s stakes',li([L(`Chaque saison, le propriétaire fixe deux objectifs : finir dans les T premiers (cible tirée de la force du club et de ses trois dernières saisons dans la division) et garder la trésorerie de la saison au-dessus d’un plancher, achats compris.`,`Each season the owner sets two goals: finish in the top T (a target drawn from the club’s strength and its last three seasons in the division) and keep the season’s cash above a floor, signings included.`),L(`Sa confiance (0 à 100, ${OWN_START} au départ) bouge au bilan de fin de saison : objectif dépassé, atteint ou manqué, budget, montée, titre, relégation. Solide dès ${OWN_OK}, Fragile de ${OWN_WARN} à ${OWN_OK-1}, Menacée en dessous.`,`Their confidence (0 to 100, starting at ${OWN_START}) moves at the end-of-season review: goal beaten, met or missed, budget, promotion, title, relegation. Solid from ${OWN_OK}, Fragile from ${OWN_WARN} to ${OWN_OK-1}, At risk below.`),L(`Sous ${OWN_SURSIS} en fin de saison, tu obtiens un sursis d’une saison : seul l’objectif de classement compte. Objectif manqué ou relégation pendant le sursis : tu es renvoyé et la partie s’arrête sur ton bilan de carrière (export possible).`,`Below ${OWN_SURSIS} at season end, you get a one-season probation: only the table goal counts. Miss it, or get relegated, and you are sacked: the game stops on your career review (export still possible).`),L('La réputation du club (0 à 100) vient de sa division, de ses derniers classements et de ses titres. Au-dessus de la normale, elle amplifie les gains de public après une victoire et amoindrit les pertes après une défaite ; en dessous, l’inverse.','Club reputation (0 to 100) comes from its division, its recent finishes and its titles. Above the norm, it boosts crowd gains after a win and softens losses after a defeat; below it, the reverse.')]))}
+    ${sec('Enjeux du propriétaire','Owner’s stakes',li([L(`Chaque saison, le propriétaire fixe deux objectifs : finir dans les T premiers (cible tirée de la force du club et de ses trois dernières saisons dans la division) et garder la trésorerie de la saison au-dessus d’un plancher, achats compris.`,`Each season the owner sets two goals: finish in the top T (a target drawn from the club’s strength and its last three seasons in the division) and keep the season’s cash above a floor, signings included.`),L(`Sa confiance (0 à 100, ${OWN_START} au départ) bouge au bilan de fin de saison : objectif dépassé, atteint ou manqué, budget, montée, championnat, relégation. Solide dès ${OWN_OK}, Fragile de ${OWN_WARN} à ${OWN_OK-1}, Menacée en dessous.`,`Their confidence (0 to 100, starting at ${OWN_START}) moves at the end-of-season review: goal beaten, met or missed, budget, promotion, championship, relegation. Solid from ${OWN_OK}, Fragile from ${OWN_WARN} to ${OWN_OK-1}, At risk below.`),L(`Sous ${OWN_SURSIS} en fin de saison, tu obtiens un sursis d’une saison : seul l’objectif de classement compte. Objectif manqué ou relégation pendant le sursis : tu es renvoyé et la partie s’arrête sur ton bilan de carrière (export possible).`,`Below ${OWN_SURSIS} at season end, you get a one-season probation: only the table goal counts. Miss it, or get relegated, and you are sacked: the game stops on your career review (export still possible).`),L('La réputation du club (0 à 100) vient de sa division, de ses derniers classements et de ses championnats gagnés. Au-dessus de la normale, elle amplifie les gains de public après une victoire et amoindrit les pertes après une défaite ; en dessous, l’inverse.','Club reputation (0 to 100) comes from its division, its recent finishes and its championships won. Above the norm, it boosts crowd gains after a win and softens losses after a defeat; below it, the reverse.')]))}
     ${sec('Sauvegarde','Save',li([L('La partie se sauvegarde toute seule dans ce navigateur.','The game saves itself in this browser.'),L('Options › Paramètres : Exporter télécharge un fichier, Copier la sauvegarde copie son texte. Importer lit un fichier, Coller une sauvegarde importe un texte copié. Si le téléchargement est bloqué, utilise Copier et Coller.','Options › Settings: Export downloads a file, Copy save copies its text. Import reads a file, Paste a save imports copied text. If downloads are blocked, use Copy and Paste.')]))}`;
 }else if(t==='stats'){
 const ex=YOSHI;
@@ -4569,7 +4663,8 @@ L(`Les gils d’un défi sont versés une seule fois, à la première victoire, 
     ${sec('Distinctions','Distinctions',li([L('Elles se gagnent en jouant, sans effet de jeu : coupes or, argent et bronze (vainqueur, finaliste, demi-finaliste), marqueurs de division à côté du blason et une médaille par niveau de défi terminé.','They are earned by playing, with no effect on the game: gold, silver and bronze cups (winner, runner-up, semi-finalist), division markers next to the crest and a medal per completed challenge level.'),
 L(`Récompenses de fin de saison : meilleur joueur, meilleur de chaque poste, meilleur espoir (${AW_YOUNG} ans ou moins), distinctions de statistique (clean sheets, arrêts, buts, passes décisives, passes, tacles, interceptions, récupérations) et équipe type de la division, parmi les joueurs de ta division ayant disputé au moins ${Math.round(AW_K*100)} % des matchs. Honorifiques, sans effet sur le jeu.`,`End-of-season awards: best player, best at each position, best young player (${AW_YOUNG} or under), statistic distinctions (clean sheets, saves, goals, assists, passes, tackles, interceptions, recoveries) and the Team of the Division, among the players of your division who played at least ${Math.round(AW_K*100)}% of the matches. Honorary, no effect on the game.`),
 L(`Distinctions de l’entraîneur, par priorité : Triplé (champion de ta division et vainqueur des deux tournois la même saison), Champion d’Élite, Doublé des tournois (les deux tournois gagnés la même saison), Briseur de défis (les ${dn} défis terminés), Champion de division, Vainqueur de fin de saison, Vainqueur de mi-saison. Chacune apparaît dans le profil de l’entraîneur après sa première obtention, avec ×n ; le détail est dans le Palmarès.`,`Coach distinctions, by priority: Treble (division champion and winner of both tournaments in the same season), Elite champion, Tournament double (both tournaments won in the same season), Challenge breaker (all ${dn} challenges done), division champion, End-of-season winner, Mid-season winner. Each one appears in the coach profile after it is first earned, with ×n; the detail is in the Honours page.`),
-L('Marqueurs de division : couronne (Élite), étoiles (D1 à D3) et triangles (Semi-Pro 1 à 3), bronze, argent et or. Titres et cadres sont des cosmétiques à débloquer par code (Options › Codes), sans effet sur le jeu : un Titre s’affiche au-dessus du nom de l’entraîneur. Le crayon du profil (Entraîneur) permet de choisir le nom, le portrait, le cadre et le Titre.','Division markers: crown (Elite), stars (D1 to D3) and triangles (Semi-Pro 1 to 3), bronze, silver and gold. Titles and frames are cosmetics unlocked by code (Options › Codes), with no effect on the game: a Title is shown above the coach name. The pencil on the coach profile lets you pick the name, portrait, frame and Title.')]))}</div>`;
+L('Marqueurs de division : couronne (Élite), étoiles (D1 à D3) et triangles (Semi-Pro 1 à 3), bronze, argent et or.','Division markers: crown (Elite), stars (D1 to D3) and triangles (Semi-Pro 1 to 3), bronze, silver and gold.'),
+L('Les Distinctions se gagnent en jouant. Certaines débloquent des Titres, que tu choisis ensuite dans le profil de l’entraîneur. Remporter une division débloque son cadre de portrait. Les codes de Options › Codes débloquent aussi titres, cadres et fonds. Rien de tout cela n’a d’effet sur le jeu.','Distinctions are earned by playing. Some unlock Titles, which you then pick in the coach profile. Winning a division unlocks its portrait frame. Codes in Options › Codes also unlock titles, frames and backgrounds. None of it affects gameplay.')]))}</div>`;
 }else{
 const c=x=>Math.round(x*100),frows=FAC.map(k=>[`<b>${P(FACD[k].n)}</b>`,P(FACD[k].d),`<span class="mono">${FACD[k].cost.map(fmt).join(' · ')}</span>`]);
 body=`${sec('Installations','Facilities',tb([[L('Installation','Facility')],[L('Effet','Effect')],[L('Coût des niveaux 1 à 5 (gils)','Cost of levels 1 to 5 (gil)')]],frows)+`<p>${L(`Chaque niveau d’installation coûte ${UPKEEP} gils d’entretien par match en Élite (× k ailleurs). Les panneaux sponsors rapportent, en plus de l’offre de sponsor, +900, +700, +600, +500 puis +400 gils par match aux niveaux 1 à 5. La personnalisation (Club › Personnalisation : eau, ballon, marqueurs, bandeau de but) est purement visuelle.`,`Each facility level costs ${UPKEEP} gil upkeep per match in Elite (× k elsewhere). Sponsor boards bring, on top of the sponsor offer, +900, +700, +600, +500 then +400 gil per match at levels 1 to 5. Customisation (Club › Customisation: water, ball, markers, goal banner) is purely cosmetic.`)}</p>`)}
@@ -4991,9 +5086,9 @@ return `<div class="row between" style="padding:4px 0;border-bottom:1px dashed v
 return `<div class="stack"><h2>${L('Calendrier','Fixtures')} · ${L('Saison','Season')} ${G.season}</h2><div class="grid2"><section class="panel"><h3>${esc(u.name)}</h3><div class="tbl" style="margin-top:12px"><table><thead><tr><th class="num">J</th><th></th><th>${L('Adversaire','Opponent')}</th><th class="num">${L('Résultat','Result')}</th></tr></thead><tbody>${cal}</tbody></table></div></section>
   <section class="panel"><div class="row between"><h3>${L('Journée','Matchday')} ${rd+1}</h3><div class="row"><button class="btn small" data-a="resday" data-d="-1" ${rd<=0?'disabled':''} aria-label="${L('Journée précédente','Previous matchday')}">←</button><button class="btn small" data-a="resday" data-d="1" ${rd>=G.schedule.length-1?'disabled':''} aria-label="${L('Journée suivante','Next matchday')}">→</button></div></div><div style="margin-top:6px">${fx}</div></section></div></div>`;
 }
-const JCAT={match:['Match','Match'],effectif:['Effectif','Squad'],marche:['Marché','Market'],club:['Club','Club'],finances:['Finances','Finances']};
-const JORD=['match','effectif','marche','club','finances'];
-const jcatName=k=>Object.prototype.hasOwnProperty.call(JCAT,k)?P(JCAT[k]):L('Autre','Other');
+const JCAT={match:['Match','Match'],effectif:['Effectif','Squad'],marche:['Marché','Market'],club:['Club','Club'],finances:['Finances','Finances'],divers:['Divers','Misc']};
+const JORD=['match','effectif','marche','club','finances','divers'];
+const jcatName=k=>Object.prototype.hasOwnProperty.call(JCAT,k)?P(JCAT[k]):P(JCAT.divers);
 const jAlert=()=>`<span class="jw" role="img" aria-label="${L('Alerte','Alert')}">⚠</span>`;
 function journalChips(){
 const n=G.news,has=k=>n.some(e=>e.k===k);
@@ -5477,6 +5572,8 @@ const ob=ownEnd(G);
 G.honors.push({s:G.season,rank,pts:me.pts,w:me.w,l:me.l+me.otl,gf:me.gf,ga:me.ga,champ:G.teams[st[0].id].name,...(G.wd?{d:G.wd.d}:{})});
 const aw=awardsEnd(G);
 if(aw&&aw.mine.length){const n=aw.mine.length;news(B(`Récompenses de la saison ${G.season} : ${n} distinction${n>1?'s':''} pour ton club.`,`Season ${G.season} awards: ${n} honour${n>1?'s':''} for your club.`),'club');}
+const te=titlesEnd(G);
+if(te&&te.nw.length)toast(L(`${te.nw.length} déblocage(s) : ${te.nw.map(x=>x.fr).join(', ')}`,`${te.nw.length} unlock(s): ${te.nw.map(x=>x.en).join(', ')}`));
 const cf=rvOf(G);
 G.coach.seasons++;
 const nb=checkBadges(G,{});
@@ -5833,6 +5930,7 @@ UI.cmsg=r.ok?{w:'ok',fr:r.r.fr,en:r.r.en}:{w:r.why};if(r.ok){save();toast(L(`Cod
 render();const i=app.querySelector('#codein');if(i)i.focus({preventScroll:true});break;}
 case 'tset':{if(titleSet(G,d.v||null)){save();render();}const b=app.querySelector('[data-a="tset"][aria-pressed="true"]');if(b)b.focus({preventScroll:true});break;}
 case 'fset':{if(frameSet(G,d.v||null)){save();render();}const b=app.querySelector('[data-a="fset"][aria-pressed="true"]');if(b)b.focus({preventScroll:true});break;}
+case 'ttl':{UI.ttl=!UI.ttl;render();const b=app.querySelector('[data-a="ttl"]');if(b)b.focus({preventScroll:true});break;}
 case 'hall':{UI.hall=UI.hall||{};UI.hall[d.v]=!UI.hall[d.v];render();const b=app.querySelector('[data-a="hall"][data-v="'+d.v+'"]');if(b)b.focus({preventScroll:true});break;}
 case 'cport':{const v=+d.v;if(Number.isInteger(v)&&v>=0&&v<8){G.coach.portrait=v;save();}render();const b=app.querySelector('.cpb[aria-checked="true"]');if(b)b.focus({preventScroll:true});break;}
 case 'cedit':{UI.cedit=!UI.cedit;render();const i=UI.cedit?document.getElementById('coach-name'):app.querySelector('.cptop [data-a="cedit"]');if(i){i.focus({preventScroll:true});if(UI.cedit)i.select();}break;}
@@ -6009,6 +6107,7 @@ app.addEventListener('change',e=>{
 const el=e.target.closest('[data-c]');if(!el)return;
 const u=G&&G.userId!=null?U():null;
 switch(el.dataset.c){
+case 'bgsel':if(G&&bgSet(G,el.value||null)){save();render();const s2=app.querySelector('[data-c=bgsel]');if(s2)s2.focus({preventScroll:true});}break;
 case 'train':G.training=el.value;save();toast(L('Entraînement : ','Training: ')+trName(el.value));render();break;
 case 'ptrain':ptrainChange(el);break;
 case 'dfrung':if(UI.mode==='defi'&&!UI.live&&defiRung(G,+el.value)){save();render();const s2=app.querySelector('[data-c=dfrung]');if(s2)s2.focus({preventScroll:true});}break;
