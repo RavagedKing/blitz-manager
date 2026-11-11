@@ -11,13 +11,37 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.28
+VERSION ACTUELLE : V0.29
 
 
 
 NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
+
+
+
+v0.29 : Records, anti-titres et cérémonie de fin de saison
+
+Mécanique
+- Nouveaux compteurs de carrière par joueur : distance de passes, passes longues, blocs.
+- Titres de statistique supplémentaires et six anti-titres (les pires de la saison), plus un « Pire joueur » et le joueur de la semaine.
+- Records du club et du jeu : un record battu est annoncé dans le Journal.
+- Deux nouveaux titres de jeu (12 au total), débloqués par le jeu.
+
+Interface
+- Cérémonie de fin de saison en 3 étapes, que tu peux passer à tout moment. Elle se désactive dans Options › Affichage.
+- Palmarès : l'historique est replié par saison (les deux dernières sont dépliées).
+- Fiche du joueur : carrière, records et distinctions.
+- Club › Entraîneur : les Badges se replient sur petit écran (sous 700 px), plus de page trop longue sur mobile.
+- Règles du jeu et actualité du titre mises à jour.
+
+Contenu
+- Les Remerciements et les nouveautés du dernier patch restent affichés sur l'écran titre.
+
+Correctifs
+- Le texte de la condition de Dynastie précise maintenant qu'il s'agit des championnats de division.
+- Club › Entraîneur ne dépasse plus la hauteur prévue à 390 px.
 
 v0.28 : Titres de jeu, cadres de division et fonds animés
 
@@ -282,4 +306,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.28
+ACTUAL VERSION : V0.29
