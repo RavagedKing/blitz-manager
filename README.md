@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.29
+VERSION ACTUELLE : V0.30
 
 
 
@@ -20,9 +20,23 @@ NOTES DE VERSION :
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
 
 
+v0.30 : Identité du club
+Interface
+- Slogan du club (32 caractères), affiché sur la Fiche du club et à l'Accueil.
+- Éditeur de blason 24×24 avec zoom ; les anciens blasons restent tels quels et passent en 24×24 sur demande.
+- Palette portée à 60 couleurs.
+- Nouveau sélecteur « Jeu porté » (Club › Personnalisation) : Auto, Domicile, Extérieur ou maillot Unique ; l'adversaire s'adapte à ton choix.
+- Le jeton de la Sphère prend la forme de l'écusson, et le visiteur porte un anneau intérieur pour le distinguer.
+Contenu
+- Maillots Domicile et Extérieur personnalisables.
+- Quatre maillots Uniques à débloquer par code, dont deux avec un effet visuel (arrêté si les animations sont réduites ou désactivées).
+- ULTIMATEST débloque aussi ces quatre maillots.
+Mécanique
+- Tout est cosmétique : aucun effet sur les matchs ni sur l'économie. Les anciennes sauvegardes se chargent sans perte.
+Correctifs
+- Un long slogan ne fait plus déborder la Fiche du club sur petit écran.
 
 v0.29 : Records, anti-titres et cérémonie de fin de saison
-
 Mécanique
 - Nouveaux compteurs de carrière par joueur : distance de passes, passes longues, blocs.
 - Titres de statistique supplémentaires et six anti-titres (les pires de la saison), plus un « Pire joueur » et le joueur de la semaine.
@@ -44,7 +58,6 @@ Correctifs
 - Club › Entraîneur ne dépasse plus la hauteur prévue à 390 px.
 
 v0.28 : Titres de jeu, cadres de division et fonds animés
-
 Mécanique
 
 Dix Titres de jeu à gagner en jouant (championnats, coupes, défis, séries…), avec des paliers.
@@ -306,4 +319,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.29
+ACTUAL VERSION : V0.30
