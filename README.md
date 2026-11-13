@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.30
+VERSION ACTUELLE : V0.31
 
 
 
@@ -19,6 +19,19 @@ NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
 
+
+v0.31 : Un stade qui grandit
+Mécanique
+- Le stade évolue par paliers (T1 à T4) : chaque palier se paie et ouvre des installations et des niveaux plus élevés selon ta division (Semi-Pro 3 : T1, Semi-Pro 2 : T2, Semi-Pro 1 : T3, division 3 et au-dessus : T4)
+- Prix du palier (selon la division) : T2 de 7 000 à 9 000, T3 18 000, T4 40 000
+- Une relégation ne te fait rien perdre : installations et palier restent à toi
+- Le palier ne rapporte rien par lui-même : les revenus viennent toujours des installations
+
+Interface
+- Club › Finances : ligne Palier avec bouton « Agrandir », prix affiché et raison quand c'est impossible (division, fonds)
+- Les tribunes autour de la Sphère grandissent avec le palier
+- Club › Personnalisation : 3 nouvelles eaux (Rubis, Olive, Ardoise), 3 nouveaux ballons (Lime, Rose, Argent), 4 styles de tribunes et la couleur des sièges
+- Règles du jeu : nouvelle section sur les paliers de stade
 
 v0.30 : Identité du club
 Interface
@@ -319,4 +332,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.30
+ACTUAL VERSION : V0.31
