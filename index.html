@@ -498,7 +498,10 @@ td select,.tbl select{max-width:150px}
 .ph .arr{position:absolute;left:50%;top:-8px;transform:translateX(-50%);font-style:normal;font-size:12px;line-height:1;color:var(--ball)}
 .pid{display:flex;gap:12px;align-items:flex-start}
 .pidr{min-width:0;flex:1;display:grid;gap:6px}
-.pframe{--k:4;flex:none;width:calc(var(--k)*24px);height:calc(var(--k)*32px);border-radius:6px;background:#8EA6B8;box-shadow:0 0 0 1px var(--line);overflow:hidden;display:block}
+.pframe i.cap,.pl .cpt text{font:700 7px var(--font-mono);color:#000;line-height:12px;text-align:center}
+.pframe i.cap{position:absolute;top:2px;left:auto;right:2px;clip-path:none;width:12px;height:12px;border-radius:50%;background:var(--ball);font-style:normal;box-shadow:0 0 0 1px #000}
+.pl .cpt{transform:translate(10px,-10px)}.pl .cpt circle{fill:var(--ball);stroke:#000;stroke-width:1}.pl .cpt text{fill:#000;text-anchor:middle;stroke:none}
+.pframe{position:relative;--k:4;flex:none;width:calc(var(--k)*24px);height:calc(var(--k)*32px);border-radius:6px;background:#8EA6B8;box-shadow:0 0 0 1px var(--line);overflow:hidden;display:block}
 .pframe svg{display:block;width:100%;height:100%}
 .pframe.k3{--k:3}.pframe.k2{--k:2}
 .sexl{font-size:12.5px;display:flex;gap:6px;align-items:baseline}
@@ -1497,6 +1500,24 @@ star:{n:['Coach Star','Star coach'],d:['Public : gains +10 % et pertes −8 % pa
 const SPEC_KEYS=['GK','DF','MF','FW','cond','star'];
 const specTier=C=>coachLvl(C).lvl>=SPEC_MIN?Math.min(5,coachLvl(C).lvl-1):0;
 const specOn=(C,k)=>C&&C.spec===k?specTier(C):0;
+const SPEC2_MIN=6;let SPEC_K2=.0025,SPEC_COST2=5000,CAP_K=.01;
+const spec2On=(C,k)=>k&&C&&C.spec2===k&&coachLvl(C).lvl>=SPEC2_MIN?specTier(C):0;
+function spec2Info(G){const C=G.coach,l=coachLvl(C).lvl;return{lvl:l,need:SPEC2_MIN,locked:l<SPEC2_MIN,cur:C.spec2||null,tier:spec2On(C,C.spec2),cost:C.spec2?SPEC_COST2:0};}
+function spec2Set(G,id){
+const C=G.coach,i=spec2Info(G);
+if(i.locked)return{ok:false,why:'level'};
+if(!SPEC_KEYS.includes(id))return{ok:false,why:'id'};
+if(id===C.spec||id===C.spec2)return{ok:false,why:'same'};
+if(G.cash<i.cost)return{ok:false,why:'budget'};
+G.cash-=i.cost;C.spec2=id;cdNews(G,'Spécialité secondaire : '+SPECS[id].n[0],'Secondary specialty: '+SPECS[id].n[1]);
+return{ok:true,cost:i.cost};
+}
+const capSen=p=>{const h=(p.hist||[]).filter(x=>x.k==='start'||x.k==='youth'||x.k==='sign');return h.length?h[h.length-1].s:0;},capSum=p=>sum(STATS.map(k=>p.stats[k]));
+function capAuto(t){let b=null;t.players.forEach(p=>{if(p.rsv)return;if(!b||(capSum(p)-capSum(b)||capSen(b)-capSen(p)||b.id-p.id)>0)b=p;});return b;}
+function capPlayer(g,t){g=gg(g);if(g&&t&&t.id===g.userId&&g.cap!==undefined){const p=t.players.find(x=>x.id===g.cap);if(p)return p;}return t?capAuto(t):null;}
+function capSet(G,pid){const t=G.teams[G.userId],p=t&&t.players.find(x=>x.id===pid);if(pid===null){delete G.cap;return{ok:true};}if(!p||p.rsv)return{ok:false,why:'player'};G.cap=pid;return{ok:true};}
+function capCheck(G,b){const t=G.teams[G.userId];if(!t||b==null||t.players.some(p=>p.id===b))return;if(G.cap===b)delete G.cap;const n=capAuto(t);if(n)cdNews(G,'Capitaine : '+n.name,'Captain: '+n.name);}
+const capIx=s=>{const c=s.cap;return c&&!(c.inj>0)&&c.hp>0?s.lu.indexOf(c):-1;},capM=(s,ci,i)=>ci>=0&&i!==ci&&s.slots[i]===s.slots[ci]?1+CAP_K:1;
 const TRAIN_T=new WeakMap();
 function bonusOf(p,f){
 if(typeof G==='undefined'||!G||!G.coach||!G.teams)return 1;
@@ -1504,6 +1525,7 @@ let t=G.teams[G.userId];if(!t)return 1;
 if(!t.players.includes(p)){t=TRAIN_T.get(p);if(!t)return 1;}
 let k=1+MASTER_K*masteryOf(G.coach,f||t.formation);
 if(['GK','DF','MF','FW'].includes(G.coach.spec)&&p.pos===G.coach.spec)k*=1+SPEC_K*specOn(G.coach,G.coach.spec);
+if(['GK','DF','MF','FW'].includes(G.coach.spec2)&&p.pos===G.coach.spec2)k*=1+SPEC_K2*spec2On(G.coach,G.coach.spec2);
 return k;
 }
 function coachLvl(c){let l=1,x=c.xp||0;while(x>=coachNeed(l)){x-=coachNeed(l);l++;}return{lvl:l,rem:x,need:coachNeed(l)};}
@@ -1787,6 +1809,7 @@ if(!Array.isArray(g.presets)||g.presets.length!==PRESET_N)presetsInit(g);
 if(!Array.isArray(g.free))g.free=[];
 g.teams.forEach(t=>t.players.forEach(fixPlayer));g.market.forEach(fixPlayer);g.free.forEach(fixPlayer);if(g.off)g.off.mk.forEach(fixPlayer);
 try{g.teams.forEach(fixCrest);fixId(g);fixStadium(g);}catch(e){return null;}
+fixCoach(g);
 return g;
 }
 function exportSave(G,now){
@@ -1801,6 +1824,14 @@ name:'blitz-manager-save-v'+G.v+'-'+d.getFullYear()+z(d.getMonth()+1)+z(d.getDat
 }catch(e){return null;}
 }
 function importSave(text){const n=DIV_SIZE.length,r=importSave0(text);if(!r.ok)wdMode(n);return r;}
+function fixCoach(g){
+try{
+const C=g.coach,t=g.teams&&g.teams[g.userId];
+if(C.spec!=null&&!SPEC_KEYS.includes(C.spec))C.spec=null;
+if(C.spec2!==undefined&&(!SPEC_KEYS.includes(C.spec2)||C.spec2===C.spec||coachLvl(C).lvl<SPEC2_MIN))delete C.spec2;
+if(g.cap!==undefined&&!(t&&t.players.some(p=>p.id===g.cap)))delete g.cap;
+}catch(e){delete g.cap;if(g.coach)delete g.coach.spec2;}
+}
 function importSave0(text){
 const bad=error=>({ok:false,error});
 const isObj=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
@@ -1827,6 +1858,7 @@ const okPre=P=>P===null||(isObj(P)&&typeof P.n==='string'&&!!FORMATIONS[P.format
 if(g.presets===undefined)g.presets=[null,null,null];
 else if(!Array.isArray(g.presets)||g.presets.length!==PRESET_N||!g.presets.every(okPre))return bad('invalid');
 try{g.teams.forEach(t=>t.players.forEach(fixPlayer));g.market.forEach(fixPlayer);g.free.forEach(fixPlayer);if(g.off)g.off.mk.forEach(fixPlayer);g.teams.forEach(fixCrest);fixId(g);fixStadium(g);}catch(e){return bad('invalid');}
+fixCoach(g);
 trnGuests(g);
 return {ok:true,G:g};
 }
@@ -1869,12 +1901,12 @@ fan:{n:['Espace supporters','Fan zone'],d:['Le public grossit plus vite après u
 const newStadium=()=>({name:'',lv:{tri:0,buv:0,spo:0,fan:0},cu:{water:'azur',ball:'ambre',fx:1}});
 const stadTotal=G=>sum(FAC.map(k=>G.stadium.lv[k]));
 const stadK=g=>kOf(g)*rvOf(g);
-const gateOf=(G,home)=>home?Math.round((2500+G.fans*1.8)*(1+.2*G.stadium.lv.tri)*(1+.02*specOn(G.coach,'star'))*stadK(G)):0;
+const gateOf=(G,home)=>home?Math.round((2500+G.fans*1.8)*(1+.2*G.stadium.lv.tri)*(1+.02*specOn(G.coach,'star')+.01*spec2On(G.coach,'star'))*stadK(G)):0;
 const concOf=(G,home)=>home?Math.round(G.stadium.lv.buv*(350+Math.round(G.fans*.15))*stadK(G)):0;
 const sponsorOf=G=>Math.round((spFix(G)+SPO[G.stadium.lv.spo])*stadK(G)*difOf(G).rev);
 const upkeepOf=G=>Math.round(UPKEEP*stadTotal(G)*kOf(G)*csOf(G)),staffOf=g=>Math.round(800*kOf(g)*csOf(g));
 let FAN_F0=800,FAN_S=3500;
-const fanDelta=(G,won)=>{const s=specOn(G.coach,'star'),k=kOf(G),m=REP_ON?REP_K*repOf(G).rel:0;return won?Math.round((40+12*G.stadium.lv.fan)*(1+.1*s)*k*(1+m)*Math.max(0,Math.min(1,1-(G.fans-FAN_F0)/(FAN_S-FAN_F0)))):Math.round((-25+6*G.stadium.lv.fan)*(1-.08*s)*k*(1-m));};
+const fanDelta=(G,won)=>{const s=specOn(G.coach,'star'),s2=spec2On(G.coach,'star'),k=kOf(G),m=REP_ON?REP_K*repOf(G).rel:0;return won?Math.round((40+12*G.stadium.lv.fan)*(1+.1*s+.05*s2)*k*(1+m)*Math.max(0,Math.min(1,1-(G.fans-FAN_F0)/(FAN_S-FAN_F0)))):Math.round((-25+6*G.stadium.lv.fan)*(1-.08*s-.04*s2)*k*(1-m));};
 const facCost=(G,k)=>Math.round(FACD[k].cost[G.stadium.lv[k]]*csOf(G)/100)*100;
 const TIER_CAP=[{tri:3,buv:3,spo:0,fan:0},{tri:3,buv:3,spo:4,fan:0},{tri:3,buv:3,spo:4,fan:4},{tri:5,buv:5,spo:5,fan:5}],TIER_BASE=[0,12000,24000,40000],TIER_DIV=[6,5,4,3];
 const tierFit=lv=>{const i=TIER_CAP.findIndex(c=>FAC.every(k=>(+lv[k]||0)<=c[k]));return i<0?4:i+1;};
@@ -1956,8 +1988,9 @@ if(!ctWindow(G))return{ok:false,why:'window'};
 if(p.ct!==1)return{ok:false,why:'ct'};
 if(t.players.length<=SQUAD_MIN)return{ok:false,why:'squad'};
 if(p.pos==='GK'&&t.players.filter(x=>x.pos==='GK').length<=1)return{ok:false,why:'gk'};
+const cb=capPlayer(G,t).id;
 t.players=t.players.filter(x=>x!==p);t.lineup=t.lineup.filter(id=>id!==p.id);ensureLineup(t);
-toPool(G,t,p);
+toPool(G,t,p);capCheck(G,cb);
 return{ok:true};
 }
 function ctSell(G,pid){
@@ -1967,7 +2000,8 @@ if(t.players.length<=SQUAD_MIN)return{ok:false,why:'squad'};
 if(p.pos==='GK'&&t.players.filter(x=>x.pos==='GK').length<=1)return{ok:false,why:'gk'};
 const sl=sellOf(G,p),net=sl.net;if(sl.leg)return{ok:false,why:'leg'};
 if(net<0&&G.cash+net<0)return{ok:false,why:'budget'};
-G.cash+=net;t.players=t.players.filter(x=>x!==p);t.lineup=t.lineup.filter(id=>id!==p.id);ensureLineup(t);
+const cb=capPlayer(G,t).id;
+G.cash+=net;t.players=t.players.filter(x=>x!==p);t.lineup=t.lineup.filter(id=>id!==p.id);ensureLineup(t);capCheck(G,cb);
 if(offOn(G))offTally(G,'l',1);
 return{ok:true,net};
 }
@@ -2172,7 +2206,7 @@ const wh=res.winner==='h',W=wh?H:A,L=wh?A:H;
 W.w++;
 if(!res.ot){W.pts+=3;L.l++;}else{W.otw++;W.pts+=2;L.otl++;L.pts+=1;}
 }
-function newMatch(home,away){
+function newMatch(home,away,g){
 const mk=(team,hm)=>{
 const slots=slotsOf(team.formation);
 if(!lineupValid(team))setAutoLineup(team);
@@ -2180,15 +2214,15 @@ const lu=team.lineup.map(id=>team.players.find(p=>p.id===id));
 const bench=team.players.filter(p=>!lu.includes(p));
 team.players.forEach(p=>{p.m={g:0,a:0,sh:0,sv:0,tw:0,ic:0,pa:0,pf:0,ca:0,played:false,rating:6,hp0:p.hp};});
 lu.forEach(p=>{p.m.played=true;});
-return{team,slots,sides:lanesOf(team),lu,bench,style:team.style,press:team.press,subs:0,half:null,blocs:HALF_BLOCS,until:0,hm};
+return{team,cap:capPlayer(g,team),slots,sides:lanesOf(team),lu,bench,style:team.style,press:team.press,subs:0,half:null,blocs:HALF_BLOCS,until:0,hm};
 };
 return{h:mk(home,HOME_K),a:mk(away),gk:GK_K+GK_S*((home.level+away.level)/2-55),n:0,hs:0,as:0,log:[],status:'play',ot:false,so:false,mercy:false,last:null,bias:null,poss:{h:0,a:0},pl:[],over:false,winner:null,ev:null};
 }
 let CNT_K=.20,MID_BONUS=1.10;
 function lines(s){
-const by={GK:[],DF:[],MF:[],FW:[]};
+const by={GK:[],DF:[],MF:[],FW:[]},ci=capIx(s);
 const ss=s.sides||slotSides(s.slots);
-s.lu.forEach((p,i)=>by[s.slots[i]].push(eff(p,s.slots[i],ss[i],s.mf)));
+s.lu.forEach((p,i)=>by[s.slots[i]].push(eff(p,s.slots[i],ss[i],s.mf)*capM(s,ci,i)));
 const cnt=c=>1-CNT_K+CNT_K*c/2,st=STYLE[s.style],pr=1+.04*s.press;
 return{gk:by.GK[0],def:avg(by.DF)*cnt(by.DF.length)*st.def,mid:avg(by.MF)*cnt(by.MF.length)*(by.MF.length>=3?MID_BONUS:1)*pr*(s.style==='contre'?.97:1),fwd:avg(by.FW)*cnt(by.FW.length)*st.att};
 }
@@ -2196,7 +2230,7 @@ function lineValsFor(t,o,auto){
 o=o||{};
 const f=FORMATIONS[o.formation]?o.formation:t.formation,c={...t,formation:f,lineup:Array.isArray(o.lineup)?o.lineup:(f===t.formation?t.lineup:[])};
 const lu=(auto||!lineupValid(c))?bestLineup(c,f):c.lineup.map(id=>c.players.find(p=>p.id===id));
-return lines({lu,slots:slotsOf(f),sides:lanesOf(c,f),style:o.style||t.style,press:o.press==null?t.press:o.press,mf:f});
+return lines({lu,slots:slotsOf(f),sides:lanesOf(c,f),style:o.style||t.style,press:o.press==null?t.press:o.press,mf:f,cap:capPlayer(undefined,t)});
 }
 let HALF_K_A=.035,HALF_K_D=.07,HALF_OFF=0,HALF_REST=.10,HALF_COST=.06;
 const HALF_BLOC=6,HALF_BLOCS=3;
@@ -2244,11 +2278,11 @@ return null;
 function liveStep(M){['h','a'].forEach(sd=>{const r=aiLive(M,sd);if(r)applyHalf(M,sd,r.id,r.blocs);});}
 function halfStep(M){const pick=['h','a'].map(sd=>aiHalf(M,sd));['h','a'].forEach((sd,i)=>{const b=Math.min(2,M[sd].blocs);if(pick[i]&&b>=1)applyHalf(M,sd,pick[i],b);});}
 let PASS_E=.007,SHOT_E=.0094,LP_M=35,LX_G=-44,LX_D=-28,LX_M=-10.5,LX_A=6,LY3=18,LY2=13,GOAL_X=50;
-const idx=(s,n)=>{const ss=s.sides||slotSides(s.slots);const nf=s.slots.filter(x=>x==='FW').length;const LX={GK:LX_G,DF:LX_D,MF:LX_M,FW:LX_A};return s.lu.map((p,i)=>{const sl=s.slots[i],w=s.slots.filter(x=>x===sl).length>=3?LY3:LY2;return{p,s:sl,sd:ss[i],i,m:halfMul(halfNow(s,n),sl)*(sl==='FW'&&nf===1?LONE_FW:1),g:s.hm,x:LX[sl],y:ss[i]==='G'?-w:ss[i]==='D'?w:0};});};
+const idx=(s,n)=>{const ss=s.sides||slotSides(s.slots),ci=capIx(s);const nf=s.slots.filter(x=>x==='FW').length;const LX={GK:LX_G,DF:LX_D,MF:LX_M,FW:LX_A};return s.lu.map((p,i)=>{const sl=s.slots[i],w=s.slots.filter(x=>x===sl).length>=3?LY3:LY2;return{p,s:sl,sd:ss[i],i,m:halfMul(halfNow(s,n),sl)*(sl==='FW'&&nf===1?LONE_FW:1),c:capM(s,ci,i),g:s.hm,x:LX[sl],y:ss[i]==='G'?-w:ss[i]==='D'?w:0};});};
 const distM=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const pcOf=(M,p)=>{const m=M.pc||(M.pc=new Map());let c=m.get(p);if(!c){c=[0,0,0];m.set(p,c);}return c;};
 const HP_LOW=10,HP_WARN=.25;
-function stv(o,k){let v=effStat(o.p,k)*bonusOf(o.p);v*=fitTier(o.p,o.s,o.sd).stv;if(o.m)v*=o.m;if(o.g)v*=o.g;if((k==='ps'||k==='ti')&&o.p.hp<HP_LOW)v*=.5;return v;}
+function stv(o,k){let v=effStat(o.p,k)*bonusOf(o.p);v*=fitTier(o.p,o.s,o.sd).stv;if(o.m)v*=o.m;if(o.g)v*=o.g;if(o.c)v*=o.c;if((k==='ps'||k==='ti')&&o.p.hp<HP_LOW)v*=.5;return v;}
 const r1=x=>Math.round(x*10)/10;
 function duelF(w,o,k,sty,pr,dm){
 const f=[],add=(id,v)=>{if(v)f.push({id,pct:r1(v),s:w});};
@@ -2453,12 +2487,12 @@ spLock(G);
 const H=G.teams[h],A=G.teams[a];
 if(h!==G.userId)prepAI(H);
 if(a!==G.userId)prepAI(A);
-const M=newMatch(H,A);M.k=kOf(G);const res=simAuto(M);
+const M=newMatch(H,A,G);M.k=kOf(G);const res=simAuto(M);
 [[H,'h'],[A,'a']].forEach(([t,sd])=>{if(t.id!==G.userId)awardTeam(G,t,res.winner===sd,true);});
 return{M,res};
 }
 const RECOV=.5;
-const recovRate=(G,t,p)=>RECOV+((t.id===G.userId&&(p.train||G.training)==='repos')?.2:0)+(t.id===G.userId?.02*specOn(G.coach,'cond'):0);
+const recovRate=(G,t,p)=>RECOV+((t.id===G.userId&&(p.train||G.training)==='repos')?.2:0)+(t.id===G.userId?.02*specOn(G.coach,'cond')+.01*spec2On(G.coach,'cond'):0);
 const recovHP=(G,t,p)=>Math.min(maxHP(p),p.hp+Math.round(maxHP(p)*recovRate(G,t,p)));
 function recovProj(G,p){
 const t=G.teams.find(x=>x.players.some(q=>q===p||q.id===p.id))||{id:-1},max=maxHP(p),hp1=recovHP(G,t,p);
@@ -2533,7 +2567,7 @@ p.wage=ctPrice(p,dur,true,false,kOf(G),G).wage;p.ct=1+dur;bil.renewed.push({c:t.
 return gone.map(p=>p.pos);
 }
 function newSeason(G){
-const bil={renewed:[],left:[],tacit:[],retired:[],sp:null},sp0=G.sp&&G.teams[G.userId]?spCur(G):null;
+const cb=(capPlayer(G,G.teams[G.userId])||{}).id,bil={renewed:[],left:[],tacit:[],retired:[],sp:null},sp0=G.sp&&G.teams[G.userId]?spCur(G):null;
 G.teams.forEach(t=>{
 let gone=[];
 if(t.id===G.userId){
@@ -2574,6 +2608,7 @@ G.table=G.teams.map(t=>({id:t.id,p:0,w:0,otw:0,otl:0,l:0,gf:0,ga:0,pts:0}));
 aiProfiles(G);
 G.market=genMarket(G);
 ownLock(G);
+capCheck(G,cb);
 return bil;
 }
 function trainSetup(hu,ha,opt,tt){
@@ -2718,7 +2753,7 @@ return o;
 }
 function trnMatch(G){
 const nx=trnNext(G);if(!nx)return null;
-const u=G.teams[G.userId],o=trnTeam(G,nx.opp),M=nx.home?newMatch(u,o):newMatch(o,u);M.trn=true;M.k=kOf(G);
+const u=G.teams[G.userId],o=trnTeam(G,nx.opp),M=nx.home?newMatch(u,o,G):newMatch(o,u,G);M.trn=true;M.k=kOf(G);
 return M;
 }
 const TRN_KEEP=['apps','g','a','rs','cg','ca','capps','crs','sw','cw','mvp','x','cx'];
@@ -3269,12 +3304,12 @@ try{['pointerdown','pointerup','keydown','touchend'].forEach(e=>window.addEventL
 document.addEventListener('visibilitychange',()=>{try{const c=SND.c;if(!c)return;sndP(document.hidden?c.suspend():c.resume());}catch(e){}});}catch(e){}
 const DN=()=>DIV_NAME.slice(0,DIV_SIZE.length).map((n,i)=>i?n:L('Élite','Elite'));
 const DNS=()=>DN().map(n=>n.replace(/^Semi-Pro /,'SP'));
-const VERSION='v0.31';
+const VERSION='v0.32';
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 const TITLE_NEWS=[
 {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-{v:VERSION,t:['Nouveautés v0.31','What\'s new in v0.31'],b:['Stade évolutif : quatre paliers à acheter selon ta division, tribunes dessinées, nouvelles eaux et ballons, styles de tribunes et couleur des sièges.','Growing stadium: four tiers to buy by division, drawn stands, new waters and balls, stand styles and seat colour.']}
+{v:VERSION,t:['Nouveautés v0.32','What\'s new in v0.32'],b:[`Capitaine : nomme-le sur la fiche joueur ; effet léger sur sa ligne, brassard C. Seconde spécialité d’entraîneur : niveau ${SPEC2_MIN}, effet à ${Math.round(SPEC_K2/SPEC_K*100)} %, ${SPEC_COST2.toLocaleString('fr-FR')} gils pour en changer.`,`Captain: name one on the player sheet; light effect on their line, C armband. Second coach specialty: level ${SPEC2_MIN}, ${Math.round(SPEC_K2/SPEC_K*100)}% effect, ${SPEC_COST2.toLocaleString('en-GB')} gil to change.`]}
 ];
 const TUTO={
 squad:[['Ton effectif','Your squad'],['Tes joueurs et leurs stats. Ouvre une fiche pour voir le radar et l’historique, et dépenser les points de talent gagnés à chaque niveau.','Your players and their stats. Open a sheet to see the radar and history, and to spend the talent points earned at each level.']],
@@ -3501,7 +3536,7 @@ return `<span class="form">${last.map(c=>`<i class="${c}">${c==='w'?L('V','W'):c
 function lineVals(team,auto){
 const sl=slotsOf(team.formation);
 const lu=(auto||!lineupValid(team))?bestLineup(team,team.formation):team.lineup.map(id=>team.players.find(p=>p.id===id));
-return lines({lu,slots:sl,sides:lanesOf(team),style:team.style,press:team.press});
+return lines({lu,slots:sl,sides:lanesOf(team),style:team.style,press:team.press,cap:capPlayer(G,team)});
 }
 function cmpRow(label,a,b,tone,st,si){
 const t=a+b||1,hi=a>b?'a':b>a?'b':'',ra=Math.round(a),rb=Math.round(b);
@@ -3749,7 +3784,8 @@ return PXC[k]=pxSvg(g,['',PXLN,hexMix(sk,'#FFFFFF',.25),sk,hexMix(sk,'#000000',.
 }
 const jcOf=t=>{const c=t&&crestOf(t).bg.c;return /^#[0-9a-fA-F]{6}$/.test(c)?c:PXNEUT;};
 const silTint=t=>t?` style="--sil:${jcOf(t)}"`:'';
-const pFrame=(f,t,lbl,k,kt)=>`<div class="pframe${k?' k'+k:''}${t?' tint':''}${kt&&kt.fx?' jfx'+kt.fx:''}"${silTint(t)} ${lbl?`role="img" aria-label="${lbl}"`:'aria-hidden="true"'}>${portraitSvg(f,jcOf(t),kt)}${kt&&kt.fx?`<i class="jl" aria-hidden="true" style="--fx:${kt.c||kt.b}"></i><i class="jr" aria-hidden="true" style="--fx:${kt.c||kt.b}"></i>`:''}</div>`;
+const capIs=p=>{const t=G&&G.teams&&G.teams[G.userId],c=t&&capPlayer(G,t);return !!c&&c.id===p.id;};
+const pFrame=(f,t,lbl,k,kt,cp)=>`<div class="pframe${k?' k'+k:''}${t?' tint':''}${kt&&kt.fx?' jfx'+kt.fx:''}"${silTint(t)} ${lbl?`role="img" aria-label="${lbl}"`:'aria-hidden="true"'}>${portraitSvg(f,jcOf(t),kt)}${cp?'<i class="cap" role="img" aria-label="'+L('Capitaine','Captain')+'">C</i>':''}${kt&&kt.fx?`<i class="jl" aria-hidden="true" style="--fx:${kt.c||kt.b}"></i><i class="jr" aria-hidden="true" style="--fx:${kt.c||kt.b}"></i>`:''}</div>`;
 function playerPanel(p,ctx,sh){
 const sq=ctx==='squad',pk=ctx==='pick',lg=ctx==='leg',u=pk?null:U(),tab=pk?'ov':lg&&UI.ptab!=='po'?'ov':UI.ptab;
 const rq=ctx==='rec'&&recQuote(G,rcTid(p),p.id),sl=lg?{net:0}:sellOf(G,p),sale=sl.net,conf=UI.confirm==='rel'+p.id,cost=lg?0:sq?valueOf(p):rq?rq.price:costOf(p),need=lg?1:xpNeed(p.lvl);
@@ -3776,8 +3812,10 @@ if(p.pts)mid+=`<div class="row between"><span class="tag ball">${p.pts} ${L(p.pt
 let act='',bpan='';
 if(sq){
 const opts=[['team',L(`Collectif (${trName(G.training)})`,`Team (${trName(G.training)})`)],...TRAIN.filter(t=>!(t[0]==='ar'&&p.pos!=='GK')).map(t=>[t[0],trName(t[0])])];
-act=`<label class="f">${L('Programme individuel','Individual programme')}<select data-c="ptrain" data-id="${p.id}">${opts.map(([k,l])=>`<option value="${k}" ${(p.train||'team')===k?'selected':''}>${esc(l)}</option>`).join('')}</select></label>
-      <button class="btn small ${conf||sale<0?'danger':''}" data-a="release" data-id="${p.id}" style="justify-self:start">${conf?L(`Confirmer : libérer (${sg(sale)})`,`Confirm: release (${sg(sale)})`):L(`Libérer ${fe(p,'le joueur','la joueuse')} (${sg(sale)})`,`Release player (${sg(sale)})`)}</button>
+const capTag=`<span class="tag ball" style="justify-self:start">${L('Capitaine','Captain')}</span>`,capBtn=`<button class="btn small" data-a="capset" data-id="${p.id}" style="justify-self:start">${L('Nommer capitaine','Make captain')}</button>`;
+const cap=p.rsv?'':G.cap===p.id?capTag:capIs(p)&&G.cap===undefined?`<span class="row" style="gap:6px;align-items:center;justify-self:start">${capTag}<span class="hint" data-cap="auto">(auto)</span></span>`+capBtn:capBtn;
+act=cap+`<label class="f">${L('Programme individuel','Individual programme')}<select data-c="ptrain" data-id="${p.id}">${opts.map(([k,l])=>`<option value="${k}" ${(p.train||'team')===k?'selected':''}>${esc(l)}</option>`).join('')}</select></label>
+      ${conf&&capIs(p)?`<p class="hint">${L('C’est ton capitaine : un capitaine automatique le remplacera.','This is your captain: an automatic captain will replace them.')}</p>`:''}<button class="btn small ${conf||sale<0?'danger':''}" data-a="release" data-id="${p.id}" style="justify-self:start">${conf?L(`Confirmer : libérer (${sg(sale)})`,`Confirm: release (${sg(sale)})`):L(`Libérer ${fe(p,'le joueur','la joueuse')} (${sg(sale)})`,`Release player (${sg(sale)})`)}</button>
       <p class="hint mono">${L('Revente','Resale')} ${fmt(sl.gross)} · ${L('Indemnité','Fee')} ${sl.fee?'−':''}${fmt(sl.fee)} · Net <b class="${sale<0?'neg-v':''}">${sg(sale)}</b>${sale<0?` · <span class="neg-v">${L('le club paie','the club pays')}</span>`:''}</p>`;
 }else if(rq){
 bpan=UI.confirm==='rc'+p.id?rcPanel(p):'';act=bpan?'':`<button class="btn primary" data-a="rcbuy" data-id="${p.id}"${rq.why?' disabled':''}>${L('Faire une offre','Make an offer')} · ${fmt(rq.cost)} gils</button>${rq.why?`<p class="hint">${rcWhy(rq.why)}</p>`:''}`;
@@ -3786,7 +3824,7 @@ const ok=G.cash>=cost&&u.players.length<SQUAD_MAX;
 bpan=UI.confirm==='buy'+p.id?buyPanel(p,cost,ok):'';act=bpan?'':`<button class="btn primary" data-a="buy" data-id="${p.id}" ${ok?'':'disabled'}>${L('Recruter pour','Sign for')} ${fmt(cost)} gils</button>${ok?'':`<p class="hint">${u.players.length>=SQUAD_MAX?L(`Effectif complet (${SQUAD_MAX}).`,`Squad full (${SQUAD_MAX}).`):L('Budget insuffisant.','Not enough budget.')}</p>`}`;
 }
 const tt=pk?(G&&G.teams?G.teams[UI.prev]:null):(sq&&u?u:null);
-const ident=`<div class="pid">${pFrame(faceOf(p),tt,`${esc(raceName(p))}, ${isF(p)?L('féminin','female'):L('masculin','male')}`,0,sq&&u?wornKit():null)}<div class="pidr">${chips}<p class="sexl"><span class="muted">${L('Sexe','Sex')}</span> <b>${isF(p)?L('Féminin','Female'):L('Masculin','Male')}</b></p>${race}</div></div>`;
+const ident=`<div class="pid">${pFrame(faceOf(p),tt,`${esc(raceName(p))}, ${isF(p)?L('féminin','female'):L('masculin','male')}`,0,sq&&u?wornKit():null,sq&&capIs(p))}<div class="pidr">${chips}<p class="sexl"><span class="muted">${L('Sexe','Sex')}</span> <b>${isF(p)?L('Féminin','Female'):L('Masculin','Male')}</b></p>${race}</div></div>`;
 body=`${bpan}${ident}${radar(p)}${kv}${mid}${act}`;
 }
 if(pk)return `<div class="ppanel stack tight sheetbody">${head}${body}</div>`;
@@ -4637,7 +4675,7 @@ const crow=comps.map(c=>{const r=Math.round(c.w/c.p*100);return `<tr class="${be
 const bd=BADGES.map(b=>{const g=C.badges[b.id];return `<div class="bdg ${g?'':'lock'}">${medal(!!g)}<div><b>${P(b.n)}</b><small>${P(b.d)}</small><small>${g?L(`Obtenu saison ${g.s}, journée ${g.d}`,`Earned season ${g.s}, matchday ${g.d}`):L('À débloquer','Locked')}</small></div></div>`;}).join('');
 return `<div class="stack"><h2>${L(`Profil d'entraîneur`,'Coach profile')}</h2>
   <section class="panel stack"><div class="row between cptop"><div class="who">${coachPortraitHTML()}<span class="bst">${badge(u,true)}${crestMarks()}</span><div class="grow">${ttlHTML()}<div class="cname"><span class="cn" id="cdisp">${esc(coachName())}</span></div><span class="muted">${esc(u.name)} · ${L('Saison','Season')} ${G.season}</span></div></div><button type="button" class="ibtn" data-a="cedit" aria-expanded="${!!UI.cedit}" aria-controls="cedit" aria-label="${L('Modifier le profil','Edit profile')}" title="${L('Modifier le profil','Edit profile')}">${PENCIL}</button></div>
-  ${UI.cedit?coachEditHTML():''}${coachBar()}${specPanel()}<div class="kpis k5">${kpi(C.m,L('Matchs','Matches'))}${kpi(C.w,L('Victoires','Wins'))}${kpi(C.l,L('Défaites','Losses'))}${kpi(pct+'%',L('Taux de victoire','Win rate'))}${kpi(C.gf,L('Buts marqués','Goals for'))}${kpi(C.ga,L('Buts encaissés','Goals against'))}${kpi(C.cs,L('Matchs sans encaisser','Clean sheets'))}${kpi(C.best,L('Meilleure série','Best streak'))}${kpi(C.ow,L('Victoires en prolongation','Overtime wins'))}${kpi(Object.keys(C.badges).length+'/'+BADGES.length,'Badges')}</div></section>
+  ${UI.cedit?coachEditHTML():''}${coachBar()}${specPanel()}${spec2Panel()}<div class="kpis k5">${kpi(C.m,L('Matchs','Matches'))}${kpi(C.w,L('Victoires','Wins'))}${kpi(C.l,L('Défaites','Losses'))}${kpi(pct+'%',L('Taux de victoire','Win rate'))}${kpi(C.gf,L('Buts marqués','Goals for'))}${kpi(C.ga,L('Buts encaissés','Goals against'))}${kpi(C.cs,L('Matchs sans encaisser','Clean sheets'))}${kpi(C.best,L('Meilleure série','Best streak'))}${kpi(C.ow,L('Victoires en prolongation','Overtime wins'))}${kpi(Object.keys(C.badges).length+'/'+BADGES.length,'Badges')}</div></section>
   ${ownSect()}${licSect()}
   <section class="panel"><h3>${L('Compositions jouées','Line-ups used')}</h3>
   ${comps.length?`<div class="tbl" style="margin-top:12px"><table><thead><tr><th>${L('Formation','Formation')}</th><th>${L('Style','Style')}</th><th class="x">${L('Pressing','Pressing')}</th><th class="num">${L('Joués','Played')}</th><th>${L('Victoires','Win rate')}</th><th class="num x">${L('BP/m','GF/m')}</th><th class="num x">${L('BC/m','GA/m')}</th></tr></thead><tbody>${crow}</tbody></table></div>
@@ -4894,7 +4932,7 @@ body=`<div class="grid2">${sec('Postes','Positions',li([L('Quatre lignes : gardi
 }else if(t==='train'){
 body=`<div class="grid2">${sec('XP et niveaux','XP and levels',li([L('Match joué : 30 XP, +30 par but, +18 par passe décisive, +9 par tacle gagné ou interception, +7 par arrêt, +3 par passe réussie, +14 par point de note au-dessus de 6 et +20 pour une victoire, le tout modulé par l’âge (plus pour les jeunes). Remplaçant non utilisé : 8 XP.','Match played: 30 XP, +30 per goal, +18 per assist, +9 per tackle won or interception, +7 per save, +3 per completed pass, +14 per rating point above 6 and +20 for a win, all scaled by age (more for the young). Unused substitute: 8 XP.'),L('Chaque niveau demande 100 + 40 × niveau XP et donne 2 points de talent (3 jusqu’à 23 ans), à répartir dans la limite du plafond du joueur. Niveau maximum : 40.','Each level needs 100 + 40 × level XP and gives 2 talent points (3 up to age 23), to spend within the player’s ceiling. Maximum level: 40.'),L(`Ton club gagne ×${dc(XP_USER_K)} d’XP, les clubs IA ×1 : 2,5 à 3 niveaux par saison.`,`Your club earns ×${XP_USER_K} XP, AI clubs ×1: 2.5 to 3 levels a season.`)]))}
     ${sec('Entraînement','Training',li([L('Séance collective après chaque match : XP pour tous les joueurs aptes (plus aux jeunes) et 35 % de chances de +1 dans la stat travaillée (× k, × âge : de 1,3 à 0,8). Le repos ne donne pas d’XP mais aide à récupérer.','Team session after every match: XP for all fit players (more for the young) and a 35% chance of +1 in the trained stat (× k, × age: 1.3 to 0.8). Rest gives no XP but helps recovery.'),L(`Programme individuel : ${MAX_INDIV} joueurs au maximum, ${fmt(TRAIN_FEE)} gils par joueur et par match en Élite (× k ailleurs), AR réservé aux gardiens. En échange : 1,5× l’XP d’entraînement et 55 % de chances de +1. Un joueur blessé ne coûte rien.`,`Individual programme: at most ${MAX_INDIV} players, ${fmt(TRAIN_FEE)} gil per player per match in Elite (× k elsewhere), AR for keepers only. In return: 1.5× training XP and a 55% chance of +1. An injured player costs nothing.`),L('Dans le bilan d’après-match, chaque stat gagnée à l’entraînement apparaît à droite de la barre d’XP du joueur (par exemple « +1 TI »).','In the match report, every stat gained in training shows to the right of the player’s XP bar (for example “+1 TI”).')]))}</div>
-    ${sec('Entraîneur','Coach',li([L('Chaque match rapporte de l’XP d’entraîneur : 40 pour une victoire, 15 pour une défaite, +10 sans encaisser. Passer du niveau n au suivant coûte 80 + 60 × n XP.','Every match earns coach XP: 40 for a win, 15 for a loss, +10 for a clean sheet. Going from level n to the next costs 80 + 60 × n XP.'),L('Le niveau débloque de nouvelles compositions. Dès le niveau 2, tu choisis une spécialité d’entraîneur (gratuite la première fois, puis 3 000 gils pour en changer). Son effet croît avec le niveau, par palier jusqu’au niveau 6 :','The level unlocks new formations. From level 2 you pick a coach specialty (free the first time, then 3,000 gil to change). Its effect grows with level, one tier per level up to level 6:'),`<ul>${SPEC_KEYS.map(s=>`<li><b>${P(SPECS[s].n)}</b> — ${P(SPECS[s].d)}</li>`).join('')}</ul>`,L('Les badges et trophées se débloquent selon tes résultats (Club › Entraîneur).','Badges and trophies unlock with your results (Club › Coach).')]))}`;
+    ${sec('Entraîneur','Coach',li([L('Chaque match rapporte de l’XP d’entraîneur : 40 pour une victoire, 15 pour une défaite, +10 sans encaisser. Passer du niveau n au suivant coûte 80 + 60 × n XP.','Every match earns coach XP: 40 for a win, 15 for a loss, +10 for a clean sheet. Going from level n to the next costs 80 + 60 × n XP.'),L('Le niveau débloque de nouvelles compositions. Dès le niveau 2, tu choisis une spécialité d’entraîneur (gratuite la première fois, puis 3 000 gils pour en changer). Son effet croît avec le niveau, par palier jusqu’au niveau 6 :','The level unlocks new formations. From level 2 you pick a coach specialty (free the first time, then 3,000 gil to change). Its effect grows with level, one tier per level up to level 6:'),`<ul>${SPEC_KEYS.map(s=>`<li><b>${P(SPECS[s].n)}</b> — ${P(SPECS[s].d)}</li>`).join('')}</ul>`,L(`Seconde spécialité : dès le niveau ${SPEC2_MIN}, un second emplacement (une autre spécialité) à ${Math.round(SPEC_K2/SPEC_K*100)} % de l’effet ; la choisir est gratuit, la changer coûte ${fmt(SPEC_COST2)} gils.`,`Second specialty: from level ${SPEC2_MIN}, a second slot (another specialty) at ${Math.round(SPEC_K2/SPEC_K*100)}% of the effect; the first pick is free, changing it costs ${fmt(SPEC_COST2)} gil.`),L(`Capitaine : nomme-le sur sa fiche (sinon le meilleur joueur l’est d’office). Ses équipiers de ligne gagnent +${+(CAP_K*100).toFixed(2)} % à toutes leurs stats, lui non. L’effet est perdu s’il est remplacé, blessé ou KO ; s’il quitte le club, un capitaine automatique est nommé.`,`Captain: name one on their sheet (otherwise the best player is captain). Teammates on their line gain +${+(CAP_K*100).toFixed(2)}% to all stats, the captain does not. The effect is lost if they are substituted, injured or KO; if they leave the club, an automatic captain is named.`),L('Les badges et trophées se débloquent selon tes résultats (Club › Entraîneur).','Badges and trophies unlock with your results (Club › Coach).')]))}`;
 }else if(t==='trn'){
 const pz=k=>TRN_PRIZE[k].map((v,r)=>trnPrz(dG(D3),k,r)).slice(1).reverse().map(fmt).join(' / ');
 body=`<div class="grid2">${sec('Tournois','Tournaments',li([L(`Deux tournois par saison, en plus du championnat : mi-saison (8 clubs, 3 tours) après la journée ${A(D3,'m')} en D1-D3 (${A(EL,'m')} en Élite), fin de saison (16 clubs, 4 tours) après la dernière journée (${A(D3,'f')} en D1-D3, ${A(EL,'f')} en Élite). Élimination directe, un tour par jour de tournoi, mêmes règles qu’un match de saison.`,`Two tournaments a season, besides the league: mid-season (8 clubs, 3 rounds) after matchday ${A(D3,'m')} in D1-D3 (${A(EL,'m')} in Elite), end of season (16 clubs, 4 rounds) after the last matchday (${A(D3,'f')} in D1-D3, ${A(EL,'f')} in Elite). Knockout, one round per tournament day, same rules as a season match.`),
@@ -4976,14 +5014,28 @@ return `<div class="split"><div class="stack"><h2>${L('Classement','League table
   ${own?`<div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))">${lead('g',L('Meilleurs buteurs','Top scorers'))}${lead('a',L('Meilleurs passeurs','Top assisters'))}</div>`:''}</div>
   ${own?clubPanel(G.teams[UI.csel]):''}</div>`;
 }
+const specCfm=(pv,cur,cost,ok,no)=>pv?`<div class="cfm" role="group" aria-live="polite"><span>${cur?L(`Passer à <b>${P(SPECS[pv].n)}</b> ? Coût : <b class="mono">${fmt(cost)}</b> gils.`,`Switch to <b>${P(SPECS[pv].n)}</b>? Cost: <b class="mono">${fmt(cost)}</b> gil.`):L(`Choisir <b>${P(SPECS[pv].n)}</b> ? Gratuit cette fois.`,`Pick <b>${P(SPECS[pv].n)}</b>? Free this time.`)}</span><span class="row"><button class="btn small primary" data-a="${ok}" data-v="${pv}">${L('Confirmer','Confirm')}</button><button class="btn small" data-a="cspecno">${L('Annuler','Cancel')}</button></span></div>`:'';
 function specPanel(){
 const C=G.coach,lv=coachLvl(C).lvl,ok=lv>=SPEC_MIN,k=specTier(C),cur=C.spec;
 const pend=UI.confirm&&String(UI.confirm).startsWith('spec:')?UI.confirm.slice(5):null,pv=pend&&ok&&SPECS[pend]&&pend!==cur?pend:null;
-const chips=SPEC_KEYS.map(s=>`<button class="chip${pv===s?' pend':''}" data-a="cspec" data-v="${s}" aria-pressed="${cur===s}" ${ok?'':'disabled'} title="${esc(P(SPECS[s].d))}">${P(SPECS[s].n)}</button>`).join('');
+const chips=SPEC_KEYS.map(s=>`<button class="chip${pv===s?' pend':''}" data-a="cspec" data-v="${s}" aria-pressed="${cur===s}" ${ok&&s!==C.spec2?'':'disabled'} title="${esc(P(SPECS[s].d))}">${P(SPECS[s].n)}</button>`).join('');
 const cost=cur?SPEC_COST:0,
-cfm=pv?`<div class="cfm" role="group" aria-live="polite"><span>${cur?L(`Passer à <b>${P(SPECS[pv].n)}</b> ? Coût : <b class="mono">${fmt(cost)}</b> gils.`,`Switch to <b>${P(SPECS[pv].n)}</b>? Cost: <b class="mono">${fmt(cost)}</b> gil.`):L(`Choisir <b>${P(SPECS[pv].n)}</b> ? Gratuit cette fois.`,`Pick <b>${P(SPECS[pv].n)}</b>? Free this time.`)}</span><span class="row"><button class="btn small primary" data-a="cspecok" data-v="${pv}">${L('Confirmer','Confirm')}</button><button class="btn small" data-a="cspecno">${L('Annuler','Cancel')}</button></span></div>`:'';
+cfm=specCfm(pv,cur,cost,'cspecok');
 const info=!ok?L(`Se débloque au niveau d’entraîneur ${SPEC_MIN}.`,`Unlocks at coach level ${SPEC_MIN}.`):cur?`<b>${P(SPECS[cur].n)}</b> · ${L('palier','tier')} ${k}/5 — ${P(SPECS[cur].d)}`:L('Choisis une spécialité (gratuit la première fois).','Pick a specialty (free the first time).');
 return `<section class="panel stack tight"><div class="row between"><h3>${L('Spécialité d’entraîneur','Coach specialty')}</h3>${cur&&ok?`<span class="mono muted" style="font-size:12px">${L('Changer','Change')} : ${fmt(SPEC_COST)} ${L('gils','gil')}</span>`:''}</div><div class="seg">${chips}</div>${cfm}<p class="hint">${info}</p></section>`;
+}
+const spec2Txt=(k,t)=>{
+const r=Math.round(SPEC_K2/SPEC_K*100),loc=LANG==='en'?'en-GB':'fr-FR',pc=x=>'+'+(x*100).toLocaleString(loc,{maximumFractionDigits:2})+(LANG==='en'?'%':' %');
+if(['GK','DF','MF','FW'].includes(k))return `${P(SPECS[k].d).split(' :')[0].split(':')[0].trim()} : ${L('toutes les stats','all stats')} ${pc(SPEC_K2)} ${L('par palier','per tier')}${t?` (${L('actuel','now')} ${pc(SPEC_K2*t)})`:''}.`;
+return L(`${r} % de l’effet de la spécialité principale, par palier.`,`${r}% of the primary specialty effect, per tier.`);
+};
+function spec2Panel(){
+const C=G.coach,i=spec2Info(G),cur=i.cur,poor=cur&&G.cash<i.cost,r=Math.round(SPEC_K2/SPEC_K*100);
+const pend=UI.confirm&&String(UI.confirm).startsWith('s2:')?UI.confirm.slice(3):null,pv=pend&&!i.locked&&SPECS[pend]&&pend!==cur&&pend!==C.spec?pend:null;
+const chips=SPEC_KEYS.map(s=>`<button class="chip${pv===s?' pend':''}" data-a="cspec2" data-v="${s}" aria-pressed="${cur===s}" ${poor||s===C.spec?'disabled':''} title="${esc(spec2Txt(s,0))}">${P(SPECS[s].n)}</button>`).join('');
+const cfm=specCfm(pv,cur,i.cost,'cspec2ok');
+const info=cur?`<b>${P(SPECS[cur].n)}</b> · ${L('palier','tier')} ${i.tier}/5 — ${L('effet à','effect at')} ${r} % : ${spec2Txt(cur,i.tier)}`:L('Choisis une seconde spécialité (gratuit la première fois).','Pick a second specialty (free the first time).');
+return `<section class="panel stack tight"><div class="row between"><h3>${L('Seconde spécialité','Second specialty')}</h3>${cur&&!i.locked?`<span class="mono muted" style="font-size:12px">${L('Changer','Change')} : ${fmt(SPEC_COST2)} ${L('gils','gil')}</span>`:''}</div>${i.locked?`<p class="hint">${L('Verrouillé','Locked')} · ${L('Niveau','Level')} ${i.need}</p>`:`<div class="seg">${chips}</div>${cfm}<p class="hint">${poor?`<b class="neg-v">${L('Fonds insuffisants','Insufficient funds')}</b> · `:''}${info}</p>`}</section>`;
 }
 const winPct=C=>C.m?Math.round(C.w/C.m*100):null;
 function coachBar(){
@@ -5146,7 +5198,7 @@ function sphereTokens(spec,lay,o){
 const lp=sphereLabelPos(spec,lay);
 return ['h','a'].map(sd=>{
 const t=spec[sd];if(!t)return '';
-return t.slots.map((s,i)=>`<g class="pl" id="p-${sd}-${i}" style="transform:${sphPx(lay[sd][i])}">${(spec.half&&spec.half[sd]==='souffler')||(spec.souf&&spec.souf[sd])?'<circle class="sv-halo" r="19"/>':''}${dotShape(t.fill||t.color,t.tid,t.hp?t.hp[i]:null,t)}<text class="pi" y="5">${slotCode(s,t.sides[i])}</text><text class="pn${lp[sd][i].an==='s'?' ps':lp[sd][i].an==='e'?' pe':''}" x="${lp[sd][i].x}" y="${lp[sd][i].y}">${esc(lp[sd][i].t)}</text></g>`).join('');
+return t.slots.map((s,i)=>`<g class="pl" id="p-${sd}-${i}" style="transform:${sphPx(lay[sd][i])}">${(spec.half&&spec.half[sd]==='souffler')||(spec.souf&&spec.souf[sd])?'<circle class="sv-halo" r="19"/>':''}${dotShape(t.fill||t.color,t.tid,t.hp?t.hp[i]:null,t)}<text class="pi" y="5">${slotCode(s,t.sides[i])}</text>${t.cap===i?'<g class="cpt"><circle r="4"/><text y="2.5">C</text></g>':''}<text class="pn${lp[sd][i].an==='s'?' ps':lp[sd][i].an==='e'?' pe':''}" x="${lp[sd][i].x}" y="${lp[sd][i].y}">${esc(lp[sd][i].t)}</text></g>`).join('');
 }).join('');
 }
 function sphereZones(spec,o){
@@ -5194,14 +5246,14 @@ return `<svg class="sphere" viewBox="0 0 ${SPH.VB} ${SPH.VB}" role="img" aria-la
   <g id="ballg" aria-hidden="true" style="transform:${sphPx(lay.ball)}"><circle class="sv-ball" r="6"/></g></svg>`;
 }
 function specOfMatch(M){
-const X=tokX(M.h.team,M.a.team),one=sd=>{const s=M[sd];return {slots:s.slots.slice(),sides:s.sides.slice(),color:s.team.color,short:s.team.short,tid:s.team.id,hp:s.team.id===G.userId?s.lu.map(p=>Math.round(hpPct(p)*100)):null,names:s.lu.map(p=>nm(p)),ids:s.lu.map(p=>p.id),...X[sd==='h'?0:1]};};
+const X=tokX(M.h.team,M.a.team),one=sd=>{const s=M[sd];return {slots:s.slots.slice(),sides:s.sides.slice(),color:s.team.color,short:s.team.short,tid:s.team.id,hp:s.team.id===G.userId?s.lu.map(p=>Math.round(hpPct(p)*100)):null,cap:s.team.id===G.userId?s.lu.indexOf(s.cap):-1,names:s.lu.map(p=>nm(p)),ids:s.lu.map(p=>p.id),...X[sd==='h'?0:1]};};
 const ev=M.ev;let ball=null;
 if(ev&&ev.sd){const i=ev.si>=0?ev.si:ev.ci;ball={sd:ev.sd,si:i>=0?i:-1,goal:!!ev.goal};}
 return {h:one('h'),a:one('a'),ball,poss:M.last===true?'h':M.last===false?'a':null,n:M.n,half:{h:halfNow(M.h,M.n)||null,a:halfNow(M.a,M.n)||null},souf:{h:soufOn(M,'h'),a:soufOn(M,'a')}};
 }
 function teamSide(t){
 const lu=lineupValid(t)?t.lineup.map(id=>t.players.find(p=>p.id===id)):bestLineup(t,t.formation);
-return {slots:slotsOf(t.formation),sides:lanesOf(t),color:t.color,short:t.short,tid:t.id,hp:lu.map(p=>Math.round(hpPct(p)*100)),names:lu.map(p=>nm(p)),ids:lu.map(p=>p.id)};
+return {slots:slotsOf(t.formation),sides:lanesOf(t),color:t.color,short:t.short,tid:t.id,hp:lu.map(p=>Math.round(hpPct(p)*100)),cap:G&&t.id===G.userId?lu.indexOf(capPlayer(G,t)):-1,names:lu.map(p=>nm(p)),ids:lu.map(p=>p.id)};
 }
 function specOfTeam(t,vs){const X=tokX(t,vs||null);return {h:{...teamSide(t),...X[0]},a:vs?{...teamSide(vs),...X[1]}:null,ball:null,poss:null,n:0,half:{h:null,a:null}};}
 const sphereOpts=()=>({zones:'half',style:sphereStyle(),id:'sp',stands:standsG()});
@@ -6212,9 +6264,12 @@ case 'ttl':{UI.ttl=!UI.ttl;render();const b=app.querySelector('[data-a="ttl"]');
 case 'hall':{UI.hall=UI.hall||{};UI.hall[d.v]=!UI.hall[d.v];render();const b=app.querySelector('[data-a="hall"][data-v="'+d.v+'"]');if(b)b.focus({preventScroll:true});break;}
 case 'cport':{const v=+d.v;if(Number.isInteger(v)&&v>=0&&v<8){G.coach.portrait=v;save();}render();const b=app.querySelector('.cpb[aria-checked="true"]');if(b)b.focus({preventScroll:true});break;}
 case 'cedit':{UI.cedit=!UI.cedit;render();const i=UI.cedit?document.getElementById('coach-name'):app.querySelector('.cptop [data-a="cedit"]');if(i){i.focus({preventScroll:true});if(UI.cedit)i.select();}break;}
-case 'cspec':{const C=G.coach;if(coachLvl(C).lvl<SPEC_MIN||C.spec===d.v||!SPECS[d.v])break;const cost=C.spec?SPEC_COST:0;if(G.cash<cost){UI.confirm=null;toast(L('Budget insuffisant.','Not enough budget.'),true);render();break;}UI.confirm='spec:'+d.v;render();break;}
+case 'cspec':{const C=G.coach;if(coachLvl(C).lvl<SPEC_MIN||C.spec===d.v||C.spec2===d.v||!SPECS[d.v])break;const cost=C.spec?SPEC_COST:0;if(G.cash<cost){UI.confirm=null;toast(L('Budget insuffisant.','Not enough budget.'),true);render();break;}UI.confirm='spec:'+d.v;render();break;}
 case 'cspecno':UI.confirm=null;render();break;
-case 'cspecok':{const C=G.coach;if(UI.confirm!=='spec:'+d.v||coachLvl(C).lvl<SPEC_MIN||C.spec===d.v||!SPECS[d.v]){UI.confirm=null;render();break;}const cost=C.spec?SPEC_COST:0;if(G.cash<cost){UI.confirm=null;toast(L('Budget insuffisant.','Not enough budget.'),true);render();break;}G.cash-=cost;C.spec=d.v;UI.confirm=null;save();render();toast(L('Spécialité choisie.','Specialty chosen.'));break;}
+case 'capset':if(capSet(G,+d.id).ok){save();render();toast(L('Capitaine nommé.','Captain named.'));}break;
+case 'cspec2':{const i=spec2Info(G);if(i.locked||d.v===G.coach.spec||d.v===i.cur||!SPECS[d.v])break;if(G.cash<i.cost){UI.confirm=null;toast(L('Fonds insuffisants.','Insufficient funds.'),true);render();break;}UI.confirm='s2:'+d.v;render();break;}
+case 'cspec2ok':{const ok=UI.confirm==='s2:'+d.v;UI.confirm=null;const r=ok?spec2Set(G,d.v):{why:'x'};if(r.ok){save();render();toast(L('Spécialité secondaire choisie.','Secondary specialty chosen.'));}else{if(ok)toast(r.why==='budget'?L('Fonds insuffisants.','Insufficient funds.'):L('Choix impossible.','Not possible.'),true);render();}break;}
+case 'cspecok':{const C=G.coach;if(UI.confirm!=='spec:'+d.v||coachLvl(C).lvl<SPEC_MIN||C.spec===d.v||C.spec2===d.v||!SPECS[d.v]){UI.confirm=null;render();break;}const cost=C.spec?SPEC_COST:0;if(G.cash<cost){UI.confirm=null;toast(L('Budget insuffisant.','Not enough budget.'),true);render();break;}G.cash-=cost;C.spec=d.v;UI.confirm=null;save();render();toast(L('Spécialité choisie.','Specialty chosen.'));break;}
 case 'rtab':UI.rtab=d.v;render();break;
 case 'gorules':pauseLive();UI.rtab=d.v;UI.tab='rules';UI.last.options='rules';render();window.scrollTo(0,0);break;
 case 'ctab':UI.ctab=d.v;render();break;
