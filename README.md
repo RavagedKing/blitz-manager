@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.31
+VERSION ACTUELLE : V0.32
 
 
 
@@ -20,7 +20,19 @@ NOTES DE VERSION :
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
 
 
+v0.32 : Capitaine et seconde spécialité
+
+Mécanique
+- Capitaine : désigne un capitaine parmi tes joueurs de champ. Il porte le brassard « C » et donne un léger bonus à sa ligne, environ +1 % d’effet. Sans choix de ta part, le jeu en propose un automatiquement, marqué « (auto) ».
+- Seconde spécialité d’entraîneur : à partir du niveau 6, tu peux en choisir une deuxième pour 5 000 gils. Elle agit à moitié de la première.
+
+Interface
+- Brassard « C » visible sur le capitaine, et mention « (auto) » quand le choix est automatique.
+- Sélection de la seconde spécialité dans le profil de l’entraîneur.
+- Actualité de l’écran titre mise à jour pour la v0.32.
+
 v0.31 : Un stade qui grandit
+
 Mécanique
 - Le stade évolue par paliers (T1 à T4) : chaque palier se paie et ouvre des installations et des niveaux plus élevés selon ta division (Semi-Pro 3 : T1, Semi-Pro 2 : T2, Semi-Pro 1 : T3, division 3 et au-dessus : T4)
 - Prix du palier (selon la division) : T2 de 7 000 à 9 000, T3 18 000, T4 40 000
@@ -34,22 +46,27 @@ Interface
 - Règles du jeu : nouvelle section sur les paliers de stade
 
 v0.30 : Identité du club
+
 Interface
 - Slogan du club (32 caractères), affiché sur la Fiche du club et à l'Accueil.
 - Éditeur de blason 24×24 avec zoom ; les anciens blasons restent tels quels et passent en 24×24 sur demande.
 - Palette portée à 60 couleurs.
 - Nouveau sélecteur « Jeu porté » (Club › Personnalisation) : Auto, Domicile, Extérieur ou maillot Unique ; l'adversaire s'adapte à ton choix.
 - Le jeton de la Sphère prend la forme de l'écusson, et le visiteur porte un anneau intérieur pour le distinguer.
+
 Contenu
 - Maillots Domicile et Extérieur personnalisables.
 - Quatre maillots Uniques à débloquer par code, dont deux avec un effet visuel (arrêté si les animations sont réduites ou désactivées).
 - ULTIMATEST débloque aussi ces quatre maillots.
+
 Mécanique
 - Tout est cosmétique : aucun effet sur les matchs ni sur l'économie. Les anciennes sauvegardes se chargent sans perte.
+
 Correctifs
 - Un long slogan ne fait plus déborder la Fiche du club sur petit écran.
 
 v0.29 : Records, anti-titres et cérémonie de fin de saison
+
 Mécanique
 - Nouveaux compteurs de carrière par joueur : distance de passes, passes longues, blocs.
 - Titres de statistique supplémentaires et six anti-titres (les pires de la saison), plus un « Pire joueur » et le joueur de la semaine.
@@ -332,4 +349,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.31
+ACTUAL VERSION : V0.32
