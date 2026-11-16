@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.33
+VERSION ACTUELLE : V0.34
 
 
 
@@ -19,6 +19,22 @@ NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
 
+
+v0.34 : Légendes par code
+
+Mécanique
+- 11 nouveaux codes « …LEGEND » : chacun donne une Légende de classe S+ à ton club, une fois par code et par partie.
+- 3 Légendes reçues au plus par partie, 1 seule active à la fois. Les autres attendent en réserve (3 au plus) et ne vieillissent pas.
+- Sa puissance est bridée selon ta division (plus haute en Élite, plus basse en Semi-Pro).
+- Elle touche le salaire maximal de la division, ne peut pas être vendue ni laissée partir, joue les défis et prend sa retraite à 35 ans.
+
+Interface
+- Options › Codes : réception des Légendes, compteur « Légendes reçues », indice corrigé.
+- Effectif : bloc « Légendes en réserve » avec bouton Activer.
+- Fiche joueur : bouton « Mettre en réserve » et mention du plafond. Section Légendes ajoutée aux Règles du jeu.
+
+Correctifs
+- Un club issu d’une ancienne sauvegarde avec un nom ou un code en double peut de nouveau être renommé.
 
 v0.33 : Créer son club
 
@@ -365,4 +381,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.33
+ACTUAL VERSION : V0.34
