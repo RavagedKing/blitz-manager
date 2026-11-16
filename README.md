@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.34
+VERSION ACTUELLE : V0.35
 
 
 
@@ -19,6 +19,15 @@ NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
 
+
+
+v0.35 : Présentation du match (I)
+
+Interface
+- Plein écran du match sur mobile, en portrait (bouton ⤢) comme en paysage, avec un bloc repliable « Ton équipe » (PV et remplacements).
+- L’Accueil montre le journal des 3 dernières journées, dans une zone qui défile.
+- Les tournois s’affichent en arbre, lisible aussi sur téléphone.
+- La fiche d’un joueur a un bloc « Au poste » : arrêts et clean sheets pour les gardiens, tacles et interceptions pour les défenseurs, passes et interceptions pour les milieux, buts et passes décisives pour les attaquants, en saison et en carrière.
 
 v0.34 : Légendes par code
 
@@ -381,4 +390,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.34
+ACTUAL VERSION : V0.35
