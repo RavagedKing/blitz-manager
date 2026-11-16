@@ -202,6 +202,7 @@ td.stat{background:color-mix(in srgb,var(--water) calc(var(--v) * 0.42%),transpa
 .news div{padding:8px 0;border-bottom:1px dashed var(--line);display:grid;grid-template-columns:40px 1fr;gap:8px;font-size:13.5px}
 .news div:last-child{border-bottom:0}
 .news span{font:600 12px var(--font-mono);color:var(--muted);padding-top:2px}
+.jsc{max-height:236px;overflow-y:auto;overscroll-behavior:contain;padding-right:4px}.jsc:focus-visible{outline:2px solid var(--water);outline-offset:2px;border-radius:6px}
 details summary{cursor:pointer;font-weight:700;font-size:13px}
 details>*:not(summary){margin-top:8px}
 dl.gl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px;margin:0}
@@ -983,7 +984,7 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
   .hm .panel{padding:12px}
   .hm .hx{display:none}
   .hm .tbl th,.hm .tbl td{padding-inline:5px}
-  .hm .news div:nth-child(n+4){display:none}
+  .jsc{max-height:150px}
   .hm .news div{grid-template-columns:30px minmax(0,1fr);gap:6px}
   .hm .news p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 }
@@ -1076,6 +1077,7 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
 .hqt b{color:var(--ink)}
 /* UI-34b : Sphère en plein écran. Calque fixe au-dessus de la page (z-index 65, sous les notifications) ; la Sphère est un carré min(hauteur − 72 px, largeur − 320 px) ; commandes à droite (≥ 1 100 px) ou sous la Sphère (700 à 1 099 px). Mêmes variables que le reste, aucune couleur nouvelle. */
 .fsbtn{display:none;min-width:44px;min-height:44px;padding:0 12px;font-size:18px;line-height:1}
+@media (min-width:360px){.lvmain .fsbtn{display:inline-flex;align-items:center;justify-content:center}}
 @media (min-width:700px){.fsbtn{display:inline-flex;align-items:center;justify-content:center}}
 .tacsph .row .fsbtn{margin-left:4px}
 .fs{position:fixed;inset:0;z-index:65;display:grid;grid-template-columns:minmax(0,1fr) 320px;background:var(--bg);color:var(--ink)}
@@ -1099,6 +1101,21 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
   .fsm .sphere{width:min(calc(100vw - 32px),calc(54dvh - 8px))}
   .fsc{border-left:0;border-top:1px solid var(--line);max-height:46dvh}
 }
+/* UI-104 (v0.35) : portrait sous 700 px (ouverture par ⤢ seulement) ; paysage bas : Sphère à gauche, panneau à droite ; « Ton équipe » : ligne d'un titulaire sur deux rangées */
+@media (max-width:699px){
+  .fsm .sphere{width:min(calc(100vw - 16px),calc(56dvh - 8px))}.fsc{max-height:44dvh;padding:12px}
+  /* commandes du direct sur deux rangées fixes (Pause … ⤢ / vitesses, Aller à la fin) : la hauteur ne dépend pas du libellé de Pause (UI-35) */
+  .lvmain>.row{display:grid;grid-template-columns:auto minmax(0,1fr) auto}.lvmain>.row>#pausebtn{grid-column:1/3;justify-self:start}.lvmain>.row>.seg{grid-row:2}.lvmain>.row>[data-a=skip]{grid-area:2/2/3/4;justify-self:start}
+}
+@media (orientation:landscape) and (max-height:520px){
+  .fs{grid-template-columns:minmax(0,1fr) minmax(240px,38vw);grid-template-rows:none}
+  .fsm .sphere{width:min(calc(100dvh - 12px),calc(62vw - 12px))}
+  .fsc{border-top:0;border-left:1px solid var(--line);max-height:none;padding:12px}
+  .fs .badge.big.cb svg{width:20px;height:20px}
+}
+.fsteam>summary{min-height:44px}.fsteam[open]>summary{margin-bottom:6px}
+.fsteam .lu-row.live{grid-template-columns:30px auto minmax(40px,1fr) auto auto 30px;row-gap:2px}
+.fsteam .lu-row.live>*{grid-row:2}.fsteam .lu-row.live>:first-child,.fsteam .lu-row.live>:last-child{grid-row:1/3}.fsteam .lu-row.live>:nth-child(2){grid-row:1;grid-column:2/6}
 @media (prefers-reduced-motion:reduce){.fs,.fs *{transition:none!important;animation:none!important}}
 /* UI-36 : bouton rapide « Consigne » dans l'en-tête de « Ton équipe » (met le match en pause, comme « Pause », et ouvre le panneau) : dès 700 px seulement ; sous 700 px le panneau s'ouvre sous les commandes dès la pause */
 .qcons{display:none;min-height:44px}
@@ -1197,19 +1214,23 @@ th,td,h3,.ph button,.cgroup h4,.mh,.cmp .lab,.rtag,.legend,.bellmenu,.bcnt,.tag,
 .bhd:has(.jtg){margin-block:-8px 2px;margin-left:-10px}.bhd0:has(.jtg){margin-bottom:-8px}
 /* UI-97 : palmarès à 390 px (353-376 px dans 322) */
 @media (max-width:480px){.hon th,.hon td{padding-inline:5px}.hon th{letter-spacing:.02em}.hon td:last-child{overflow-wrap:anywhere}}
-/* v0.14 (NAR-08, UI A) : tableau de tournoi. ≥ 901 px : une colonne par tour ; en dessous, une liste verticale par tour. Le club du joueur est surligné (tr.me). */
-.tbg{display:grid;grid-template-columns:repeat(var(--c,3),minmax(0,1fr));gap:12px}
+/* v0.14 (NAR-08) ; v0.35 (UI-105, T-A) : tableau de tournoi en arbre à toutes les largeurs (une colonne par tour, paires reliées, finale centrée par space-around). Club du joueur surligné (.me), vainqueur en gras. */
+.tbg{--g:12px;display:grid;grid-template-columns:repeat(var(--c,3),minmax(0,1fr));gap:var(--g)}
 .tbr{display:flex;flex-direction:column;gap:8px;min-width:0}
-.tbc{display:grid;gap:8px;align-content:space-around;flex:1}
-.tbr h4{margin:0;font-size:13px;color:var(--muted)}
-.tbm{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
-.tbt{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 8px;min-width:0}
+.tbc,.tbp{display:flex;flex-direction:column;justify-content:space-around;flex:1}
+.tbp{position:relative}
+.tbr:not(:last-child) .tbp::after{content:"";position:absolute;right:calc(var(--g)/-2);top:25%;bottom:25%;width:calc(var(--g)/2);border:1px solid var(--line-ctl);border-left:0;border-radius:0 4px 4px 0}
+.tbr:not(:last-child) .tbp::before{content:"";position:absolute;right:calc(0px - var(--g));top:50%;width:calc(var(--g)/2);border-top:1px solid var(--line-ctl)}
+.tbr h4{margin:0;min-height:2.7em;font-size:13px;color:var(--muted)}.tbr .ts{display:none}
+.tbm{margin-block:4px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.tbt{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 8px;min-width:0;min-height:34px}
 .tbt+.tbt{border-top:1px solid var(--line)}
 .tbn{min-width:0;overflow:hidden}
-.tbt.win{font-weight:700}.tbt.lose{color:var(--muted)}
+.tbt,.tbt .badge,.tbt b{font-weight:400}.tbt.win,.tbt.win .badge,.tbt.win b{font-weight:700}.tbt.lose{color:var(--muted)}
 .tbt.me{background:var(--water-soft)}
 .trnr td{background:var(--water-soft);font-size:13px}
-@media (max-width:900px){.tbg{grid-template-columns:minmax(0,1fr)}}
+.apo tr:last-child td{border-bottom-width:2px}   /* PRO-05 : fin du bloc « Au poste » */
+@media (max-width:599px){.tbg{--g:8px}.tbr h4{min-height:0;font-size:12px}.tbr .tl{display:none}.tbr .ts{display:inline}.tbt{gap:3px;padding:3px 4px;min-height:28px;font-size:12px}.tbn .badge.cb{gap:3px}.tbn .badge.cb svg{width:14px;height:14px}}
 .dfg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
 .dfc .nm .muted{font-weight:500;font-size:12px}
 .dflogo{display:block;max-width:100%;height:auto;margin:0 auto;filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 1px 3px rgba(0,0,0,.5))}
@@ -3372,12 +3393,12 @@ try{['pointerdown','pointerup','keydown','touchend'].forEach(e=>window.addEventL
 document.addEventListener('visibilitychange',()=>{try{const c=SND.c;if(!c)return;sndP(document.hidden?c.suspend():c.resume());}catch(e){}});}catch(e){}
 const DN=()=>DIV_NAME.slice(0,DIV_SIZE.length).map((n,i)=>i?n:L('Élite','Elite'));
 const DNS=()=>DN().map(n=>n.replace(/^Semi-Pro /,'SP'));
-const VERSION='v0.34';
+const VERSION='v0.35';
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 const TITLE_NEWS=[
 {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-{v:VERSION,t:['Nouveautés v0.34','What\'s new in v0.34'],b:['Légendes : des codes donnent une Légende à ton effectif (3 au plus, une active, le reste en réserve). Correctif : nom et code du club modifiables après import.','Legends: codes give a Legend to your squad; up to 3, one active, the rest in reserve (Squad). Fix: club name and code editable after import.']}
+{v:VERSION,t:['Nouveautés v0.35','What\'s new in v0.35'],b:['v0.35 — Plein écran du match sur mobile (portrait et paysage), journal défilant sur l\'Accueil, tournois en arbre, statistiques par poste.','v0.35 — Full-screen match on mobile (portrait and landscape), scrolling news feed on Home, bracket-style tournaments, position stats.']}
 ];
 const TUTO={
 squad:[['Ton effectif','Your squad'],['Tes joueurs et leurs stats. Ouvre une fiche pour voir le radar et l’historique, et dépenser les points de talent gagnés à chaque niveau.','Your players and their stats. Open a sheet to see the radar and history, and to spend the talent points earned at each level.']],
@@ -3812,9 +3833,13 @@ function statsTabHTML(p){
 const pct=(w,n)=>n?Math.round(w/n*100)+' %':'–';
 const X=xOf(p),XC=xOf(p,1),cav=p.capps?(p.crs/p.capps).toFixed(1):'–',sav=p.apps?(p.rs/p.apps).toFixed(1):'–';
 const rows=[[L('Matchs','Matches'),p.apps,p.capps],[L('Victoires','Wins'),p.sw||0,p.cw||0],[L('Taux de victoire','Win rate'),pct(p.sw||0,p.apps),pct(p.cw||0,p.capps)],[L('Buts','Goals'),p.g,p.cg],[L('Passes décisives','Assists'),p.a,p.ca],[L('Note moyenne','Avg rating'),sav,cav],['MVP','–',p.mvp||0],[L('Distance de passes','Passing distance'),fmt(X[5])+' m',fmt(XC[5])+' m'],[L('Passes longues','Long passes'),fmt(X[6]),fmt(XC[6])],[L('Buts de loin','Long-range goals'),'–',fmt(XC[7])]];
+const av=(v,n,d)=>n?(v/n).toFixed(d):'–',f=v=>typeof v=='number'?fmt(v):v,ps=p.pos,ap=p.apps||0,cp=p.capps||0,
+st=(lb,i,d)=>[[lb[0],lb[1],X[i],XC[i]],[lb[0]+' / match',lb[1]+' / match',av(X[i],ap,d),av(XC[i],cp,d)]],
+sv=st(['Arrêts','Saves'],0,1),cs=st(['Clean sheets','Clean sheets'],1,2),tw=st(['Tacles gagnés','Tackles won'],2,1),ic=st(['Interceptions','Interceptions'],3,1),pa=st(['Passes réussies','Completed passes'],4,1),
+pr=(ps==='GK'?sv.concat(cs):ps==='DF'?tw.concat(ic):ps==='MF'?pa.concat(ic):[['Buts / match','Goals / match',av(p.g||0,ap,2),av(p.cg||0,cp,2)],['Buts + passes déc.','Goals + assists',(p.g||0)+(p.a||0),(p.cg||0)+(p.ca||0)]]).map(r=>[L(r[0],r[1]),f(r[2]),f(r[3])]);
 const comps=Object.entries(p.comps||{}).sort((a,b)=>b[1].p-a[1].p).slice(0,4);
 const pos=Object.entries(p.posn||{}).sort((a,b)=>b[1]-a[1]);
-return `<table class="mini" style="width:100%;font-size:12.5px"><thead><tr><th></th><th class="num">${L('Saison','Season')}</th><th class="num">${L('Carrière','Career')}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td></tr>`).join('')}</tbody></table>
+return `<table class="mini" style="width:100%;font-size:12.5px"><thead><tr><th></th><th class="num">${L('Saison','Season')}</th><th class="num">${L('Carrière','Career')}</th></tr></thead><tbody class="apo"><tr><th colspan="3" scope="rowgroup">${L('Au poste','In position')} · ${posN(ps)}</th></tr>${pr.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td></tr>`).join('')}</tbody><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td></tr>`).join('')}</tbody></table>
   <div><h3>${L('Compositions jouées','Formations played')}</h3><div style="margin-top:6px">${comps.length?comps.map(([f,c])=>formLine(f,c)).join(''):`<p class="hint">${L('Pas encore de match.','No match yet.')}</p>`}</div></div>
   <div><h3>${L('Postes occupés','Positions played')}</h3><div class="chips" style="margin-top:6px">${pos.length?pos.map(([k,n])=>`<span class="pchip">${lineN(k,p)} × ${n}</span>`).join(''):`<span class="hint">–</span>`}</div></div>`;
 }
@@ -4529,10 +4554,11 @@ const hm=`<div class="hm"><div class="hcA">${todoBlock()}${pd?'':trnCardHTML('hb
 return bl?`<div class="stack"><div class="stack tight">${bl}</div>${hm}</div>`:hm;
 }
 const jrnOpen=()=>UI.jopen!=null?UI.jopen:!!(window.matchMedia&&matchMedia('(min-width:1200px)').matches);
-const homeJrn=()=>jrnBlock(G.news.length?G.news.slice(0,5).map(n=>`<div><span>J${n.d}</span><p>${n.a?jAlert()+' ':''}${esc(jtx(n.s))}</p></div>`).join(''):`<p class="hint">${L('Aucune nouvelle pour le moment.','No news yet.')}</p>`);
+const jrn3=()=>{const K=[];return G.news.filter(n=>{const k=n.sn+'.'+n.d;if(K.includes(k))return 1;if(K.length>2)return 0;K.push(k);return 1;});};
+const homeJrn=()=>jrnBlock(G.news.length?jrn3().map(n=>`<div><span>J${n.d}</span><p>${n.a?jAlert()+' ':''}${esc(jtx(n.s))}</p></div>`).join(''):`<p class="hint">${L('Aucune nouvelle pour le moment.','No news yet.')}</p>`);
 function jrnBlock(nw){
 const o=jrnOpen();
-return `<section class="panel hb4"><div class="row between bhd${o?'':' bhd0'}"><div class="jhd"><button class="jtg" data-a="jtog" aria-expanded="${o}" aria-label="${L('Journal du club','Club journal')} : ${o?L('replier','collapse'):L('déplier','expand')}"></button><h3>${L('Journal du club','Club journal')}</h3></div>${goLink('journal')}</div>${o?`<div class="news">${nw}</div>`:''}</section>`;
+return `<section class="panel hb4"><div class="row between bhd${o?'':' bhd0'}"><div class="jhd"><button class="jtg" data-a="jtog" aria-expanded="${o}" aria-label="${L('Journal du club','Club journal')} : ${o?L('replier','collapse'):L('déplier','expand')}"></button><h3>${L('Journal du club','Club journal')}</h3></div>${goLink('journal')}</div>${o?`<div class="news jsc" tabindex="0" role="region" aria-label="${L('3 dernières journées','Last 3 matchdays')}">${nw}</div>`:''}</section>`;
 }
 const cfTxt=c=>String(c).replace('.',PREFS.lang==='en'?'.':',');
 function divBilanHTML(B){
@@ -5803,17 +5829,17 @@ return `<div class="stack"><section class="panel stack"><h3>${L('Coup de sifflet
   ${idle.length?`<section class="panel idle"><h3>${L('N’ont pas joué','Did not play')}</h3><div class="mtab idle">${idleRows}</div></section>`:''}</details>
   <details class="sumd"><summary><b>${L('Revoir le fil du match','Review the match feed')}</b></summary><div class="feed" id="sfeed">${M.log.slice().reverse().map(e=>evHTML(M,e)).join('')}</div></details></div>`;
 }
-const FSQ=(window.matchMedia&&window.matchMedia('(min-width:700px)'))||{matches:false};
+const mq=q=>(window.matchMedia&&window.matchMedia(q))||{matches:false},FSQ=mq('(min-width:360px)'),FSW=mq('(min-width:700px)');
 const FSP=(window.matchMedia&&window.matchMedia('(pointer:fine)'))||{matches:true};
 const FS_MOVE={
-match:[['.lvmain svg.sphere','m'],['.lvmain .scoreboard','a'],['.lvmain .slot48','a'],['.lvmain>.row','b'],['#halfsec','c']],
+match:[['.lvmain svg.sphere','m'],['.lvmain .scoreboard','a'],['.lvmain .slot48','a'],['.lvmain>.row','b'],['#halfsec','c'],['#lineup','g'],['#subinfo','g'],['#subpanel','g']],
 tac:[['.tacsph svg.sphere','m'],['.tacctl>div.stack:nth-child(1)>.seg','a'],['.tacctl>.plans','b'],['.tacsix [data-a="auto"]','c'],['.tacctl>div.stack:nth-child(2)>.seg','d'],['.tacctl>div.stack:nth-child(3)>.seg','e'],['.tacsph .zb','f'],['.tacsph .zt','f']]
 };
 const fsBtn=k=>`<button class="btn fsbtn" data-a="fsopen" data-k="${k}" aria-label="${L('Sphère en plein écran','Full-screen Sphere')}" title="${L('Plein écran','Full screen')}">⤢</button>`;
 function fsHTML(k){
 const x=`<div class="fsh"><button class="btn" id="fsx" data-a="fsclose" aria-label="${L('Quitter le plein écran','Leave full screen')}">✕ ${L('Quitter','Leave')}</button></div>`;
 const body=k==='match'
-?`<div id="fs-a" class="stack tight"></div><div id="fs-b"></div><button class="btn" id="fs-cb" data-a="fsconsigne" aria-expanded="false" aria-controls="halfsec">${L('Consigne','Instruction')}</button><div id="fs-c"></div><div class="fsfeed" id="fsfeed" aria-label="${L('Dernières lignes du fil','Latest feed lines')}"></div>`
+?`<div id="fs-a" class="stack tight"></div><div id="fs-b"></div><button class="btn" id="fs-cb" data-a="fsconsigne" aria-expanded="false" aria-controls="halfsec">${L('Consigne','Instruction')}</button><div id="fs-c"></div><details class="sumd fsteam"><summary>${L('Ton équipe','Your team')}</summary><div id="fs-g"></div></details><div class="fsfeed" id="fsfeed" aria-label="${L('Dernières lignes du fil','Latest feed lines')}"></div>`
 :`<h3>${L('Composition','Line-up')}</h3><b class="qtl">${L('Formation','Formation')}</b><div id="fs-a"></div><div id="fs-b"></div><div id="fs-c"></div><h3>${L('Tactique','Tactics')}</h3><b class="qtl">${L('Style de jeu','Playstyle')}</b><div id="fs-d"></div><b class="qtl">Pressing</b><div id="fs-e"></div><div id="fs-f" class="fszb"></div>`;
 return `<h2 class="sr" id="fs-t">${L('Sphère en plein écran','Full-screen Sphere')}</h2><div class="fsm" id="fsm"></div><aside class="fsc" id="fsc">${x}${body}</aside>`;
 }
@@ -5830,7 +5856,7 @@ el.before(ph);box.appendChild(el);F.mv.push({ph,el});
 function fsUnmount(){const F=UI.fs;if(!F)return;F.mv.forEach(({ph,el})=>{if(ph.isConnected)ph.replaceWith(el);else el.remove();});F.mv=[];}
 function fsDrop(){const F=UI.fs;if(!F)return;F.mv.forEach(({el})=>el.remove());F.mv=[];}
 function openFS(k){
-if(UI.fs||!FSQ.matches||!G||UI.scr!=='game')return;
+if(UI.fs||!(k==='tac'?FSW:FSQ).matches||!G||UI.scr!=='game')return;
 if(k==='match'?!(mpage()&&UI.live&&!UI.live.done):UI.tab!=='lineup')return;
 const root=document.createElement('div');
 root.id='fs';root.className='fs';root.tabIndex=-1;root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-labelledby','fs-t');
@@ -5874,7 +5900,7 @@ function fsFeed(Lv){
 const el=document.getElementById('fsfeed');if(!el)return;
 el.innerHTML=Lv.M.log.slice(-3).reverse().map(e=>evHTML(Lv.M,e,true)).join('');
 }
-if(FSQ.addEventListener)FSQ.addEventListener('change',()=>{if(!FSQ.matches)closeFS();});
+[FSQ,FSW].forEach(q=>q.addEventListener&&q.addEventListener('change',()=>{if(UI.fs&&!(UI.fs.k==='tac'?FSW:FSQ).matches)closeFS();}));
 function stopTimer(){clearTimeout(UI.timer);UI.timer=null;}
 function startLive(){
 if(trnPending(G))return;
@@ -6007,7 +6033,7 @@ UI.tab='home';UI.live=null;UI.cdiv=null;save();cerOpen();render();window.scrollT
 const trnClub=id=>{if(id<100)return G.teams[id];const g=trnGuests(G)[id-100];return{id,name:g.n,short:g.c,color:g.cc,emblem:g.cr};};
 const trnN=k=>k==='f'?4:3;
 const trnTitle=k=>k==='f'?L('Tournoi de fin de saison','End-of-season tournament'):L('Tournoi de mi-saison','Mid-season tournament');
-const trnRn=m=>[0,L('Finale','Final'),L('Demi-finales','Semi-finals'),L('Quarts de finale','Quarter-finals'),L('Huitièmes de finale','Round of 16')][m];
+const trnRn=m=>[0,L('Finale','Final'),L('Demi-finales','Semi-finals'),L('Quarts de finale','Quarter-finals'),L('Huitièmes de finale','Round of 16')][m],trnRs=m=>[0,L('Finale','Final'),L('Demies','Semis'),L('Quarts','Quarters'),L('Huitièmes','Last 16')][m];
 const trnRes=(r,n)=>r<0?L('Absent','Not entered'):r>=n?L('Vainqueur','Winner'):r===n-1?L('Finaliste','Runner-up'):L(`Éliminé en ${trnRn(n-r).toLowerCase()}`,`Out in the ${trnRn(n-r).toLowerCase()}`);
 const trnWhy=k=>{const u=U();return u.players.length<SQUAD_MIN?'squad':!lineupValid(u)?'lineup':G.cash<trnFee(G,k)?'cash':'';};
 const trnWhyTxt=w=>w==='squad'?L(`Effectif trop court (${SQUAD_MIN} joueurs minimum)`,`Squad too small (${SQUAD_MIN} players minimum)`):w==='lineup'?L('Composition invalide : corrige la Tactique','Invalid lineup: fix Tactics'):w==='cash'?L('Trésorerie insuffisante','Not enough funds'):L('Inscription impossible','Cannot enter');
@@ -6076,10 +6102,14 @@ return `<section class="panel stack">${finalHTML(Lv)}${trnOutcomeHTML(tr)}
   <details class="sumd"><summary><b>${L('Joueurs · XP du jour','Players · day XP')}</b></summary><div class="stack tight">${rows}</div></details></section>`;
 }
 function bracketHTML(T){
-const v=trnView(T),u=G.userId;
-const cell=(id,sc,w)=>{const t=trnClub(id);return `<div class="tbt${sc==null?'':w?' win':' lose'}${id===u?' me':''}"><span class="tbn">${badge(t)}</span><b class="mono">${sc==null?'':sc}</b></div>`;};
-const cols=v.rounds.map((R,ri)=>`<div class="tbr"><h4>${trnRn(trnN(T.b.length===16?'f':'m')-ri)}</h4><div class="tbc">${R.res.map((x,i)=>`<div class="tbm">${cell(R.ids[2*i],x&&x[0],x&&x[2]===0)}${cell(R.ids[2*i+1],x&&x[1],x&&x[2]===1)}</div>`).join('')}</div></div>`).join('');
-return `<div class="tbg" style="--c:${v.rounds.length}">${cols}</div>`;
+const v=trnView(T),u=G.userId,n=trnN(T.b.length===16?'f':'m');
+const cell=(id,sc,w)=>{if(id==null)return `<div class="tbt"><span class="tbn muted">–</span></div>`;const t=trnClub(id);return `<div class="tbt${sc==null?'':w?' win':' lose'}${id===u?' me':''}"><span class="tbn">${badge(t)}</span><b class="mono">${sc==null?'':sc}</b></div>`;};
+const cols=Array.from({length:n},(_,ri)=>{
+const R=v.rounds[ri]||{ids:[],res:Array(T.b.length>>ri+1).fill(null)},m=n-ri,
+ms=R.res.map((x,i)=>`<div class="tbm">${cell(R.ids[2*i],x&&x[0],x&&x[2]===0)}${cell(R.ids[2*i+1],x&&x[1],x&&x[2]===1)}</div>`);
+return `<div class="tbr"><h4><span class="tl">${trnRn(m)}</span><span class="ts">${trnRs(m)}</span></h4><div class="tbc">${ms.length>1?ms.map((h,i)=>i%2?'':`<div class="tbp">${h}${ms[i+1]}</div>`).join(''):ms[0]}</div></div>`;
+}).join('');
+return `<div class="tbg" style="--c:${n}">${cols}</div>`;
 }
 function trnHTML(){
 const T=G.trn,run=trnRun(G),L2=G.pal&&G.pal.l||{};
@@ -6527,7 +6557,7 @@ if(UI.dlg&&UI.dlg.k==='psheet')syncSheet();
 }
 app.addEventListener('click',e=>{
 const tk=e.target.closest('.tacsph .pl');
-if(!UI.fs&&FSQ.matches&&FSP.matches){const sp=e.target.closest('.lvmain svg.sphere,.tacsph svg.sphere');if(sp){openFS(sp.closest('.tacsph')?'tac':'match');return;}}
+if(!UI.fs&&FSW.matches&&FSP.matches){const sp=e.target.closest('.lvmain svg.sphere,.tacsph svg.sphere');if(sp){openFS(sp.closest('.tacsph')?'tac':'match');return;}}
 if(tk&&/^p-h-\d+$/.test(tk.id)){const sl=document.getElementById('slot-'+tk.id.slice(4));if(sl)sl.focus();return;}
 const el=e.target.closest('[data-a]');if(!el||el.disabled)return;
 act(el.dataset.a,el.dataset);
