@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.35
+VERSION ACTUELLE : V0.36
 
 
 
@@ -20,6 +20,23 @@ NOTES DE VERSION :
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
 
 
+v0.36 : Un match plus vivant
+
+Mécanique
+- Pauses décisives : le direct ralentit après un but, un arrêt ou un tir manqué, et se met en pause à la fin d'un match serré et avant la mort subite (2 fois au plus), pour donner une consigne ou remplacer.
+
+Interface
+- Foule dans les tribunes : le remplissage suit la popularité de ton club, les visiteurs ont leur secteur, la foule réagit aux buts ; le public s'affiche pendant les matchs à domicile.
+- Chronomètre qui s'écoule en continu, en grands chiffres.
+- Animations plus fluides : les joueurs arrivent avant l'action suivante même en vitesse ×2 et ×4, porteur mis en évidence, trajectoire du tir, but qui clignote.
+- Options › Affichage : « Animations du match » et « Pauses décisives » (activables et désactivables).
+
+Contenu
+- 10 nouveaux tutoriels à la première apparition d'une mécanique (mercato de mi-saison, fin de contrats, inscription au tournoi, blessure, points de talent, budget négatif, mi-temps, joueur épuisé, match d'entraînement, défis) ; en match, ils s'affichent seulement à la pause.
+
+Correctifs
+- Club › Finances ne déborde plus sur les écrans moyens.
+- Le Journal de l'Accueil affiche le texte entier des entrées sur mobile.
 
 v0.35 : Présentation du match (I)
 
@@ -390,4 +407,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.35
+ACTUAL VERSION : V0.36
