@@ -233,7 +233,7 @@ dl.gl dd{margin:0;color:var(--muted)}
 .sv-goal{fill:var(--ink);fill-opacity:.16;stroke:var(--ink);stroke-width:4;stroke-linejoin:round;opacity:.6}   /* TAC-03 A : but triangulaire, base sur le bord de l'eau, pointe vers l'extérieur */
 .bub{fill:none;stroke:var(--water);stroke-width:1.5;opacity:.4;animation:rise 9s linear infinite}
 @keyframes rise{from{transform:translateY(0)}to{transform:translateY(-340px)}}
-.pl{transition:transform .9s cubic-bezier(.3,.7,.2,1)}
+.pl{transition:transform var(--td,.9s) cubic-bezier(.3,.7,.2,1)}
 .pl circle,.pl rect,.pl polygon,.pl ellipse,.pl path{stroke:var(--surface);stroke-width:2}
 /* UI-57 : contour de HP du jeton (mêmes seuils que les barres) ; jamais la couleur seule : vert = trait plein fin, orange = tirets, rouge = pointillé épais */
 .pl .tf{stroke-width:3.5}   /* liseré clair entre le disque d'équipe et le trait de HP */
@@ -244,7 +244,7 @@ dl.gl dd{margin:0;color:var(--muted)}
 .pl .pi{font:700 14px var(--font-mono);fill:#fff;text-anchor:middle;pointer-events:none}
 .pl .pn{font:600 14px var(--font-body);fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:var(--surface);stroke-width:3px}
 .pl .pn.ps{text-anchor:start}.pl .pn.pe{text-anchor:end}
-#ballg{transition:transform .8s cubic-bezier(.3,.7,.2,1)}
+#ballg{transition:transform calc(var(--td,.9s)*.9) cubic-bezier(.3,.7,.2,1)}
 .sv-ball{fill:var(--ball);stroke:var(--ball-ink);stroke-width:1.5}
 /* consigne de mi-temps : zone de la ligne active (hachures + glyphe, jamais la couleur seule) ; Souffler = halo sur les jetons */
 .sv-zone{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:5 4;opacity:.4}
@@ -259,6 +259,7 @@ dl.gl dd{margin:0;color:var(--muted)}
 .scoreboard .tn{font:600 13px var(--font-display);text-wrap:balance;min-width:0}
 .score{font:800 clamp(30px,8vw,46px)/1 var(--font-display);font-variant-numeric:tabular-nums;letter-spacing:.02em;text-align:center}
 .clock{text-align:center;font:600 12px var(--font-mono);color:var(--muted);margin-top:4px}
+#clock b{display:block;font-size:22px;line-height:1.1;color:var(--ink)}#clock i{display:none}
 .prog{height:4px;border-radius:2px;background:var(--surface2);overflow:hidden}
 .prog i{display:block;height:100%;background:var(--ball);width:var(--w)}
 .banner{padding:10px 12px;border-radius:8px;background:var(--water-soft);border:1px solid var(--water);font-size:13.5px;font-weight:600}
@@ -986,7 +987,6 @@ html[data-dlg],html[data-dlg] body{overflow:hidden}
   .hm .tbl th,.hm .tbl td{padding-inline:5px}
   .jsc{max-height:150px}
   .hm .news div{grid-template-columns:30px minmax(0,1fr);gap:6px}
-  .hm .news p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 }
 /* colonne gauche étroite (3 colonnes, 1 100 à 1 279 px) : la ligne d'un titulaire passe sur deux rangées pour garder le nom lisible */
 @media (min-width:1100px){
@@ -1398,6 +1398,15 @@ th,td,h3,.ph button,.cgroup h4,.mh,.cmp .lab,.rtag,.legend,.bellmenu,.bcnt,.tag,
 @media (max-width:700px){.jed{grid-template-columns:1fr;justify-items:center}.jed>.stack,.jed>.jcards{justify-self:stretch}}
 .cgroup .sw.wheel{width:44px;height:44px}   /* roue chromatique : cible tactile de 44 px */
 @media (max-width:699px){.custcols .stpal .pal{grid-template-columns:repeat(8,minmax(0,1fr));width:100%}.custcols .stpal .pc{width:100%;height:auto;aspect-ratio:1}}   /* v0.31 : grille des sièges dans le panneau Stade (324 px utiles) */
+/* v0.36 · UI-116 : entre 701 et 780 px, les tableaux à 11 colonnes (Club › Finances, FR) gardent leurs colonnes .x : marges de cellule réduites, aucun défilement horizontal */
+@media (min-width:701px) and (max-width:780px){.tbl th,.tbl td{padding-inline:6px}}
+/* v0.36 · UI-106 : foule (FO-B), porteur, but, ralenti (PA-A) ; sans data-ma (Animations du match = Non, ou reduced-motion) la Sphère n'anime rien */
+.cw{fill:none;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:0 6.5}
+.cw.c0{animation:cw0 .3s 6 alternate}.cw.c1{animation:cw1 .3s 6 alternate}@keyframes cw0{to{stroke-width:5.6}}@keyframes cw1{to{stroke-width:5.6}}
+.pl.k0>:not(text):not(g):not(.sv-halo){animation:pk0 .2s 8 alternate}.pl.k1>:not(text):not(g):not(.sv-halo){animation:pk1 .2s 8 alternate}@keyframes pk0{to{stroke:var(--ball);stroke-width:4}}@keyframes pk1{to{stroke:var(--ball);stroke-width:4}}
+.sv-goal.g0{animation:gl0 .3s 6 alternate}.sv-goal.g1{animation:gl1 .3s 6 alternate}@keyframes gl0{to{fill:var(--ball);fill-opacity:.7;stroke:var(--ball)}}@keyframes gl1{to{fill:var(--ball);fill-opacity:.7;stroke:var(--ball)}}
+.ral .sv-ball{stroke:var(--ball);stroke-width:9;stroke-opacity:.4;paint-order:stroke}
+:root:not([data-ma]) .sphere *{transition:none!important;animation:none!important}
 </style>
 
 
@@ -3261,12 +3270,14 @@ const app=document.getElementById('app');
 let G=null;
 const UI={og:{},prev:null,sect:'accueil',tab:'home',last:lastDef(),ptab:'ov',rtab:'game',csel:null,ctab:'ov',bdur:0,sort:'pos',sdir:1,msort:'ovr',mdir:-1,sel:null,msel:null,confirm:null,cedit:false,live:null,timer:null,resDay:null,toastT:null,scr:'title',step:1,draft:{coach:''},saved:null,dlg:null,fs:null,fl:{s:{},m:{}},newsI:0,jf:'all',jn:30,warn:false,xmsg:null,xpend:null,xtxt:null,xpaste:false,xptxt:'',mode:'season',px:{t:0,c:1,s:0,k:0,d:0,z:0,w:4,u:[],r:[],cf:0,xc:0},jt:0,jab:0,jg:0,js:0,cl:'bg',tr:{opp:null,how:'live'},bell:false,ltxt:null,lconf:false};
 const KEY='blitz-manager-v2',PKEY='blitz-manager-prefs';
-const PREFS={lang:'fr',theme:'dark',nav:'bar',hideWelcome:false,log:true,alt:false,glass:true,altAnim:true,cer:true,snd:{fx:true,mus:false,vol:5},tuto:{off:false,seen:[]}};
+const PREFS={lang:'fr',theme:'dark',nav:'bar',hideWelcome:false,log:true,alt:false,glass:true,altAnim:true,cer:true,manim:true,pdec:true,snd:{fx:true,mus:false,vol:5},tuto:{off:false,seen:[]}};
 let LOGC=null,LOGDEAD=false,LOGBOUND=false;
 const RMQ=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
 const altAnimOn=()=>PREFS.glass&&PREFS.altAnim&&!RMQ.matches;
+const maOn=()=>PREFS.manim&&!RMQ.matches;
 const ALTB=[[6,18,22,0,-4],[17,34,30,-3,-17],[29,12,19,10,-9],[41,26,26,-6,-23],[53,40,34,8,-12],[64,16,21,-9,-6],[75,30,28,5,-19],[86,22,24,-4,-14],[12,48,36,12,-27],[34,14,18,-10,-2],[58,28,25,6,-21],[92,20,32,-5,-11],[12,14,19,18,-6],[38,22,26,-24,-15],[63,11,17,14,-3],[90,18,23,-16,-11]];
-function altSync(){const r=document.documentElement,o=document.getElementById('altbg'),f=document.getElementById('altreef');if(altAnimOn())r.setAttribute('data-fx','');else r.removeAttribute('data-fx');
+function altSync(){const r=document.documentElement,o=document.getElementById('altbg'),f=document.getElementById('altreef');if(maOn())r.setAttribute('data-ma','');else r.removeAttribute('data-ma');
+if(altAnimOn())r.setAttribute('data-fx','');else r.removeAttribute('data-fx');
 if(!PREFS.glass)r.removeAttribute('data-alt');else r.setAttribute('data-alt','');
 if(!PREFS.glass){if(f)f.remove();}else if(!f){const e=document.createElement('div');e.id='altreef';e.setAttribute('aria-hidden','true');document.body.prepend(e);}
 if(!altAnimOn()){if(o)o.remove();return;}
@@ -3275,7 +3286,7 @@ function bgSync(){const r=document.documentElement,b=G&&G.coach&&UI.scr==='game'
 try{RMQ.addEventListener('change',()=>{altSync();if(G)render();});}catch(e){}
 const ICOS='<svg id="i-sprite" style="display:none" aria-hidden="true"><symbol id="i-m" viewBox="0 0 16 16"><circle cx="6.5" cy="9.5" r="3.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.2 6.8L13.6 2.4M9.6 2.4h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="i-f" viewBox="0 0 16 16"><circle cx="8" cy="5.5" r="3.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 9.2V14.5M5.4 12H10.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol><symbol id="i-uniq" viewBox="0 0 16 16"><path d="M8 1.5L13.5 8 8 14.5 2.5 8z" fill="currentColor"/></symbol><symbol id="i-up" viewBox="0 0 16 16"><path d="M8 14V2.5M3.5 7L8 2.5 12.5 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="i-dn" viewBox="0 0 16 16"><path d="M8 2V13.5M3.5 9L8 13.5 12.5 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>';
 function applyPrefs(){LANG=PREFS.lang;const r=document.documentElement;if(!document.getElementById('i-sprite'))document.body.insertAdjacentHTML('afterbegin',ICOS);r.lang=LANG;r.setAttribute('data-theme','dark');altSync();}
-function loadPrefs(){try{const s=JSON.parse(localStorage.getItem(PKEY)||'null');if(s){if(s.lang==='en'||s.lang==='fr')PREFS.lang=s.lang;if(s.nav==='bar'||s.nav==='tabs')PREFS.nav=s.nav;if(s.hideWelcome===true)PREFS.hideWelcome=true;if(s.log===false)PREFS.log=false;if(s.alt===true)PREFS.alt=true;if(s.glass===false||(s.glass===undefined&&s.simple===true))PREFS.glass=false;if(s.altAnim===false)PREFS.altAnim=false;if(s.cer===false)PREFS.cer=false;const o=s.snd;if(o&&typeof o==='object'){if(typeof o.fx==='boolean')PREFS.snd.fx=o.fx;if(typeof o.mus==='boolean')PREFS.snd.mus=o.mus;if(Number.isInteger(o.vol)&&o.vol>=0&&o.vol<=10)PREFS.snd.vol=o.vol;}const u=s.tuto;if(u&&typeof u==='object'){PREFS.tuto.off=u.off===true;if(Array.isArray(u.seen))PREFS.tuto.seen=u.seen.filter(x=>typeof x==='string'&&TUTO[x]);}}}catch(e){}applyPrefs();}
+function loadPrefs(){try{const s=JSON.parse(localStorage.getItem(PKEY)||'null');if(s){if(s.lang==='en'||s.lang==='fr')PREFS.lang=s.lang;if(s.nav==='bar'||s.nav==='tabs')PREFS.nav=s.nav;if(s.hideWelcome===true)PREFS.hideWelcome=true;if(s.log===false)PREFS.log=false;if(s.alt===true)PREFS.alt=true;if(s.glass===false||(s.glass===undefined&&s.simple===true))PREFS.glass=false;if(s.altAnim===false)PREFS.altAnim=false;if(s.cer===false)PREFS.cer=false;if(s.manim===false)PREFS.manim=false;if(s.pdec===false)PREFS.pdec=false;const o=s.snd;if(o&&typeof o==='object'){if(typeof o.fx==='boolean')PREFS.snd.fx=o.fx;if(typeof o.mus==='boolean')PREFS.snd.mus=o.mus;if(Number.isInteger(o.vol)&&o.vol>=0&&o.vol<=10)PREFS.snd.vol=o.vol;}const u=s.tuto;if(u&&typeof u==='object'){PREFS.tuto.off=u.off===true;if(Array.isArray(u.seen))PREFS.tuto.seen=u.seen.filter(x=>typeof x==='string'&&TUTO[x]);}}}catch(e){}applyPrefs();}
 function savePrefs(){try{localStorage.setItem(PKEY,JSON.stringify(PREFS));}catch(e){}}
 const MUS={bpm:132,
 mel:['E5 - C5 E5 D5 C5 B4 C5','A4 - C5 A4 B4 - - -','C5 - A4 C5 D5 C5 A4 -','A4 C5 A4 - E5 D5 C5 -','E5 - D5 E5 C5 D5 E5 -','D5 C5 - A4 C5 - D5 -','D5 - B4 D5 E5 D5 B4 -','B4 A4 B4 D5 B4 - A4 -','C5 A4 C5 E5 D5 C5 A4 -','B4 D5 B4 D5 E5 - D5 B4','C5 E5 D5 C5 B4 C5 D5 E5','E5 D5 C5 B4 A4 - - -','A4 D5 C5 A4 D5 - E5 D5','B4 E5 D5 B4 E5 - D5 B4','C5 E5 D5 C5 B4 - A4 B4','A4 - C5 B4 A4 - - -'],
@@ -3393,12 +3404,13 @@ try{['pointerdown','pointerup','keydown','touchend'].forEach(e=>window.addEventL
 document.addEventListener('visibilitychange',()=>{try{const c=SND.c;if(!c)return;sndP(document.hidden?c.suspend():c.resume());}catch(e){}});}catch(e){}
 const DN=()=>DIV_NAME.slice(0,DIV_SIZE.length).map((n,i)=>i?n:L('Élite','Elite'));
 const DNS=()=>DN().map(n=>n.replace(/^Semi-Pro /,'SP'));
-const VERSION='v0.35';
+const VERSION='v0.36';
+const RAL_K=1.5,PDEC_N=33,PDEC_GAP=1,PDEC_MAX=2,CROWD_MIN=.15;
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 const TITLE_NEWS=[
 {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-{v:VERSION,t:['Nouveautés v0.35','What\'s new in v0.35'],b:['v0.35 — Plein écran du match sur mobile (portrait et paysage), journal défilant sur l\'Accueil, tournois en arbre, statistiques par poste.','v0.35 — Full-screen match on mobile (portrait and landscape), scrolling news feed on Home, bracket-style tournaments, position stats.']}
+{v:VERSION,t:['Nouveautés v0.36','What\'s new in v0.36'],b:['v0.36 — Foule dans les tribunes selon ta popularité, chronomètre qui s\'écoule, pauses aux moments décisifs, animations plus fluides, nouveaux tutoriels.','v0.36 — Crowd in the stands based on your popularity, running clock, pauses at decisive moments, smoother animations, new tutorials.']}
 ];
 const TUTO={
 squad:[['Ton effectif','Your squad'],['Tes joueurs et leurs stats. Ouvre une fiche pour voir le radar et l’historique, et dépenser les points de talent gagnés à chaque niveau.','Your players and their stats. Open a sheet to see the radar and history, and to spend the talent points earned at each level.']],
@@ -3409,7 +3421,23 @@ contrats:[['Contrats','Contracts'],['Chaque joueur a un contrat de 1 à 3 saison
 finance:[['Finances','Finances'],['Recettes (sponsor, billetterie, primes) contre dépenses (salaires, staff, stade). Choisis ton sponsor avant le premier match : il se verrouille ensuite. Un budget négatif bloque les recrutements.','Income (sponsor, gate, bonuses) against costs (wages, staff, stadium). Pick your sponsor before the first match: it locks afterwards. A negative budget blocks signings.']],
 coach:[['Entraîneur','Coach'],['Ton niveau monte avec les matchs et débloque des compositions ; dès le niveau 2, tu choisis une spécialité. Le propriétaire fixe deux objectifs par saison et juge ton bilan.','Your level rises with matches and unlocks formations; from level 2 you pick a specialty. The owner sets two goals each season and judges your record.']],
 match:[['Match','Match'],['Lance le match en direct ou simule-le. En direct, mets en pause pour donner une consigne (Souffler, Verrouiller, Pousser) ou remplacer un joueur : trois remplacements au plus.','Play the match live or simulate it. Live, pause to give an instruction (Catch breath, Lock down, Push forward) or substitute a player: three substitutions at most.']],
-trn:[['Tournoi','Tournament'],['Deux tournois par saison, en plus du championnat. L’inscription est facultative et payante, ouverte quelques journées avant ; élimination directe, sans effet sur le classement.','Two tournaments a season, besides the league. Entry is optional and paid, open a few matchdays before; knockout, with no effect on the league table.']]
+trn:[['Tournoi','Tournament'],['Deux tournois par saison, en plus du championnat. L’inscription est facultative et payante, ouverte quelques journées avant ; élimination directe, sans effet sur le classement.','Two tournaments a season, besides the league. Entry is optional and paid, open a few matchdays before; knockout, with no effect on the league table.']],
+mtrain:[['Match d’entraînement','Training match'],['Un match contre un autre club, sans aucun effet sur ta saison : classement, XP, HP, blessures et finances ne bougent pas.','A match against another club, with no effect on your season: table, XP, HP, injuries and finances do not move.']],
+mdefi:[['Défis','Challenges'],['Des équipes inventées, trois types (Duel, Équipe prêtée, Contrainte), quatre niveaux. Les gils ne sont versés qu’à la première victoire ; rien ne touche ta saison.','Invented teams, three types (Duel, Loaned team, Constraint), four levels. Gil is paid on the first win only; nothing touches your season.']],
+mercm:[['Mercato de mi-saison','Mid-season window'],['À la mi-saison, le Marché rouvre avec 9 nouveaux joueurs. Il ferme au coup d’envoi du match suivant : recrute avant.','At mid-season the Market reopens with 9 new players. It closes at the next kick-off: sign before then.']],
+ctwin:[['Fin de contrats','Expiring contracts'],['Des contrats finissent avec cette saison. Pendant les 4 dernières journées, renouvelle ou laisse partir (Club › Contrats) ; sans décision, ils sont reconduits 1 saison.','Some contracts end with this season. During the last 4 matchdays, renew or let go (Club › Contracts); with no decision, they are renewed for 1 season.']],
+trnreg:[['Inscription au tournoi','Tournament entry'],['Les inscriptions d’un tournoi sont ouvertes, dans Jouer › Tournoi. Elles sont facultatives et payantes ; élimination directe, sans effet sur le classement.','A tournament is open for entry, in Play › Tournament. Entry is optional and paid; knockout, with no effect on the league table.']],
+inj:[['Blessure','Injury'],['Un de tes joueurs est blessé : il manque les prochaines journées. Le risque grandit quand les HP sont bas. Compose sans lui dans Tactique.','One of your players is injured and misses the next matchdays. The risk grows when HP are low. Pick your side without them in Tactics.']],
+pts:[['Points de talent','Talent points'],['Un joueur a gagné un niveau et des points de talent (3 jusqu’à 23 ans, 2 ensuite). Dépense-les dans sa fiche pour monter ses stats.','A player has gained a level and talent points (3 up to age 23, 2 after). Spend them on the player’s sheet to raise stats.']],
+cash:[['Budget négatif','Negative budget'],['Ton budget est sous zéro : les recrutements sont bloqués jusqu’à ce qu’il redevienne positif. Salaires et entretien sont détaillés dans Club › Finances.','Your budget is below zero: signings are blocked until it is positive again. Wages and upkeep are listed in Club › Finances.']],
+half:[['Mi-temps','Half-time'],['Le match s’arrête à la mi-temps. Choisis une consigne (Souffler, Verrouiller, Pousser) et sa durée en blocs, ou remplace un joueur, puis reprends.','The match stops at half-time. Pick an instruction (Catch breath, Lock down, Push forward) and its length in blocks, or substitute a player, then resume.']],
+low:[['Joueur épuisé','Spent player'],['Sous 10 HP, un joueur voit ses PS et TI divisés par 2. Remplace-le, ou donne la consigne Souffler à la prochaine pause.','Below 10 HP, a player’s PS and TI are halved. Substitute them, or give the Catch breath instruction at the next pause.']]
+};
+const lvOn=()=>!!UI.live&&!UI.live.done;
+const TUTB={
+mtrain:()=>UI.mode==='training'&&UI.tab==='tmatch',mdefi:()=>UI.mode==='defi'&&UI.tab==='tmatch',mercm:()=>UI.mode==='season'&&!!(G.off&&G.off.m),
+ctwin:()=>ctWindow(G)&&ctDue(G).length>0,trnreg:()=>!G.trn&&TRN_KINDS.some(k=>trnWindow(G,k)),inj:()=>U().players.some(p=>p.inj>0),pts:()=>U().players.some(p=>p.pts>0),cash:()=>G.cash<0,
+half:()=>lvOn()&&UI.live.M.status==='half',low:()=>lvOn()&&!!UI.live.low&&UI.live.low.size>0
 };
 const TX={
 't.tag':['Un hommage au Blitzball, mini-jeu de FFX, par Ravaged King','A tribute to Blitzball, the FFX mini-game, by Ravaged King'],
@@ -4171,8 +4199,10 @@ function tutoHTML(){const x=TUTO[UI.dlg.id];
 return dlgBox('',P(x[0]),`<p id="dlg-d">${P(x[1])}</p>`,'tnomore',PREFS.tuto.off,L('Ne plus afficher les tutoriels','Don’t show tutorials again'),['tclose',L('Compris','Got it')],'trules',L('Règles du jeu','Game rules'));
 }
 function tutoCheck(ae){
-const t=PREFS.tuto,k=UI.tab;
-if(!TUTO[k]||t.off||t.seen.includes(k)||UI.dlg||UI.live||UI.fs||UI.mode!=='season'||G.day>=G.schedule.length)return;
+const t=PREFS.tuto,Lv=UI.live,ok=i=>!t.seen.includes(i);let k=UI.tab;
+if(t.off||UI.dlg||UI.fs||!G||G.day>=G.schedule.length||lvOn()&&!Lv.paused&&Lv.M.status!=='half')return;
+if(!(TUTO[k]&&!TUTB[k]&&ok(k)&&!Lv&&UI.mode==='season'))k=Object.keys(TUTB).find(i=>ok(i)&&TUTB[i]());
+if(!k)return;
 t.seen.push(k);savePrefs();
 const d=ae&&ae.dataset;
 UI.dlg={k:'tuto',id:k,ret:d&&d.a?Object.entries(d).map(([n,v])=>`[data-${n}="${v}"]`).join(''):''};renderDlg();
@@ -4969,16 +4999,18 @@ function settingsHTML(){
 const seg=(items,cur,act)=>`<div class="seg">${items.map(([k,l])=>`<button class="chip" data-a="${act}" data-v="${k}" aria-pressed="${cur===k}">${l}</button>`).join('')}</div>`;
 const live=!!(G&&G.started),conf=UI.confirm==='title',yn=[['on',L('Oui','Yes')],['off',L('Non','No')]];
 const og=(k,fr,en,body)=>{if(!body.trim())return '';const o=ogOpen(k);return `<section class="panel optg"><button class="ogh" data-a="og" data-v="${k}" aria-expanded="${o}" aria-controls="og-${k}"><b>${L(fr,en)}</b><span class="ogc" aria-hidden="true">${o?'▾':'▸'}</span></button><div id="og-${k}" class="ogb"${o?'':' hidden'}>${body}</div></section>`;};
-const rm=RMQ.matches,an=PREFS.glass&&!rm;
+const rm=RMQ.matches,an=PREFS.glass&&!rm,rmT=L('Coupé : ton appareil demande moins d’animations.','Off: your device asks for reduced motion.');
 return `<div class="stack"><h2>${L('Paramètres','Settings')}</h2>
   ${og('gen','Général','General',`<div class="optrow"><div><b>${L('Langue','Language')}</b><span class="hint">${L('Français par défaut. Le journal suit la langue (sauf les entrées anciennes).','French by default. The journal follows the language (except older entries).')}</span></div>${seg([['fr','Français'],['en','English']],PREFS.lang,'lang')}</div>
   <div class="optrow"><div><b>${L('Navigation mobile','Mobile navigation')}</b><span class="hint">${L('Sections en bas (icônes) ou en haut (onglets), sur écran étroit.','Sections at the bottom (icons) or at the top (tabs), on narrow screens.')}</span></div>${seg([['bar',L('Barre en bas','Bottom bar')],['tabs',L('Barre en haut','Top bar')]],PREFS.nav,'nav')}</div>
   <div class="optrow"><div><b>${L('Tutoriels','Tutorials')}</b><span class="hint">${L('Un pop-up à la première ouverture de chaque page.','A pop-up the first time you open each page.')}</span></div><div class="stack tight">${seg(yn,PREFS.tuto.off?'off':'on','tpref')}<button class="btn" data-a="treset">${L('Réafficher','Show again')}</button></div></div>
   <div class="optrow"><div><b>${T('s.welcome')}</b><span class="hint">${T('s.welcome.h')}</span></div>${seg(yn,PREFS.hideWelcome?'off':'on','wpref')}</div>`)}
-  ${og('aff','Affichage','Display',`<div class="optrow"><div><b>${L('Fond animé','Animated background')}</b><span class="hint">${rm?L('Coupé : ton appareil demande moins d’animations.','Off: your device asks for reduced motion.'):!PREFS.glass?L('Demande les effets glass.','Needs the glass effects.'):L('Des bulles montent derrière les blocs.','Bubbles rise behind the panels.')}</span></div>${seg(yn,an&&PREFS.altAnim?'on':'off','altanim').replace(/<button /g,an?'<button ':'<button disabled ')}</div>
+  ${og('aff','Affichage','Display',`<div class="optrow"><div><b>${L('Fond animé','Animated background')}</b><span class="hint">${rm?rmT:!PREFS.glass?L('Demande les effets glass.','Needs the glass effects.'):L('Des bulles montent derrière les blocs.','Bubbles rise behind the panels.')}</span></div>${seg(yn,an&&PREFS.altAnim?'on':'off','altanim').replace(/<button /g,an?'<button ':'<button disabled ')}</div>
   <div class="optrow"><div><b>${L('Fond','Background')}</b><span class="hint">${!live?L('Lance une partie pour choisir un fond débloqué.','Start a game to pick an unlocked background.'):!PREFS.glass?L('Demande les effets glass.','Needs the glass effects.'):!(an&&PREFS.altAnim)?L('Le fond choisi s’applique à la teinte du récif ; les bulles demandent Fond animé.','The chosen background tints the reef; the bubbles need Animated background.'):L('Les fonds se débloquent avec des codes (Options › Codes).','Backgrounds are unlocked with codes (Options › Codes).')}</span></div><select data-c="bgsel" aria-label="${L('Fond','Background')}"${live?'':' disabled'}><option value="">${L('Récif','Reef')}</option>${live?bgsOf(G).filter(b=>b.on).map(b=>`<option value="${b.id}"${bgOf(G)===b.id?' selected':''}>${esc(L(b.fr,b.en))}</option>`).join(''):''}</select></div>
   <div class="optrow"><div><b>${L('Effets glass','Glass effects')}</b><span class="hint">${L('Blocs en verre, ciel et récif. Non : interface sobre.','Glass panels, sky and reef. No: plain interface.')}</span></div>${seg(yn,PREFS.glass?'on':'off','glass')}</div>
-  <div class="optrow"><div><b>${L('Afficher la cérémonie de fin de saison','Show the end-of-season ceremony')}</b><span class="hint">${L('Les lauréats de la saison, en 3 étapes, avant la nouvelle saison.','The season’s winners, in 3 steps, before the new season.')}</span></div>${seg(yn,PREFS.cer?'on':'off','cerpref')}</div>`)}
+  <div class="optrow"><div><b>${L('Afficher la cérémonie de fin de saison','Show the end-of-season ceremony')}</b><span class="hint">${L('Les lauréats de la saison, en 3 étapes, avant la nouvelle saison.','The season’s winners, in 3 steps, before the new season.')}</span></div>${seg(yn,PREFS.cer?'on':'off','cerpref')}</div>
+  <div class="optrow"><div><b>${L('Animations du match','Match animations')}</b><span class="hint">${rm?rmT:L('Jetons, ballon, buts et foule de la Sphère.','Sphere tokens, ball, goals and crowd.')}</span></div>${seg(yn,!rm&&PREFS.manim?'on':'off','manim').replace(/<button /g,rm?'<button disabled ':'<button ')}</div>
+  <div class="optrow"><div><b>${L('Pauses décisives','Decisive pauses')}</b><span class="hint">${L('Le direct s’arrête en fin de match serré et avant la mort subite.','Live play stops late in a close match and before sudden death.')}</span></div>${seg(yn,PREFS.pdec?'on':'off','pdec')}</div>`)}
   ${og('son','Son','Sound',sndRowsHTML())}
   ${og('data','Sauvegarde et journal','Save and log',`<div class="optrow"><div><b>${T('x.title')}</b><span class="hint">${T('x.hint')}${live?'':' '+T('x.noexp')}</span></div><div class="stack tight xbtns"><div class="row"><button class="btn" data-a="exp"${live?'':' disabled'}>${T('x.exp')}</button><button class="btn" data-a="copysave"${live?'':' disabled'}>${T('x.copy')}</button></div><div class="row"><button class="btn" data-a="imp">${T('x.imp')}</button><button class="btn" data-a="pastesave" aria-expanded="${UI.xpaste}">${T('x.paste')}</button></div><input type="file" id="impfile" data-c="impfile" accept=".json,application/json" hidden></div></div>
   ${xmsgHTML()}${xboxHTML()}
@@ -5558,11 +5590,9 @@ return `<div class="stack"><h2>${L('Journal du club','Club journal')}</h2>
 const blocNow=M=>M.over||M.ot?0:Math.min(HALF_BLOCS,Math.floor((M.n%18)/HALF_BLOC)+1);
 const blocText=M=>{const b=blocNow(M);return b?L(`Bloc ${b}/${HALF_BLOCS}`,`Block ${b}/${HALF_BLOCS}`):'';};
 const howOf=(M,res)=>M.mercy?L(`par écart de ${Math.abs(M.hs-M.as)} buts`,`by a ${Math.abs(M.hs-M.as)}-goal gap`):res.so?L('après départage','after a tiebreak'):res.ot?L('en mort subite','in sudden death'):'';
-function clockText(M){
+function clockHTML(M,f){
 if(M.over)return M.mercy?L(`Arrêté · écart de ${Math.abs(M.hs-M.as)} buts`,`Stopped · ${Math.abs(M.hs-M.as)}-goal gap`):M.so?L('Terminé · départage','Full time · tiebreak'):M.ot?L('Terminé · mort subite','Full time · sudden death'):L('Terminé','Full time');
-const t=clk(M.n);
-if(M.ot)return `${L('Mort subite','Sudden death')} · ${t}`;
-return `${M.n<18?L('1re période','1st half'):L('2e période','2nd half')} · ${t}`;
+return `<span>${M.ot?L('Mort subite','Sudden death'):M.n<18?L('1re période','1st half'):L('2e période','2nd half')}<i> · </i></span><b>${clk(M.n+(f||0))}</b>`;
 }
 const HICO={souffler:'≈',verrouiller:'▣',pousser:'▶'};
 const HLINE={D:['défense','defence'],A:['attaque','attack']};
@@ -5632,7 +5662,7 @@ return `<div class="grid2 lv"><div class="lvk2">
   <div class="tm r"><span class="tn">${esc(A.name)}</span>${badge(A,true)}</div></div>
   <div class="prog"><i id="prog" style="--w:0%"></i></div>
   <div class="slot48"><div id="banner" role="status" aria-live="polite"></div><div id="halfbadge"></div></div>
-  ${sphereSVG(specOfMatch(M),sphereOpts())}
+  ${sphereSVG(specOfMatch(M),{...sphereOpts(),stands:standsG()+crowdG(M)})}
   <div class="row"><button class="btn primary" id="pausebtn" data-a="pause"></button>
   <div class="seg">${[1,2,4].map(s=>`<button class="chip" data-a="speed" data-v="${s}" aria-pressed="${Lv.speed===s}">×${s}</button>`).join('')}</div>
   <button class="btn" data-a="skip">${L('Aller à la fin','Skip to the end')}</button>
@@ -5655,9 +5685,29 @@ if(Lv.dotKey!==key||!g.children.length){g.innerHTML=sphereTokens(spec,lay,o);Lv.
 ['h','a'].forEach(sd=>spec[sd].slots.forEach((s,i)=>{const e=document.getElementById(`p-${sd}-${i}`);if(e){e.style.transform=sphPx(lay[sd][i]);const r=e.querySelector('.hr'),hc=spec[sd].hp&&'hr '+hpCls(spec[sd].hp[i]);if(r&&hc&&r.getAttribute('class')!==hc)r.setAttribute('class',hc);
 const n=e.querySelector('.pn'),q=lp[sd][i];if(n){n.setAttribute('y',q.y);n.setAttribute('x',q.x);n.setAttribute('class',q.an==='s'?'pn ps':q.an==='e'?'pn pe':'pn');if(n.textContent!==q.t)n.textContent=q.t;}}}));
 const z=document.getElementById('zones');if(z)z.innerHTML=sphereZones(spec,o);
-const b=document.getElementById('ballg');if(b)b.style.transform=sphPx(lay.ball);
+const b=document.getElementById('ballg');if(b){b.style.transition='';b.style.transform=sphPx(lay.ball);}
 const sv=g.ownerSVGElement,lab=sphereLabel(spec);
-if(sv){sv.setAttribute('aria-label',lab);const t=sv.querySelector('title');if(t)t.textContent=lab;}
+if(sv){sv.setAttribute('aria-label',lab);const t=sv.querySelector('title');if(t)t.textContent=lab;
+sv.style.setProperty('--td',Math.min(.9,(Lv.ral?RAL_K:1)/Lv.speed).toFixed(2)+'s');
+sv.classList.toggle('ral',!!Lv.ral);}
+evFx(Lv,sv,b);
+}
+function evFx(Lv,sv,b){
+const M=Lv.M,e=M.ev,n=M.n,c=n%2,$=q=>sv.querySelectorAll(q);
+if(!sv||!e||!e.sd||Lv.ak===n||!maOn())return;Lv.ak=n;
+$('.k0,.k1,.g0,.g1,.c0,.c1').forEach(x=>x.classList.remove('k0','k1','g0','g1','c0','c1'));
+const i=e.si>=0?e.si:e.ci,p=document.getElementById(`p-${e.sd}-${i}`);if(p)p.classList.add('k'+c);
+if(e.goal){const t=$('.sv-goal')[e.sd==='h'?1:0],w=document.getElementById('cw-'+e.sd);if(t)t.classList.add('g'+c);if(w)w.classList.add('c'+c);}
+if(b&&(e.goal||/^(save|miss|block)$/.test(e.type))){const o=b.style.transform;b.style.transition='transform .35s';b.style.transform=sphPx({x:(e.sd==='h'?1:-1)*.96,y:0});
+setTimeout(()=>{if(Lv.M.n!==n)return;b.style.transition='';if(!e.goal)b.style.transform=o;},350);}
+}
+function crowdG(M){
+const t=tierOf(G),a=.5+.13*t,rk=sortedTable(G).findIndex(x=>x.id===M.h.team.id),n=G.table.length;
+const k=M.h.team.id===G.userId?clamp((G.fans-300)/(FAN_S-300),CROWD_MIN,1):rk<0?.5:.85-.64*rk/Math.max(1,n-1),c=t*k;
+const P=(r,v,y)=>`${(200+r*Math.sin(v)).toFixed(1)} ${(200+y*r*Math.cos(v)).toFixed(1)}`,A=(r,u,v,y)=>`M${P(r,u,y)}A${r} ${r} 0 0 ${y<0?1:0} ${P(r,v,y)}`;
+let h='',w='';
+for(let i=0;i<c;i++){const r=183+4*i,e=a*Math.min(1,c-i),s=a/3;h+=A(r,-e,e,-1);if(e>s){h+=A(r,-e,-s,1)+A(r,s,e,1);w+=A(r,-s,s,1);}else w+=A(r,-e,e,1);}
+return ['h','a'].map(sd=>`<path class="cw" id="cw-${sd}" d="${sd==='h'?h:w}" style="stroke:${M[sd].team.color}" aria-hidden="true"/>`).join('');
 }
 const DKIND={tackle:['Tacle','Tackle'],pass:['Passe','Pass'],shot:['Tir · blocage','Shot · block'],save:['Tir · arrêt','Shot · save']};
 const DFAC={style:['Style','Style'],press:['Pressing','Pressing'],fit:['Adéquation','Position fit'],trait:['Trait','Trait'],hp:['HP < 10','HP < 10'],half:['Consigne','Instruction'],dist:['Distance','Distance'],home:['Domicile','Home']};
@@ -5739,14 +5789,15 @@ const Lv=UI.live;if(!Lv||Lv.done)return;
 const M=Lv.M,u=Lv.userSide,$=id=>document.getElementById(id);
 if(!$('score'))return;
 $('score').textContent=`${M.hs} – ${M.as}`;
-$('clock').textContent=clockText(M);
-$('bloc').textContent=blocText(M);
+$('clock').innerHTML=clockHTML(M,lvFrac(Lv));
+const bt=blocText(M);$('bloc').textContent=bt&&u==='h'&&!Lv.train&&!Lv.defi?`${bt} · ${L('Public','Crowd')} ${fmt(G.fans)}`:bt;
 $('prog').style.setProperty('--w',Math.min(100,M.n/36*100)+'%');
 feedFill($('feed'),M,`<p class="hint">${L('Le match va commencer.','The match is about to start.')}</p>`);
 const half=M.status==='half';
 const ge=M.ev&&M.ev.goal&&G.stadium.cu.fx&&!M.over?M.ev:null;
 const bn=[];
 if(ge){const mine=ge.sd===u;bn.push(`<div class="goalfx ${mine?'us':'them'}"><span class="gb">${badge(M[ge.sd].team)}</span><span class="gl"><i aria-hidden="true">${mine?'▲':'▼'}</i><b>${mine?L('BUT !','GOAL!'):L('BUT ADVERSE','OPPONENT GOAL')}</b></span><span class="gt">${esc(ge.txt.replace(/^BUT ! |^GOAL! /,'').split(/[.!]/)[0])}</span></div>`);}
+if(Lv.dp&&Lv.paused&&!half)bn.push(`<div class="banner"><span class="bnt">${L('Moment décisif : donne une consigne, remplace ou reprends.','Decisive moment: give an instruction, substitute or resume.')}</span></div>`);
 if(half)bn.push(`<div class="banner"><span class="bnt">${L(`Mi-temps · ${M.hs} – ${M.as}. Ajuste ta tactique ou tes remplacements, puis reprends.`,`Half-time · ${M.hs} – ${M.as}. Adjust your tactics or substitutions, then resume.`)}</span></div>`);
 (Lv.alerts||[]).filter(a=>M.n<a.until).forEach(a=>bn.push(`<div class="banner warn"><i aria-hidden="true">⚠</i><span class="bnt">${esc(a.txt)}</span></div>`));
 $('banner').innerHTML=bn.length?bn[0]+(bn.length>1?`<span class="bmore" aria-hidden="true">+${bn.length-1}</span>`:''):'';
@@ -5774,6 +5825,7 @@ if(UI.fs&&UI.fs.k==='match')fsFeed(Lv);
 const chips=halfChips(Lv,u).concat(halfChips(Lv,u==='h'?'a':'h'));
 $('halfbadge').innerHTML=chips.length?`<div class="hbadge"><span class="hl">${L('Consigne','Instruction')}</span>${chips.join('')}</div>`:'';
 updatePitch();
+if(Lv.paused||half)tutoCheck(document.activeElement);
 }
 function subPanel(Lv){
 const side=Lv.M[Lv.userSide],i=Lv.subSlot,slot=side.slots[i],sd=side.sides[i],out=side.lu[i];
@@ -5901,7 +5953,9 @@ const el=document.getElementById('fsfeed');if(!el)return;
 el.innerHTML=Lv.M.log.slice(-3).reverse().map(e=>evHTML(Lv.M,e,true)).join('');
 }
 [FSQ,FSW].forEach(q=>q.addEventListener&&q.addEventListener('change',()=>{if(UI.fs&&!(UI.fs.k==='tac'?FSW:FSQ).matches)closeFS();}));
-function stopTimer(){clearTimeout(UI.timer);UI.timer=null;}
+function stopTimer(){const Lv=UI.live;if(Lv&&Lv.t0){Lv.f=lvFrac(Lv);Lv.t0=0;}clearTimeout(UI.timer);UI.timer=null;}
+const lvFrac=Lv=>Lv.t0?Math.min(1,(performance.now()-Lv.t0)/Lv.d):Lv.f||0;
+function clockTick(){const Lv=UI.live,e=document.getElementById('clock');if(!Lv||Lv.done){clearInterval(UI.ci);UI.ci=0;return;}if(Lv.t0&&e){const h=clockHTML(Lv.M,lvFrac(Lv));if(e.innerHTML!==h)e.innerHTML=h;}}
 function startLive(){
 if(trnPending(G))return;
 spLock(G);
@@ -5916,11 +5970,13 @@ UI.tab='match';render();
 function nextTick(){
 stopTimer();
 const Lv=UI.live;if(!Lv||Lv.done||Lv.paused||Lv.M.over||Lv.M.status==='half')return;
-UI.timer=setTimeout(tick,1250/Lv.speed);
+const d=1250/Lv.speed*(Lv.ral?RAL_K:1),f=Lv.f||0;
+Lv.d=d;Lv.t0=performance.now()-f*d;UI.timer=setTimeout(tick,d*(1-f));
+if(!UI.ci)UI.ci=setInterval(clockTick,250);
 }
 function tick(){
 const Lv=UI.live;if(!Lv||Lv.done||Lv.paused)return;
-const M=Lv.M;
+const M=Lv.M;Lv.t0=0;Lv.f=0;
 liveAI(Lv,Lv.userSide==='h'?'a':'h');
 phase(M);
 const opp=Lv.userSide==='h'?M.a:M.h;
@@ -5928,8 +5984,13 @@ if(M.n===27&&!M.ot)aiSubs(opp);
 if(M.status==='half'){aiSubs(opp);Lv.paused=true;}
 sndGoals(Lv);
 if(M.over){finishLive();return;}
-trackAlerts(Lv);
+trackAlerts(Lv);pdecCheck(Lv);
 updateLive();nextTick();
+}
+function pdecCheck(Lv){
+const M=Lv.M,e=M.ev||{},g=Math.abs(M.hs-M.as)<=PDEC_GAP,so=M.ot&&M.n===36;
+Lv.ral=!!(e.goal||e.type==='save'||e.type==='miss'||so||!M.ot&&M.n>=PDEC_N&&M.n<36&&g);
+if(PREFS.pdec&&(Lv.pd|0)<PDEC_MAX&&(so||!M.ot&&M.n===PDEC_N&&g)){Lv.pd=(Lv.pd|0)+1;Lv.paused=Lv.dp=true;}
 }
 function finishLive(){
 const Lv=UI.live;stopTimer();if(UI.fs)closeFS(true);
@@ -6355,6 +6416,8 @@ if(a==='wrules'||a==='trules'){act('gorules',{v:'game'});break;}
 const b=(r&&[...document.querySelectorAll(r)].find(e=>e.offsetParent))||app.querySelector('.sect.play')||app.querySelector('h2,h1');if(b){if(!/^(BUTTON|A)$/.test(b.tagName))b.setAttribute('tabindex','-1');b.focus();}
 break;}
 case 'cerpref':PREFS.cer=d.v==='on';savePrefs();render();break;
+case 'manim':if(!RMQ.matches){PREFS.manim=d.v==='on';savePrefs();altSync();render();}break;
+case 'pdec':PREFS.pdec=d.v==='on';savePrefs();render();break;
 case 'wpref':PREFS.hideWelcome=d.v==='off';savePrefs();render();break;
 case 'tpref':PREFS.tuto.off=d.v==='off';savePrefs();render();break;
 case 'treset':PREFS.tuto={off:false,seen:[]};savePrefs();render();break;
@@ -6515,7 +6578,7 @@ case 'sndtest':SND.g=true;sndFx('goal',0,true);break;
 case 'pause':{
 const Lv=UI.live,M=Lv.M;
 if(M.status==='half'){resolveHalf(Lv,false);M.status='play';Lv.paused=false;}else Lv.paused=!Lv.paused;
-if(!Lv.paused)Lv.halfPick=null;
+if(!Lv.paused){Lv.halfPick=null;Lv.dp=0;}
 updateLive();nextTick();break;}
 case 'half':{const Lv=UI.live;if(!Lv||Lv.done||!Lv.paused||Lv.M.over||Lv.M.ot||!halfOpt(d.v))break;Lv.halfPick=Lv.halfPick===d.v?null:d.v;updateLive();break;}
 case 'fsopen':openFS(d.k);break;
