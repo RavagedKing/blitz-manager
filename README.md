@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.36
+VERSION ACTUELLE : V0.37
 
 
 
@@ -19,6 +19,25 @@ NOTES DE VERSION :
 
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
 
+
+
+v0.37 : Formation et effectif
+
+Mécanique
+- Plus de limite de 14 joueurs : garde autant de joueurs que tu veux (plafond technique à 40). Sur-recruter reste possible, mais les salaires peuvent ruiner le club.
+- Centre de formation (Club › Formation) : débloque-le puis améliore-le sur 3 niveaux. Des espoirs de 15 ans arrivent chaque saison et rejoignent l'effectif à 18 ans si tu leur as fait signer un précontrat.
+- Choisis le parcours de chaque espoir (Poste, Physique ou Technique) et paie une formation renforcée pour qu'il progresse plus vite. Son potentiel exact et son profil restent cachés jusqu'à ses 18 ans.
+- Les joueurs déclinent et prennent leur retraite plus ou moins tard selon leur profil de progression (retraite entre 35 et 40 ans).
+- Avec un centre de formation, un joueur qui part à la retraite n'est plus remplacé gratuitement.
+
+Interface
+- Indicateur de la part des recettes qui part en salaires dans Finances et Effectif (orange à 85 %, rouge à 100 %), et estimation après signature dans chaque fenêtre d'achat.
+- « Afficher plus » dans l'Effectif au-delà de 14 joueurs ; l'onglet Potentiel montre les âges de déclin et de retraite du joueur.
+- Nouveau tutoriel pour le centre de formation ; Règles du jeu mises à jour.
+
+Correctifs
+- La trajectoire du tir ne déborde plus sur l'action suivante en vitesse ×4.
+- L'aide de l'option « Animations du match » précise qu'elle coupe aussi les bulles et la Sphère de la Tactique.
 
 v0.36 : Un match plus vivant
 
@@ -407,4 +426,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.36
+ACTUAL VERSION : V0.37
