@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.37
+VERSION ACTUELLE : V0.38
 
 
 
@@ -20,6 +20,17 @@ NOTES DE VERSION :
 Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand une version satisfera pleinement son créateur, elle deviendra la Bêta (tests, petits changements), puis viendra la v1.0.
 
 
+
+v0.38 : Recruteur et formation sur mesure
+
+Mécanique
+-un recruteur peut être embauché au centre de formation, avec une spécialité au choix : Découverte (un espoir de plus par saison), Évaluation (potentiel exact des espoirs) ou Révélation (profil de progression visible avant l'intégration).
+- Le recruteur coûte un entretien par journée tant qu'il est embauché ; sa spécialité se change en fin de saison.
+- Nouveau parcours de formation « Personnalisé » : tu choisis les 2 stats que l'espoir travaille.
+
+Interface 
+- Club › Formation montre le recruteur, sa demande pour la saison suivante, son coût, et le choix des 2 stats.
+- Règles du jeu mises à jour (Stade et finances), en français et en anglais.
 
 v0.37 : Formation et effectif
 
@@ -426,4 +437,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.37
+ACTUAL VERSION : V0.38
