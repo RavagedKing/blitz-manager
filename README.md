@@ -11,7 +11,7 @@ Jouer : https://ravagedking.github.io/blitz-manager/
 Hommage non commercial et sans but lucratif au mini-jeu Blitzball de Final Fantasy X. 
 Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine appartiennent à leurs ayants droit. Les marques citées appartiennent à leurs propriétaires.
 
-VERSION ACTUELLE : V0.38
+VERSION ACTUELLE : V0.39
 
 
 
@@ -21,10 +21,25 @@ Les versions sont numérotées v0.x : toute la phase actuelle est l'Alpha. Quand
 
 
 
+v0.39 : Tutoriel et Règles réécrites
+
+Interface 
+- les Règles s'ouvrent sur un nouvel onglet Tutoriel, qui regroupe tous les tutoriels en 5 catégories.
+- le bouton « Règles du jeu » d'un tutoriel ouvre directement sa catégorie.
+- après le renvoi du recruteur, la spécialité gardée est marquée et l'aide propose de la réembaucher.
+
+Contenu
+- Règles du jeu relues et corrigées, en français et en anglais.
+- quatre nouveaux tutoriels : spécialité d'entraîneur, seconde spécialité, mort subite, écart de 7 buts.
+
+Correctifs
+- après un renommage du club, le Palmarès et la victoire en tournoi du Journal affichent le nouveau nom.
+- les objectifs de sponsor parlent de mort subite au lieu de prolongations.
+
 v0.38 : Recruteur et formation sur mesure
 
 Mécanique
--un recruteur peut être embauché au centre de formation, avec une spécialité au choix : Découverte (un espoir de plus par saison), Évaluation (potentiel exact des espoirs) ou Révélation (profil de progression visible avant l'intégration).
+- un recruteur peut être embauché au centre de formation, avec une spécialité au choix : Découverte (un espoir de plus par saison), Évaluation (potentiel exact des espoirs) ou Révélation (profil de progression visible avant l'intégration).
 - Le recruteur coûte un entretien par journée tant qu'il est embauché ; sa spécialité se change en fin de saison.
 - Nouveau parcours de formation « Personnalisé » : tu choisis les 2 stats que l'espoir travaille.
 
@@ -437,4 +452,4 @@ Play: https://ravagedking.github.io/blitz-manager/
 A non-commercial, non-profit tribute to the Blitzball mini-game from Final Fantasy X.
 Fan project, not affiliated with Square Enix; all original names and terms belong to their respective owners. Trademarks mentioned belong to their respective owners.
 
-ACTUAL VERSION : V0.38
+ACTUAL VERSION : V0.39
