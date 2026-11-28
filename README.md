@@ -13,7 +13,7 @@ Projet de fan, sans lien avec Square Enix ; les noms et termes d'origine apparti
 
 -----
 
-### VERSION ACTUELLE : V0.41 ( Consulter patchnoteFR.md pour plus de détails )
+### VERSION ACTUELLE : V0.42 ( Consulter patchnoteFR.md pour plus de détails )
 
 -----
 
@@ -32,6 +32,6 @@ Fan project, not affiliated with Square Enix; all original names and terms belon
 
 -----
 
-### ACTUAL VERSION : V0.41 ( Consult patchnoteEN.md for more details )
+### ACTUAL VERSION : V0.42 ( Consult patchnoteEN.md for more details )
 
 -----

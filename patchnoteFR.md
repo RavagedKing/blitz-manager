@@ -8,6 +8,26 @@ English version: [patchnoteEN.md](patchnoteEN.md)
 
 ---
 
+## v0.42 - Monde vivant, deuxième partie
+
+### Gameplay
+- Certains événements te demandent de trancher : une carte « À décider » apparaît sur l'Accueil, avec Oui ou Non ; sans réponse, c'est Non au match suivant.
+- Des clubs adverses font des offres pour tes meilleurs joueurs ; si tu refuses, le joueur peut revenir à la charge quelques journées plus tard.
+- Les effectifs des clubs adverses varient de 12 à 14 joueurs selon leurs supporters.
+- Des carrières s'allongent d'une saison ou s'arrêtent plus tôt après une blessure grave ; les grandes carrières des clubs adverses ont leur ligne de fin dans le Journal.
+
+### Interface
+- Carte « À décider » sur l'Accueil.
+- Onglet Histoire sur la fiche d'un club adverse : titres, entraîneur, records.
+
+### Contenu
+- Règles « Monde vivant » complétées et Tutoriel « Monde vivant » enrichi.
+
+### Technique
+- Fichier un peu plus lourd : 806 Ko au lieu de 796 Ko.
+
+---
+
 ## v0.41 - Nouvelle police, fichier allégé
 
 ### Interface
