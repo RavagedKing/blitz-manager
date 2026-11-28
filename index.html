@@ -2034,9 +2034,10 @@ if(p.leg||p.lgd)return{gross:0,fee:0,net:0,leg:1};
 const gross=Math.round(valueOf(p)*.5/100)*100,fee=Math.round(CT_FEE*Math.max(0,(p.ct||1)-1)*G.schedule.length*p.wage);
 return{gross,fee,net:gross-fee};
 }
+const hSeason=(G,t,p)=>({k:'season',s:G.season,c:t.short,i:clubRef(t),apps:p.apps,g:p.g,a:p.a,avg:p.apps?Math.round(p.rs/p.apps*10)/10:null,w:p.sw||0,lvl:p.lvl}),hReset=p=>{p.g=0;p.a=0;p.apps=0;p.rs=0;p.sw=0;p.x=X0();p.train=null;};
 function toPool(G,t,p){
-(p.hist=p.hist||[]).push({k:'season',s:G.season,c:t.short,i:clubRef(t),apps:p.apps,g:p.g,a:p.a,avg:p.apps?Math.round(p.rs/p.apps*10)/10:null,w:p.sw||0,lvl:p.lvl},{k:'free',s:G.season});p.hist=p.hist.slice(-40);
-p.g=0;p.a=0;p.apps=0;p.rs=0;p.sw=0;p.x=X0();p.train=null;delete p.ct;
+(p.hist=p.hist||[]).push(hSeason(G,t,p),{k:'free',s:G.season});p.hist=p.hist.slice(-40);
+hReset(p);delete p.ct;
 G.free.push(p);while(G.free.length>FREE_MAX)G.free.shift();
 }
 function ctRenew(G,pid,dur){
@@ -2717,8 +2718,9 @@ rk(ix.filter(x=>!st[x.id]),'v').forEach((x,i)=>{if(i<q)st[x.id]=3;});
 rk(ix,'h').forEach((x,i)=>{pr[x.id]=i<r?2:i>=n-r?0:1;});
 T.forEach(t=>{if(t.id!==G.userId)t.ia=[st[t.id],pr[t.id]];});
 }
+const aiFull=p=>eff(p,p.pos,p.side)/(.75+.25*hpPct(p));
 function aiContracts(G,t,bil){
-const full=p=>eff(p,p.pos,p.side)/(.75+.25*hpPct(p)),rank=[...t.players].sort((a,b)=>full(b)-full(a)||a.id-b.id);
+const full=aiFull,rank=[...t.players].sort((a,b)=>full(b)-full(a)||a.id-b.id);
 const out=rank.filter((p,i)=>i>=AI_KEEP&&p.ct===1).reverse().slice(0,2),gone=[];
 out.forEach(p=>{
 if(t.players.length-gone.length<=SQUAD_MIN)return;
@@ -2734,17 +2736,20 @@ p.wage=ctPrice(p,dur,true,false,kOf(G),G).wage;p.ct=1+dur;bil.renewed.push({c:t.
 return gone.map(p=>p.pos);
 }
 function newSeason(G){
-const cb=(capPlayer(G,G.teams[G.userId])||{}).id,bil={renewed:[],left:[],tacit:[],retired:[],sp:null},sp0=G.sp&&G.teams[G.userId]?spCur(G):null;
+const cb=(capPlayer(G,G.teams[G.userId])||{}).id,nw=NW_ON&&G.nw,bil={renewed:[],left:[],tacit:[],retired:[],sp:null},sp0=G.sp&&G.teams[G.userId]?spCur(G):null;
 G.teams.forEach(t=>{
 let gone=[];
 if(t.id===G.userId){
-t.players.forEach(p=>{if(p.ct===1){p.wage=ctPrice(p,1,true,true,kOf(G),G).wage;p.ct=2;bil.tacit.push(p.name);}});
+t.players.slice().forEach(p=>{if(p.ct!==1)return;
+if(nw&&nwMk(G,p.id)===2&&t.players.length>SQUAD_MIN&&(p.pos!=='GK'||t.players.filter(x=>x.pos==='GK').length>1)){t.players=t.players.filter(x=>x!==p);t.lineup=t.lineup.filter(id=>id!==p.id);toPool(G,t,p);bil.left.push({c:t.short,id:p.id,name:p.name});return;}
+p.wage=ctPrice(p,1,true,true,kOf(G),G).wage;p.ct=2;bil.tacit.push(p.name);});
 }else gone=aiContracts(G,t,bil);
-const youth=[],ac=t.id===G.userId&&acOn(G);let dr=0;
+const youth=[],me=t.id===G.userId,ac=me&&acOn(G);let dr=0,sr=0;
 t.players=t.players.map(p=>{
 p.age+=p.uid&&UNIQ_LOCK_AGE?0:1;
-if(p.age>=retAge(p)){
-if(t.id===G.userId)bil.retired.push(p.name);
+if(p.age>=(me?nwRetAge(G,p):retAge(p))){
+if(me)bil.retired.push(p.name);
+else if(nw&&!sr&&p.capps>=100){sr=1;nwNews(G,'star',{p:p.name,c:t.name,m:p.capps,g:p.cg});}
 if(ac&&t.players.length-dr>SQUAD_MIN&&(p.pos!=='GK'||t.players.some(x=>x!==p&&x.pos==='GK'&&x.age<retAge(x)-1))){dr++;return null;}
 {const q=aiRecruit(G,t,p.pos,{mates:t.players.concat(youth)});youth.push(q);return q;}
 }
@@ -2754,9 +2759,11 @@ p.g=0;p.a=0;p.apps=0;p.rs=0;p.sw=0;p.x=X0();p.inj=0;p.hp=maxHP(p);p.ct=Math.max(
 return p;
 }).filter(p=>p);
 gone.forEach(pos=>{t.players.push(aiRecruit(G,t,pos));});
+if(nw&&!me)nwSquad(G,t,bil);
 if(IA_ON&2&&t.id!==G.userId)aiTrainSet(G,t);
 setAutoLineup(t);
 });
+if(nw&&nw.t){const u=G.teams[G.userId];nw.t=nw.t.filter(x=>u.players.some(p=>p.id===x[0]));if(!nw.t.length)delete nw.t;}
 if(sp0){
 const sp=sp0,w=G.table[G.userId].w,ok=w>=sp.thr,gain=ok?Math.round(sp.bonus*rvOf(G)*difOf(G).rev):0;
 G.cash+=gain;bil.sp={id:sp.id,thr:sp.thr,wins:w,ok,gain};
@@ -3341,8 +3348,8 @@ while(i<cand.length&&size()>max)drop(cand[i++]);
 while(out.parts.length>1&&size()>max)out.parts.shift();
 return out;
 }
-let NW_ON=1,NW_EV=.2,NW_EN=12,NW_B=4000,NW_RIV=40,NW_RN=4,NW_RC=10,NW_RL=5,NW_RP=10,NW_RD=5,NW_RX=100,NW_DG=1.2,NW_DF=1.5,NW_Z=2,NW_P0=800,NW_PL=.04,NW_PMIN=100,NW_PMAX=6000,NW_PR=.08,NW_PT=.1,NW_PU=.06,NW_PD=.08,NW_PM=.1,NW_LV=2,NW_PQ=.1,NW_PREC=.02;
-const NW_E=[['fete',3,0],['mecene',2,0],['panne',2,0],['une',3,0],['froid',2,0],['chambre',2,0],['blessure',1,1],['don',1,1]];
+let NW_ON=1,NW_EV=.2,NW_EN=12,NW_B=4000,NW_RIV=40,NW_RN=4,NW_RC=10,NW_RL=5,NW_RP=10,NW_RD=5,NW_RX=100,NW_DG=1.2,NW_DF=1.5,NW_Z=2,NW_P0=800,NW_PL=.04,NW_PMIN=100,NW_PMAX=6000,NW_PR=.08,NW_PT=.1,NW_PU=.06,NW_PD=.08,NW_PM=.1,NW_LV=2,NW_PQ=.1,NW_PREC=.02,NW_INT=2,NW_KD=5,NW_RAISE=1.15,NW_OFR=[.9,1.3],NW_SQ=[1.15,1.35],NW_TN=8,NW_RETX=2;
+const NW_E=[['fete',3,0],['mecene',2,0],['panne',2,0],['une',3,0],['froid',2,0],['chambre',2,0],['blessure',1,1],['don',1,1],['offre',3,1,1],['gala',2,0,1],['presse',2,0,1],['danse',2,0,1],['insiste',0,0,1]];
 const NW_T={fete:['Les supporters fêtent la série de victoires : affluence en hausse.','Fans celebrate the winning streak: crowds are up.'],
 mecene:['Un mécène du port offre {v} gils au club.','A harbour patron gives the club {v} gil.'],
 panne:['Panne des pompes du bassin : {v} gils de réparations.','The pool pumps break down: {v} gil of repairs.'],
@@ -3355,7 +3362,25 @@ riv:['{c} devient le rival de ton club.','{c} becomes your club\'s rival.'],
 meet:['Retrouvailles : {c}, ton rival, est de nouveau dans ta division.','Reunion: {c}, your rival, is back in your division.'],
 fire:['{c} renvoie son entraîneur ; {n} le remplace.','{c} sacks its coach; {n} takes over.'],
 rec:['Record battu par {p} ({c}) : la popularité du club grimpe.','Record broken by {p} ({c}): the club\'s popularity rises.'],
-wood:['Cuillère de bois pour {p} ({c}) : la vaisselle du club est assurée.','Wooden spoon for {p} ({c}): the club\'s washing-up is covered.']};
+wood:['Cuillère de bois pour {p} ({c}) : la vaisselle du club est assurée.','Wooden spoon for {p} ({c}): the club\'s washing-up is covered.'],
+offre:['{c} propose {v} gils pour {p}. Accepter ?','{c} offers {v} gil for {p}. Accept?'],
+offre1:['{p} rejoint {c} pour {v} gils.','{p} joins {c} for {v} gil.'],
+offre0:['Offre de {c} pour {p} refusée.','{c}\'s offer for {p} turned down.'],
+gala:['Un gala de charité est proposé : {v} gils pour gagner des supporters ?','A charity gala is proposed: {v} gil to win over fans?'],
+gala1:['Le gala attire du monde : supporters en hausse.','The gala draws a crowd: fans are up.'],
+gala0:['Pas de gala cette saison.','No gala this season.'],
+presse:['La presse demande une interview. Accepter ?','The press asks for an interview. Accept?'],
+presse1:['Interview réussie : les supporters apprécient.','Good interview: the fans approve.'],
+presse2:['Interview ratée : le propriétaire grince des dents.','Botched interview: the owner is not pleased.'],
+presse0:['Interview déclinée.','Interview declined.'],
+danse:['{p} envisage de jouer une saison de plus. L\'encourager ?','{p} is thinking of playing one more season. Encourage it?'],
+danse1:['{p} jouera une saison de plus.','{p} will play one more season.'],
+danse0:['{p} prendra sa retraite comme prévu.','{p} will retire as planned.'],
+insiste:['{c} revient à la charge pour {p}, qui demande une hausse de salaire. L\'accorder ?','{c} comes back for {p}, who asks for a pay rise. Grant it?'],
+insiste1:['{p} obtient sa hausse et reste au club.','{p} gets the rise and stays.'],
+insiste0:['{p} ne renouvellera pas son contrat.','{p} will not renew the contract.'],
+grave:['Blessure grave : {p} met fin à sa carrière en fin de saison.','Serious injury: {p} will retire at the end of the season.'],
+star:['Fin de carrière pour {p} ({c}) : {m} matchs, {g} buts.','Career over for {p} ({c}): {m} matches, {g} goals.']};
 const nwH=(G,d,k)=>hmix(hmix(G.nw.z,G.season*64+d),k),nwPb=v=>clamp(Math.round(v),NW_PMIN,NW_PMAX),nwUg=G=>G.teams[G.userId].g,nwCn=(G,g)=>(G.teams.find(t=>t.g===g)||gClub(g)).name;
 const nwName=n=>{const F=n%3?FIRST_M:FIRST_F;return F[(n>>>2)%F.length]+' '+LAST[(n>>>9)%LAST.length];};
 const nwNews=(G,id,X,a)=>{if(!G.news)return;const f=(t,l)=>t.replace(/\{(\w)\}/g,(m,k)=>typeof X[k]=='number'?X[k].toLocaleString(l):X[k]),e={d:G.day+1,s:B(f(NW_T[id][0],'fr-FR'),f(NW_T[id][1],'en-US')),sn:G.season,k:'monde'};if(a)e.a=1;G.news.unshift(e);G.news.length=Math.min(G.news.length,100);};
@@ -3385,27 +3410,33 @@ return v;
 }
 function nwDay(G){
 const N=nwInit(G);if(!N)return null;
-const d=G.day,s=G.season,u=G.teams[G.userId],k=kOf(G),h=j=>nwH(G,d,j);
+const d=G.day,s=G.season,u=G.teams[G.userId],k=kOf(G),h=j=>nwH(G,d,j),c1=v=>Math.round(v/100)*100,ask=(id,D)=>{N.q=[id,s,d,D];N.e.push([id,s,d]);if(N.e.length>NW_EN)N.e=N.e.slice(-NW_EN);nwNews(G,id,nwX(G,N.q));return id;};
+if(N.q)nwAns(G,0);
+if(N.k&&d>=N.k[1]){const K=N.k;delete N.k;if(u.players.some(p=>p.id===K[2][0]))return ask(K[0],K[2]);}
 if(h(1)%1000>=NW_EV*1000)return null;
 const ps=u.players,ok=p=>!(p.inj>0),best=ps.filter(p=>p.m&&p.m.played).reduce((a,p)=>!a||p.m.rating>a.m.rating?p:a,null),fr=ps.filter(ok),lu=fr.filter(p=>(u.lineup||[]).includes(p.id)),rv=N.r.filter(r=>r[1]>=NW_RIV),
-C={fete:G.coach.streak>=3,mecene:1,panne:1,une:best,froid:fr.length,chambre:rv.length,blessure:lu.length,don:G.cash>0},
+of=nwOfr(G,h),dz=u.players.filter(p=>p.age+1>=retAge(p)&&!nwMk(G,p.id)),
+C={fete:G.coach.streak>=3,mecene:1,panne:1,une:best,froid:fr.length,chambre:rv.length,blessure:lu.length,don:G.cash>0,offre:of,gala:G.cash>c1(2000*k),presse:1,danse:dz.length},
 el=NW_E.filter(e=>C[e[0]]&&!N.e.some(x=>x[0]===e[0]&&x[1]===s)&&!(e[2]&&N.b===s));
 if(!el.length)return null;
-let r=h(3)%sum(el.map(e=>e[1]));const E=el.find(e=>(r-=e[1])<0),id=E[0],X={},c1=v=>Math.round(v/100)*100,pk=a=>a[h(4)%a.length];
+let r=h(3)%sum(el.map(e=>e[1]));const E=el.find(e=>(r-=e[1])<0),id=E[0],X={},pk=a=>a[h(4)%a.length];
+if(E[3]){if(E[2])N.b=s;return ask(id,id==='gala'?[c1(2000*k)]:id==='offre'?of:id==='danse'?[pk(dz).id]:[]);}
 if(id==='fete'||id==='une'){G.fans=clamp(Math.round(G.fans*(id==='fete'?1.02:1.01)),300,6000);X.p=best&&best.name;}
 else if(id==='mecene'){X.v=c1(2000*k);G.cash+=X.v;}
 else if(id==='panne'){X.v=c1(1500*k);G.cash-=X.v;}
 else if(id==='don'){X.v=Math.min(c1(G.cash*.1),c1(20000*k));G.cash+=X.v;}
 else if(id==='froid'){const p=pk(fr);p.hp=Math.max(1,Math.round(p.hp*.8));X.p=p.name;}
 else if(id==='chambre'){const e=pk(rv);e[1]=Math.min(NW_RX,e[1]+NW_RP);e[2]=s;X.c=nwCn(G,e[0]);}
-else{const p=pk(lu);p.inj=Math.max(1,Math.round((3+h(5)%3)/k));X.p=p.name;X.n=p.inj;}
+else{const p=pk(lu);p.inj=Math.max(1,Math.round((3+h(5)%3)/k));X.p=p.name;X.n=p.inj;if(retAge(p)-p.age<=NW_RETX)X.g=p.id;}
 if(E[2])N.b=s;
 N.e.push([id,s,d]);if(N.e.length>NW_EN)N.e=N.e.slice(-NW_EN);
 nwNews(G,id,X,E[2]);
+if(X.g!=null){nwMk(G,X.g,-1);nwNews(G,'grave',X,1);}
 return id;
 }
 function nwSeason(G,aw){
-const N=nwInit(G),W=G&&G.wd;if(!N||G.en&&G.en.f)return null;
+const N=nwInit(G),W=G&&G.wd;if(N){if(N.q)nwAns(G,0);delete N.k;}
+if(!N||G.en&&G.en.f)return null;
 const s=G.season,ug=nwUg(G),st=sortedTable(G),o={f:0,fu:0,rec:0},
 ord=DIV_SIZE.map((n,d)=>d===W.d?st.map(r=>G.teams[r.id].g):lightOrd(W.x[d]).map(i=>wdBlk(W,d)[i]));
 ord.forEach((O,d)=>{
@@ -3434,8 +3465,55 @@ const s=G.season;let n=0;
 N.r.forEach(e=>{if(!G.teams.some(t=>t.g===e[0]))return;if(e[1]>=NW_RIV&&e[3]<s-1){e[1]=Math.min(NW_RX,e[1]+NW_RD);n++;nwNews(G,'meet',{c:nwCn(G,e[0])});}e[3]=s;});
 return n;
 }
-const okNw=g=>{const N=g.nw,W=g.wd,A=Array.isArray;if(N===undefined)return true;if(!isO(N)||!isO(W)||!A(W.m))return false;const m=W.m.length,ids=NW_E.map(e=>e[0]);
-return Object.keys(N).every(k=>['z','p','c','r','e','b'].includes(k))&&okI(N.z,-2147483648,2147483647)&&A(N.p)&&N.p.length===m&&N.p.every(v=>okI(v,NW_PMIN,NW_PMAX))
+function nwX(G,q){
+const id=q[0],D=q[3];if(id==='gala')return{v:D[0]};if(id==='presse')return{};
+const p=G.teams[G.userId].players.find(x=>x.id===D[0]),b=D.length>1&&G.teams.find(t=>t.g===D[1]);if(!p||id==='offre'&&!b)return null;
+return{p:p.name,c:D.length>1?nwCn(G,D[1]):'',v:D[2]};
+}
+function nwAns(G,a){
+const N=NW_ON&&G&&G.nw,q=N&&N.q;if(!q)return null;
+delete N.q;const X=nwX(G,q);if(!X)return null;
+const id=q[0],D=q[3],u=G.teams[G.userId],p=u.players.find(x=>x.id===D[0]),f=m=>{G.fans=clamp(Math.round(G.fans*m),300,6000);};let r=id+(a?1:0);
+if(a){
+if(id==='gala'){G.cash-=D[0];f(1.03);}
+else if(id==='presse'){if(nwH(G,q[2],6)%2)f(1.02);else{r='presse2';if(G.en)G.en.c=clamp(G.en.c-NW_INT,0,100);}}
+else if(id==='offre'){
+const b=G.teams.find(t=>t.g===D[1]),cb=capPlayer(G,u).id;
+u.players=u.players.filter(x=>x!==p);u.lineup=u.lineup.filter(i=>i!==p.id);ensureLineup(u);
+(p.hist=p.hist||[]).push(hSeason(G,u,p),{k:'sign',s:G.season,c:b.name,i:clubRef(b),price:D[2]});p.hist=p.hist.slice(-40);hReset(p);p.ct=Math.max(2,p.ct||0);
+b.players.push(p);setAutoLineup(b);G.cash+=D[2];capCheck(G,cb);
+}
+else if(id==='insiste')p.wage=Math.round(p.wage*NW_RAISE);
+else nwMk(G,p.id,1);
+}else if(id==='offre')N.k=['insiste',G.day+NW_KD,[D[0],D[1]]];
+else if(id==='insiste')nwMk(G,p.id,2);
+nwNews(G,r,X);
+return r;
+}
+function nwOfr(G,h){
+const N=G.nw,u=G.teams[G.userId],P=u.players,cp=capPlayer(G,u),gk=P.filter(x=>x.pos==='GK').length;if(P.length<=SQUAD_MIN)return 0;
+const c=P.slice().sort((a,b)=>valueOf(b)-valueOf(a)||a.id-b.id).slice(0,5).filter(p=>!p.uid&&!p.lgd&&!p.leg&&p!==cp&&p.ct>=2&&(p.pos!=='GK'||gk>1)),
+B=G.teams.filter(t=>t!==u).sort((a,b)=>N.p[b.g]-N.p[a.g]||a.g-b.g).slice(0,4);
+if(!c.length||!B.length)return 0;
+const p=c[h(7)%c.length],b=B[h(8)%B.length];
+return[p.id,b.g,Math.round(valueOf(p)*(NW_OFR[0]+(NW_OFR[1]-NW_OFR[0])*(h(9)%1000)/1000)*nwPrice(G,b)/100)*100];
+}
+function nwMk(G,pid,k){
+const N=NW_ON&&G.nw;if(!N)return 0;const T=N.t||[];
+if(k===undefined)return(T.find(x=>x[0]===pid)||[0,0])[1];
+N.t=T.filter(x=>x[0]!==pid).concat([[pid,k]]).slice(-NW_TN);return k;
+}
+const nwRetAge=(G,p)=>{const m=nwMk(G,p.id);return retAge(p)+(m===1?1:m===-1?-99:0);};
+function nwSquad(G,t,bil){
+const r=1+nwRel(G,t),c=12+(r>=NW_SQ[0])+(r>=NW_SQ[1]);let i=0;
+while(t.players.length<c)t.players.push(aiRecruit(G,t,['MF','DF','FW'][i++%3]));
+t.players.filter(p=>p.ct===1&&p.pos!=='GK').sort((a,b)=>aiFull(a)-aiFull(b)||b.id-a.id).forEach(p=>{if(t.players.length<=c+1)return;t.players=t.players.filter(x=>x!==p);t.lineup=t.lineup.filter(i=>i!==p.id);toPool(G,t,p);bil.left.push({c:t.short,id:p.id,name:p.name});});
+}
+const okNw=g=>{const N=g.nw,W=g.wd,A=Array.isArray;if(N===undefined)return true;if(!isO(N)||!isO(W)||!A(W.m))return false;const m=W.m.length,ids=NW_E.map(e=>e[0]),Q=N.q,K=N.k,T=N.t,oD=(D,n)=>A(D)&&D.length<=n&&D.every(v=>okI(v,0,1e9));
+return Object.keys(N).every(k=>['z','p','c','r','e','b','q','k','t'].includes(k))
+&&(Q===undefined||A(Q)&&Q.length===4&&NW_E.some(e=>e[3]&&e[0]===Q[0])&&okI(Q[1],1,9999)&&okI(Q[2],0,99)&&oD(Q[3],3))
+&&(K===undefined||A(K)&&K.length===3&&K[0]==='insiste'&&okI(K[1],0,199)&&oD(K[2],2)&&K[2].length===2)
+&&(T===undefined||A(T)&&T.length>0&&T.length<=NW_TN&&T.every(x=>A(x)&&x.length===2&&okI(x[0],0,1e9)&&[-1,1,2].includes(x[1]))&&new Set(T.map(x=>x[0])).size===T.length)&&okI(N.z,-2147483648,2147483647)&&A(N.p)&&N.p.length===m&&N.p.every(v=>okI(v,NW_PMIN,NW_PMAX))
 &&A(N.c)&&N.c.length===m&&N.c.every(c=>A(c)&&c.length===4&&okI(c[0],0,999999)&&okI(c[1],1,9999)&&okI(c[2],0,99)&&okI(c[3],0,999))
 &&A(N.r)&&N.r.length<=NW_RN&&new Set(N.r.map(r=>A(r)&&r[0])).size===N.r.length&&N.r.every(r=>A(r)&&r.length===4&&okI(r[0],0,m-1)&&okI(r[1],1,NW_RX)&&okI(r[2],1,9999)&&okI(r[3],1,9999))
 &&A(N.e)&&N.e.length<=NW_EN&&N.e.every(e=>A(e)&&e.length===3&&ids.includes(e[0])&&okI(e[1],1,9999)&&okI(e[2],0,99))&&okI(N.b,0,9999)&&JSON.stringify(N).length<=NW_B;};
@@ -3580,13 +3658,13 @@ try{['pointerdown','pointerup','keydown','touchend'].forEach(e=>window.addEventL
 document.addEventListener('visibilitychange',()=>{try{const c=SND.c;if(!c)return;sndP(document.hidden?c.suspend():c.resume());}catch(e){}});}catch(e){}
 const DN=()=>DIV_NAME.slice(0,DIV_SIZE.length).map((n,i)=>i?n:L('Élite','Elite'));
 const DNS=()=>DN().map(n=>n.replace(/^Semi-Pro /,'SP'));
-const VERSION='v0.41';
+const VERSION='v0.42';
 const RAL_K=1.5,PDEC_N=33,PDEC_GAP=1,PDEC_MAX=2,CROWD_MIN=.15;
 const COACH_MAX=20,NEWS_MAX=3;
 const CREDITS={thanks:['Merci à toutes celles et ceux qui ont aidé, testé et encouragé ce projet.','Thanks to everyone who helped, tested and encouraged this project.'],special:['Sokomaa','Manda','Pyllouzard','Nikje','Dockbrown','Vaslabas','Loska','Santos','Snoop']};
 const TITLE_NEWS=[
 {t:['Remerciements','Thanks'],b:['Merci à toutes les personnes prenant le temps de tester ce projet. Remerciement spécial pour les amis qui se reconnaîtront. N’hésitez pas à me communiquer vos remarques et suggestions, et surtout, amusez-vous !','Thank you to everyone taking the time to test this project. Special thanks to the friends who will recognise themselves. Feel free to send me your remarks and suggestions, and above all, have fun!']},
-{v:VERSION,t:['Nouveautés v0.41','What\'s new in v0.41'],b:['v0.41 — Nouvelle police de texte, Chakra Petch (libre, à la place de Square 721), et polices allégées : le jeu n’embarque plus que les caractères qu’il affiche et IBM Plex Mono passe de trois graisses à deux. Fichier plus léger d’environ 48 Ko.','v0.41 — New text font, Chakra Petch (open licence, replacing Square 721), and lighter fonts: the game now embeds only the characters it displays, and IBM Plex Mono goes from three weights to two. The file is about 48 KB smaller.']},
+{v:VERSION,t:['Nouveautés v0.42','What\'s new in v0.42'],b:['v0.42 — Le monde vivant s’étoffe : des événements te demandent de trancher (carte « À décider » de l’Accueil, Non par défaut), des clubs font des offres pour tes joueurs, les effectifs IA varient de 12 à 14 selon leurs supporters, des carrières s’allongent ou s’arrêtent, et chaque club IA a son onglet Histoire.','v0.42 — The living world grows: some events ask you to decide (“To decide” card on the Home page, No by default), clubs bid for your players, AI squads range from 12 to 14 depending on their fans, careers get longer or end early, and every AI club has a History tab.']},
 ];
 const TUTO={
 squad:[['Ton effectif','Your squad'],['Tes joueurs et leurs stats. Ouvre une fiche pour voir le radar et l’historique, et dépenser les points de talent gagnés à chaque niveau.','Your players and their stats. Open a sheet to see the radar and history, and to spend the talent points earned at each level.']],
@@ -3613,7 +3691,7 @@ spec2:[['Seconde spécialité','Second specialty'],['Au niveau 6, ajoute une sec
 ot:[['Mort subite','Sudden death'],['Égalité à la fin du temps réglementaire : le premier but gagne. Sans but après 12 phases, un départage désigne le vainqueur. Pas de consigne en mort subite.','Level at full time: the first goal wins. With no goal after 12 phases, a tiebreak decides. No instruction in sudden death.']],
 mercy:[['Écart de 7 buts','7-goal gap'],['Le match s’est arrêté : dès qu’une équipe mène de 7 buts en temps réglementaire, la rencontre prend fin sur ce score.','The match was stopped: as soon as a side leads by 7 goals in normal time, the game ends on that score.']],
 low:[['Joueur épuisé','Spent player'],['Sous 10 HP, un joueur voit ses PS et TI divisés par 2. Remplace-le, ou donne la consigne Souffler à la prochaine pause.','Below 10 HP, a player’s PS and TI are halved. Substitute them, or give the Catch breath instruction at the next pause.']],
-monde:[['Monde vivant','Living world'],['Les autres clubs vivent aussi : événements après certains matchs, rivalités nées des matchs serrés (un derby rapporte plus), entraîneurs renvoyés, supporters qui montent ou baissent. Tout s’affiche dans le Journal, catégorie Monde.','Other clubs live too: events after some matches, rivalries born from close matches (a derby pays more), sacked coaches, supporters rising or falling. It all shows in the Journal, World category.']]
+monde:[['Monde vivant','Living world'],['Les autres clubs vivent aussi : événements après certains matchs, rivalités nées des matchs serrés (un derby rapporte plus), entraîneurs renvoyés, supporters qui montent ou baissent. Tout s’affiche dans le Journal, catégorie Monde. Une carte « À décider » de l’Accueil te fait parfois trancher : sans réponse, c’est Non.','Other clubs live too: events after some matches, rivalries born from close matches (a derby pays more), sacked coaches, supporters rising or falling. It all shows in the Journal, World category. A “To decide” card on the Home page sometimes asks you to choose: no answer means No.']]
 };
 const lvOn=()=>!!UI.live&&!UI.live.done;
 const TUTB={
@@ -4683,6 +4761,11 @@ const ls=todoLines(G).slice(0,5);
 const rows=ls.map(l=>`<li class="td ${l.sev}"><span class="tdi" role="img" aria-label="${l.sev==='block'?L('Bloquant','Blocking'):L('À surveiller','Heads-up')}">${TODO_ICO[l.id]||'•'}</span><span class="tdt">${esc(todoText(l))}</span><button class="btn small" data-a="goto" data-t="${l.go}">${TODO_LBL[l.go]?P(TODO_LBL[l.go]):pageName(l.go)} →</button></li>`).join('');
 return ls.length?`<ul class="todo">${rows}</ul>`:`<p class="alldone"><span aria-hidden="true">✓</span> ${L('Tout est prêt','All set')}</p>`;
 }
+function nwqHTML(){
+const q=NW_ON&&G.nw&&G.nw.q,X=q&&nwX(G,q);if(!X)return'';
+const t=NW_T[q[0]][LANG==='en'?1:0].replace(/\{(\w)\}/g,(m,k)=>typeof X[k]=='number'?fmt(X[k]):esc(X[k]));
+return `<section class="panel hb1 nwq"><p><b>${L('À décider','To decide')}</b> · ${t} <span class="muted">(${L('Non par défaut','No by default')})</span></p><div class="row"><button class="btn primary" data-a="nwq" data-v="1">${L('Oui','Yes')}</button><button class="btn" data-a="nwq" data-v="0">${L('Non','No')}</button></div></section>`;
+}
 function todoBlock(){
 return `<section class="panel hb1"><h3>${L('À faire avant le match','To do before the match')}</h3>${todoListHTML()}</section>`;
 }
@@ -4772,7 +4855,7 @@ const cc=`<section class="panel hb5">${blockHd(L('Entraîneur','Coach'),'coach')
   ${cr(L('Bilan','Record'),`${C.w} ${L('V','W')} · ${C.l} ${L('D','L')}`)}${cr(L('Taux de victoire','Win rate'),dm||pc0+'%')}${cr(L('Série · record','Streak · best'),`${C.streak} · ${C.best}`)}${cr(L('BP · BC / m','GF · GA / m'),dm||`${(C.gf/C.m).toFixed(1)} · ${(C.ga/C.m).toFixed(1)}`)}${cr(L('Saisons · championnats','Seasons · leagues won'),`${C.seasons} · ${ttl}`)}${palWins().length?cr(L('Coupes','Cups'),palWins().length):''}</div></div></section>`;
 const tbl=`<section class="panel hb3">${blockHd(L('Classement','League table')+(G.wd?` · ${DN()[G.wd.d]} · ${rankTxt(me5+1)}`:''),'table')}<div class="tbl"><table><thead><tr><th class="num">#</th><th>Club</th><th class="num hx">${L('J','P')}</th><th class="num hx">+/−</th><th class="num">Pts</th></tr></thead><tbody>${mini}</tbody></table></div></section>`;
 const jrn=homeJrn();
-const hm=`<div class="hm"><div class="hcA">${todoBlock()}${pd?'':trnCardHTML('hb1')}${next}</div><div class="hcB"><div class="hpr">${tbl}${cc}</div>${jrn}${fin}</div>${helpRow('game')}</div>`,bl=bilanHTML();
+const hm=`<div class="hm"><div class="hcA">${todoBlock()}${nwqHTML()}${pd?'':trnCardHTML('hb1')}${next}</div><div class="hcB"><div class="hpr">${tbl}${cc}</div>${jrn}${fin}</div>${helpRow('game')}</div>`,bl=bilanHTML();
 return bl?`<div class="stack"><div class="stack tight">${bl}</div>${hm}</div>`:hm;
 }
 const jrnOpen=()=>UI.jopen!=null?UI.jopen:!!(window.matchMedia&&matchMedia('(min-width:1200px)').matches);
@@ -4843,10 +4926,14 @@ return `<div class="split"><div class="stack"><div class="row between"><h2>${L('
 }
 function clubPanel(t){
 const st=sortedTable(G),rank=st.findIndex(r=>r.id===t.id)+1,r=G.table[t.id],me=t.id===G.userId;
-const N=!me&&NW_ON&&G.nw,ch=N&&N.c[t.g],lv=lineVals(t,!me),tabs=[['ov',L('Club','Club')],['sq',L('Effectif','Squad')]];
+const N=!me&&NW_ON&&G.nw,ch=N&&N.c[t.g],lv=lineVals(t,!me),tabs=[['ov',L('Club','Club')],['sq',L('Effectif','Squad')]].concat(ch?[['hi',L('Histoire','History')]]:[]),ct=UI.ctab==='hi'&&!ch?'ov':UI.ctab;
 const star=t.players.slice().sort((a,b)=>ovr(b)-ovr(a))[0];
 let body='';
-if(UI.ctab==='sq'){
+if(ct==='hi'){
+const ti=(G.wd&&G.wd.h||[]).map(e=>[e[0],e.indexOf(t.g,1)-1]).filter(e=>e[1]>=0).reverse(),R=G.rl||{},rn=[].concat(...Object.values(R.s||{}),R.c||[]).filter(r=>r[3]===t.g).length;
+body=`<div class="kv"><div><span>${L('Titres de division','Division titles')}</span><b>${ti.length}</b></div><div><span>${L('Entraîneur','Coach')}</span><b>${esc(nwName(ch[0]))}</b></div><div><span>${L('Depuis la saison','Since season')}</span><b>${ch[1]}</b></div><div><span>${L('Entraîneurs','Coaches')}</span><b>${ch[3]+1}</b></div><div><span>${L('Records détenus','Records held')}</span><b>${rn}</b></div></div>
+    <div class="stack tight">${ti.length?ti.slice(0,6).map(e=>`<div class="frow"><span class="muted">${L('Saison','Season')} ${e[0]}</span><b>${L('Champion','Champion')} · ${DN()[e[1]]}</b></div>`).join(''):`<p class="hint">${L('Aucun titre de division.','No division title.')}</p>`}</div>`;
+}else if(ct==='sq'){
 const ord={GK:0,DF:1,MF:2,FW:3};
 body=`<div style="font-size:12px;color:var(--muted)" class="crow"><span></span><span>${L('Joueur','Player')}</span><span style="text-align:center">${L('Âge','Age')}</span><span style="text-align:center">${L('Note','Ovr')}</span><span style="text-align:center">Pot.</span><span style="text-align:center">${L('Clé','Key')}</span></div>`+
 t.players.slice().sort((a,b)=>ord[a.pos]-ord[b.pos]||ovr(b)-ovr(a)).map(p=>`<div class="crow">${posTag(p)}<span class="nm" title="${esc(p.name)} · ${esc(raceName(p))}">${sexIco(p)} ${esc(p.name)}${p.uid||p.lgd?' '+uniqTag(p):''}${p.inj?` <i class="tag bad" style="font-style:normal">${L('Bl.','Inj.')}</i>`:''}</span><b>${p.age}</b><span class="nn">${ovr(p)}</span><span style="text-align:center">${potCell(p)}</span><span class="mono" style="font-size:12px;text-align:center">${keyStat(p)}</span></div>`).join('');
@@ -4859,7 +4946,7 @@ body=`<div class="kpis" style="grid-template-columns:repeat(3,1fr)">${kp.map(([l
     <div class="row between"><span class="muted" style="font-size:13px">${L('Forme','Form')}</span>${formChips(t.id)}</div>`;
 }
 return `<aside class="panel ppanel stack tight sticky"><div class="who">${badge(t,true)}<div style="min-width:0"><h2 style="overflow-wrap:anywhere">${esc(t.name)}</h2><span class="muted" style="font-size:13px">${rank}${ord1(rank)} · ${r.pts} pts${me?` · ${L('ton club','your club')}`:''}${nwRival(G,t.g)?' '+rvTag():''}</span></div></div>
-  <div class="tabsm" role="tablist">${tabs.map(([k,l])=>`<button role="tab" data-a="ctab" data-v="${k}" aria-selected="${UI.ctab===k}">${l}</button>`).join('')}</div>${body}</aside>`;
+  <div class="tabsm" role="tablist">${tabs.map(([k,l])=>`<button role="tab" data-a="ctab" data-v="${k}" aria-selected="${ct===k}">${l}</button>`).join('')}</div>${body}</aside>`;
 }
 const medal=on=>`<svg viewBox="0 0 36 36" aria-hidden="true"><path d="M11 3h6l1 9h-6zM25 3h-6l-1 9h6z" fill="var(--water)"/><circle cx="18" cy="21" r="11" fill="${on?'var(--ball)':'var(--line)'}"/><path d="M18 14l2 4.2 4.6.5-3.4 3.1 1 4.5-4.2-2.4-4.2 2.4 1-4.5-3.4-3.1 4.6-.5z" fill="#fff"/></svg>`;
 const cupSvg=col=>`<svg viewBox="0 0 36 36" aria-hidden="true"><path d="M10 5h16v8a8 8 0 0 1-16 0z" fill="${col}"/><path d="M10 8H5v3a5 5 0 0 0 5 5M26 8h5v3a5 5 0 0 1-5 5" fill="none" stroke="${col}" stroke-width="2.5"/><rect x="16" y="20" width="4" height="6" fill="${col}"/><rect x="11" y="26" width="14" height="4" rx="1" fill="${col}"/></svg>`;
@@ -5317,7 +5404,11 @@ body=`${sec('Installations','Facilities',tb([[L('Installation','Facility')],[L('
     ${sec('Contrats','Contracts',li([L(`Chaque joueur a un contrat de 1 à ${CT_MAX} saisons. Son salaire est fixe jusqu’au renouvellement ; à la signature, c’est le barème (valeur du joueur).`,`Every player has a contract of 1 to ${CT_MAX} seasons. The wage stays fixed until renewal; when signing, it is the scale (based on the player’s value).`),L(`Renouvellement : pendant les ${CT_WIN} dernières journées (Club › Contrats), puis à l’écran de fin de saison. Le nouveau salaire suit le barème, limité à +${c(CT_CAP_UP)} % ou −${c(CT_CAP_DN)} % par rapport à l’ancien. Pas de renouvellement à l’âge de la retraite (${RET_AGE.join(' / ')} ans selon le profil).`,`Renewal: during the last ${CT_WIN} matchdays (Club › Contracts), then on the end-of-season screen. The new wage follows the scale, limited to +${c(CT_CAP_UP)}% or −${c(CT_CAP_DN)}% against the old one. No renewal at retirement age (${RET_AGE.join(' / ')} by profile).`),L(`Sans décision, le contrat est reconduit 1 saison, barème +${c(CT_TACIT-1)} %.`,`With no decision, the contract is renewed for 1 season, scale +${c(CT_TACIT-1)}%.`),L(`Laisser partir est refusé à ${SQUAD_MIN} joueurs ou moins, et pour le dernier gardien. Le joueur rejoint les ex-contrats du Marché, à racheter au prix du Marché : ${FREE_MAX} au plus, le plus ancien disparaît.`,`Letting go is refused at ${SQUAD_MIN} players or fewer, and for the last keeper. The player joins the former contracts on the Market, to buy back at the Market price: ${FREE_MAX} at most, the oldest drops out.`),L(`Revente en cours de contrat : la moitié de la valeur, moins ${c(CT_FEE)} % des salaires restants après la saison en cours (le net peut être négatif).`,`Selling mid-contract: half the value, minus ${c(CT_FEE)}% of the wages left after the current season (the net can be negative).`)]))}
     ${sec('Mercato','Transfer window',li([L(`Une phase entre la fin de saison et le premier match : ${MERC_N} joueurs de plus au Marché (tirage élargi), de même niveau que le Marché, en plus des ex-contrats.`,`One phase between the end of the season and the first match: ${MERC_N} extra players on the Market (extended draw), at the same level as the Market, on top of the former contracts.`),L(`Prix = valeur${MERC_PRICE===1?'':` × ${String(MERC_PRICE).replace('.',',')}`}, ×${String(UNIQ_PRICE_MULT).replace('.',',')} pour un Unique. Effectif d’au moins ${SQUAD_MIN} joueurs (maximum technique ${SQUAD_CAP}), budget suffisant pour le prix.`,`Price = value${MERC_PRICE===1?'':` × ${MERC_PRICE}`}, ×${UNIQ_PRICE_MULT} for a Unique. Squad of at least ${SQUAD_MIN} players (technical maximum ${SQUAD_CAP}), enough budget for the price.`),L('Les clubs IA ne bougent pas pendant le mercato. Le tirage disparaît au premier match : ce qui n’est pas recruté est perdu.','AI clubs do not move during the window. The draw vanishes at the first match: whoever is not signed is lost.'),L('Un « creux prévu » signale une trésorerie qui risque de passer sous zéro en cours de saison : une prévision, jamais un blocage.','A “cash dip expected” warns that the budget may fall below zero during the season: a forecast, never a block.'),L(`Offres aux clubs (Marché › Clubs) : ${OFR_MAX[0]} en fin de saison, ${OFR_MAX[1]} à la mi-saison. Prix = valeur × ${dc(OFR_MULT)} + ${Math.round(AGT_PCT*100)} % d’agent, salaire au barème. Les ${OFR_PROT} meilleurs de chaque club sont protégés, le vendeur reçoit un remplaçant. Sans hasard : le motif d’un refus est affiché.`,`Club offers (Market › Clubs): ${OFR_MAX[0]} at season end, ${OFR_MAX[1]} at mid-season. Price = value × ${dc(OFR_MULT)} + ${Math.round(AGT_PCT*100)}% agent fee, wage on the scale. Each club’s ${OFR_PROT} best are protected, the seller gets a replacement. No luck: a refusal shows its reason.`),L(`Mi-saison : après le tournoi, ${MERC_MID_N} joueurs au Marché (× ${dc(MERC_MID_PRICE)}) et les offres ; fermé au 1er match de la reprise.`,`Mid-season: after the tournament, ${MERC_MID_N} Market players (× ${dc(MERC_MID_PRICE)}) and offers; closes at the first match after the break.`)]))}
     ${sec('Clubs IA','AI clubs',li([L('Ils recrutent : le candidat dont le trait convient à leur style.','They recruit: the candidate whose trait suits their style.'),L(`Ils s’entraînent : ${AIT_N} jeunes à fort potentiel par club, à ${dc(AIT_XP)} × l’XP de séance.`,`They train: ${AIT_N} high-potential youngsters per club, at ${AIT_XP} × session XP.`),L('Leur pressing suit l’endurance (HP) des titulaires.','Their pressing follows the starters’ endurance (HP).')]))}
-    ${sec('Monde vivant','Living world',li([L(`Événements : après environ ${c(NW_EV)} % des matchs de championnat, un événement touche ton club (mécène, panne, presse, coup de froid, chambrage…). Chacun sort au plus une fois par saison ; un seul gros effet (blessure à l’entraînement, don) par saison, signalé par une alerte.`,`Events: after about ${c(NW_EV)}% of league matches, an event hits your club (patron, breakdown, press, chill, taunts…). Each one happens at most once a season; only one big effect (training injury, donation) per season, flagged by an alert.`),L(`Entraîneurs : chaque club IA a le sien (fiche du club dans le Classement). Après ${NW_Z} saisons de suite dans le bas du classement, ou une seule si le club descend, il est renvoyé, jamais la saison de son arrivée. Il ne change ni la force ni les choix de son club.`,`Coaches: every AI club has one (club sheet in the League table). After ${NW_Z} seasons in a row near the bottom, or just one if the club goes down, the coach is sacked, never in their first season. Coaches change neither their club’s strength nor its choices.`),L(`Supporters : chaque club IA a les siens (de ${fmt(NW_PMIN)} à ${fmt(NW_PMAX)}). En fin de saison, ils suivent le rang (de +${c(NW_PR)} % au premier à −${c(NW_PR)} % au dernier), le titre (+${c(NW_PT)} %), la montée (+${c(NW_PU)} %) ou la descente (−${c(NW_PD)} %). Un club plus suivi que la moyenne de sa division recrute mieux (jusqu’à ${NW_LV} niveaux de plus) et vend plus cher (jusqu’à +${c(NW_PQ)} %) ; l’inverse s’il l’est moins.`,`Supporters: every AI club has its own (${fmt(NW_PMIN)} to ${fmt(NW_PMAX)}). At season end they follow the rank (+${c(NW_PR)}% for first to −${c(NW_PR)}% for last), the title (+${c(NW_PT)}%), promotion (+${c(NW_PU)}%) or relegation (−${c(NW_PD)}%). A club followed more than its division’s average signs better players (up to ${NW_LV} levels higher) and sells dearer (up to +${c(NW_PQ)}%); the reverse if followed less.`),L(`Rivalités : un match de championnat serré (un but d’écart au plus, ou mort subite) contre un club ajoute ${NW_RC} points de rivalité, ${NW_RL} de plus en cas de défaite ; à ${NW_RIV} points sur ${NW_RX}, ce club devient ton rival. ${NW_RN} clubs suivis au plus ; un score qui ne monte pas de la saison perd ${NW_RD} points, même hors de ta division. Un rival de retour dans ta division après une saison ailleurs : retrouvailles, +${NW_RD}.`,`Rivalries: a close league match (one goal apart at most, or sudden death) against a club adds ${NW_RC} rivalry points, ${NW_RL} more after a loss; at ${NW_RIV} points out of ${NW_RX}, that club becomes your rival. ${NW_RN} tracked clubs at most; a score that does not rise all season loses ${NW_RD} points, even outside your division. A rival back in your division after a season away: reunion, +${NW_RD}.`),L(`Derby : en championnat contre un rival, la billetterie à domicile est multipliée par ${dc(NW_DG)} et les supporters gagnés ou perdus par ${dc(NW_DF)}. Le match lui-même ne change pas.`,`Derby: in the league against a rival, home gate is multiplied by ${dc(NW_DG)} and fans won or lost by ${dc(NW_DF)}. The match itself is unchanged.`)]))}`;
+    ${sec('Monde vivant','Living world',li([L(`Événements : après environ ${c(NW_EV)} % des matchs de championnat, un événement touche ton club (mécène, panne, presse, coup de froid, chambrage…). Chacun sort au plus une fois par saison ; un seul gros effet (blessure à l’entraînement, don) par saison, signalé par une alerte.`,`Events: after about ${c(NW_EV)}% of league matches, an event hits your club (patron, breakdown, press, chill, taunts…). Each one happens at most once a season; only one big effect (training injury, donation) per season, flagged by an alert.`),L(`Entraîneurs : chaque club IA a le sien (fiche du club dans le Classement). Après ${NW_Z} saisons de suite dans le bas du classement, ou une seule si le club descend, il est renvoyé, jamais la saison de son arrivée. Il ne change ni la force ni les choix de son club.`,`Coaches: every AI club has one (club sheet in the League table). After ${NW_Z} seasons in a row near the bottom, or just one if the club goes down, the coach is sacked, never in their first season. Coaches change neither their club’s strength nor its choices.`),L(`Supporters : chaque club IA a les siens (de ${fmt(NW_PMIN)} à ${fmt(NW_PMAX)}). En fin de saison, ils suivent le rang (de +${c(NW_PR)} % au premier à −${c(NW_PR)} % au dernier), le titre (+${c(NW_PT)} %), la montée (+${c(NW_PU)} %) ou la descente (−${c(NW_PD)} %). Un club plus suivi que la moyenne de sa division recrute mieux (jusqu’à ${NW_LV} niveaux de plus) et vend plus cher (jusqu’à +${c(NW_PQ)} %) ; l’inverse s’il l’est moins.`,`Supporters: every AI club has its own (${fmt(NW_PMIN)} to ${fmt(NW_PMAX)}). At season end they follow the rank (+${c(NW_PR)}% for first to −${c(NW_PR)}% for last), the title (+${c(NW_PT)}%), promotion (+${c(NW_PU)}%) or relegation (−${c(NW_PD)}%). A club followed more than its division’s average signs better players (up to ${NW_LV} levels higher) and sells dearer (up to +${c(NW_PQ)}%); the reverse if followed less.`),L(`Rivalités : un match de championnat serré (un but d’écart au plus, ou mort subite) contre un club ajoute ${NW_RC} points de rivalité, ${NW_RL} de plus en cas de défaite ; à ${NW_RIV} points sur ${NW_RX}, ce club devient ton rival. ${NW_RN} clubs suivis au plus ; un score qui ne monte pas de la saison perd ${NW_RD} points, même hors de ta division. Un rival de retour dans ta division après une saison ailleurs : retrouvailles, +${NW_RD}.`,`Rivalries: a close league match (one goal apart at most, or sudden death) against a club adds ${NW_RC} rivalry points, ${NW_RL} more after a loss; at ${NW_RIV} points out of ${NW_RX}, that club becomes your rival. ${NW_RN} tracked clubs at most; a score that does not rise all season loses ${NW_RD} points, even outside your division. A rival back in your division after a season away: reunion, +${NW_RD}.`),L(`Derby : en championnat contre un rival, la billetterie à domicile est multipliée par ${dc(NW_DG)} et les supporters gagnés ou perdus par ${dc(NW_DF)}. Le match lui-même ne change pas.`,`Derby: in the league against a rival, home gate is multiplied by ${dc(NW_DG)} and fans won or lost by ${dc(NW_DF)}. The match itself is unchanged.`),
+L(`Décisions : certains événements attendent ta réponse (carte « À décider » de l’Accueil), une question à la fois ; sans réponse au match suivant ou en fin de saison, c’est Non.`,`Decisions: some events await your answer (“To decide” card on the Home page), one question at a time; with no answer by the next match or at season end, it is No.`),
+L(`Offres : un club IA populaire de ta division propose de ${c(NW_OFR[0])} à ${c(NW_OFR[1])} % de la valeur d’un de tes meilleurs joueurs (ni Unique, ni Légende, ni capitaine). Refusée, il revient ${NW_KD} journées plus tard : le joueur veut +${c(NW_RAISE-1)} % de salaire, sinon il ne renouvelle pas.`,`Offers: a popular AI club in your division bids ${c(NW_OFR[0])}% to ${c(NW_OFR[1])}% of the value of one of your best players (not a Unique, Legend or captain). Refused, it returns ${NW_KD} matchdays later: the player wants +${c(NW_RAISE-1)}% wages, or will not renew.`),
+L(`Effectifs : en fin de saison, les clubs IA de ta division visent 12 joueurs, 13 avec des supporters à +${c(NW_SQ[0]-1)} % de la moyenne, 14 à +${c(NW_SQ[1]-1)} %.`,`Squads: at season end, AI clubs in your division aim for 12 players, 13 with supporters +${c(NW_SQ[0]-1)}% above average, 14 at +${c(NW_SQ[1]-1)}%.`),
+L(`Carrières : encouragé, un vétéran joue une saison de plus. Blessé à l’entraînement à ${NW_RETX} ans ou moins de sa retraite, il arrête en fin de saison. Les vedettes IA qui partent sont saluées dans le Journal.`,`Careers: encouraged, a veteran plays one more season. Hurt in training ${NW_RETX} years or less from retirement, they stop at season end. Departing AI stars are hailed in the Journal.`)]))}`;
 }
 return `<div class="stack"><h2>${L('Règles du jeu','Game rules')}</h2>
   <div class="tabsm" role="tablist">${RTABS.map(([k,l])=>`<button role="tab" data-a="rtab" data-v="${k}" aria-selected="${t===k}">${P(l)}</button>`).join('')}</div>${body}</div>`;
@@ -6696,6 +6787,7 @@ case 'cspecok':{const C=G.coach;if(UI.confirm!=='spec:'+d.v||coachLvl(C).lvl<SPE
 case 'rtab':UI.rtab=d.v;render();break;
 case 'gorules':pauseLive();UI.rtab=d.v;UI.tab='rules';UI.last.options='rules';render();window.scrollTo(0,0);break;
 case 'ctab':UI.ctab=d.v;render();break;
+case 'nwq':if(G.nw&&G.nw.q){nwAns(G,d.v==='1'?1:0);save();render();}break;
 case 'sortdir':{if(d.w==='m')UI.mdir=-UI.mdir;else UI.sdir=-UI.sdir;render();break;}
 case 'upfac':{const r=upgradeFac(G,d.k);if(r==='ok'){news(()=>L(`Stade : ${P(FACD[d.k].n)} niveau ${G.stadium.lv[d.k]}.`,`Stadium: ${P(FACD[d.k].n)} level ${G.stadium.lv[d.k]}.`),'club');checkBadges(G,{});save();render();toast(L('Installation améliorée.','Facility upgraded.'));}else toast(r==='cash'?L('Budget insuffisant.','Not enough budget.'):r==='tier'?L('Plafond du palier.','Tier cap.'):L('Niveau maximum.','Maximum level.'),true);break;}
 case 'scust':{const cu=G.stadium.cu;cu[d.k]=d.k==='fx'||d.k==='stand'?+d.v:d.v;save();render();break;}
