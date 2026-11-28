@@ -8,6 +8,26 @@ Version française : [patchnoteFR.md](patchnoteFR.md)
 
 ---
 
+## v0.42 - Living world, part two
+
+### Gameplay
+- Some events ask you to decide: a "To decide" card appears on the Home page, with Yes or No; without an answer, it is No at the next match.
+- Opposing clubs bid for your best players; if you refuse, the player may come back to it a few matchdays later.
+- Opposing squads range from 12 to 14 players depending on their fans.
+- Some careers last one more season or end early after a serious injury; great careers of opposing clubs get their farewell line in the Journal.
+
+### Interface
+- "To decide" card on the Home page.
+- History tab on an opposing club's page: titles, coach, records.
+
+### Content
+- "Living world" Rules completed and "Living world" Tutorial expanded.
+
+### Technical
+- Slightly heavier file: 806 KB instead of 796 KB.
+
+---
+
 ## v0.41 - New font, lighter file
 
 ### Interface
